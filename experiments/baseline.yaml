@@ -1,0 +1,27 @@
+# nnga --config-file experiments/baseline.yaml
+
+GA:
+  NRO_MAX_GEN: 10
+  POPULATION_SIZE: 10
+  HYPERMUTATION_CYCLE_SIZE: 2
+  MUTATION_RATE: 0.01
+  ELITISM: 5
+  CONTINUE_EXEC: False
+  ATTRIBUTE_SELECTION: True
+
+DATASET:
+  TRAIN_IMG_PATH: 'C:\Users\Rafael Del Lama\Desktop\dataset\FVC_3C\TRAIN'
+  TRAIN_CSV_PATH: 'C:\Users\Rafael Del Lama\Desktop\dataset\FVC_3C\TRAIN\data.csv'
+  TRAIN_AUGMENTATION: True
+  TRAIN_SHUFFLE: True
+
+  VAL_IMG_PATH: 'C:\Users\Rafael Del Lama\Desktop\dataset\FVC_3C\TEST'
+  VAL_CSV_PATH: 'C:\Users\Rafael Del Lama\Desktop\dataset\FVC_3C\TEST\data.csv'
+
+  PRESERVE_IMG_RATIO: True
+
+MODEL:
+  INPUT_SHAPE: (150, 150, 1)
+  ARCHITECTURE: "MLP"
+
+OUTPUT_DIR: ./NNGA_output
