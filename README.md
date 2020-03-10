@@ -43,20 +43,17 @@ The directory structure should look like this:
 ## Models
 ----
 
-### Multilayer Perceptron (MLP)
+### Multilayer Perceptron with Feature Selection optimized by Genetic Algorithms (MLP)
 ----
 ![mlp](/doc/images/mlp.png)
-Format: ![Multilayer Perceptron with Feature Selection optimized by Genetic Algorithms]
 
-### Convolutional Neural Network (CNN)
+### Convolutional Neural Network optimized by Genetic Algorithms (CNN)
 ----
-![mlp](/doc/images/cnn.png)
-Format: ![Convolutional Neural Network optimized by Genetic Algorithms]
+![cnn](/doc/images/cnn.png)
 
-### Hybrid CNN-MLP (CNN/MLP)
+### Hybrid CNN-MLP Model with Feature Selection optimized by Genetic Algorithms (CNN/MLP)
 ----
-![mlp](/doc/images/cnn_mlp.png)
-Format: ![Hybrid CNN-MLP Model with Feature Selection optimized by Genetic Algorithms]
+![cnn_mlp](/doc/images/cnn_mlp.png)
 
 ## Installation
 ----
