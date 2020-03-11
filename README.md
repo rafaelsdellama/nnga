@@ -62,16 +62,10 @@ The Genetic Algorithm chromosome that encodes this model is shown below:
 
 ### Optimized model parameters:
 
-| Parameter | activation_conv | activation_dense | batch_size | epochs | optimizer | learning_rate | scaler |
-| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| Values | relu <br/> tanh | relu <br/> tanh  | The number of filters is defined by the function: filters = 2^i, where i is a value of the sequence of integer numbers from 3 to 7, increment by 1	 |  A value of the sequence of integer numbers from 20 to 200, increment by 5 | adam <br/> SGD <br/> RMSprop <br/> Adagrad <br/> Adadelta <br/> Adamax <br/> Nadam  | 0.001 <br/> 0.0025 <br/> 0.005 <br/> 0.0075 <br/> 0.01 <br/> 0.025 <br/> 0.05 <br/> 0.075 <br/> 0.1 <br/> 0.25 <br/> 0.5 <br/> 0.75 <br/> 1.0 <br/> 1.1 | Standard <br/> MinMax | 
-| Description | Activation function to use in the CNNs layer. | Activation function to use in the Denses layer. | Number of samples per gradient update. | Number of epochs to train the model. | Optimizer used in training the model. | Learning rate used in training the model. | Standardization method used to scale the data |
-
-| Parameter | kernel_regularizer | kernel_initializer | activity_regularizer | bias_regularizer |
-| :---: | :---: | :---: | :---: | :---: |
-| Values | None  <br/> l1 <br/> l2 <br/> l1_l2 | Zeros <br/> Ones <br/> RandomNormal <br/> RandomUniform <br/> TruncatedNormal <br/> VarianceScaling <br/> Orthogonal <br/> lecun_uniform <br/> glorot_normal <br/> glorot_uniform <br/> he_normal <br/> lecun_normal <br/> he_uniform | None  <br/> l1 <br/> l2 <br/> l1_l2 | None  <br/> l1 <br/> l2 <br/> l1_l2 |
-| Description | Regularizer function applied to the kernel weights matrix. <br/> https://keras.io/regularizers/ |  Initializer for the kernel weights matrix. <br/> https://keras.io/initializers/ | Regularizer function applied to the output of the layer (its activation). <br/> https://keras.io/regularizers/ | Regularizer function applied to the bias vector. <br/> https://keras.io/regularizers/ |
-
+| Parameter | activation_conv | activation_dense | batch_size | epochs | optimizer | learning_rate | scaler | kernel_regularizer | kernel_initializer | activity_regularizer | bias_regularizer |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| Values | relu <br/> tanh | relu <br/> tanh  | The number of filters is defined by the function: filters = 2^i, where i is a value of the sequence of integer numbers from 3 to 7, increment by 1	 |  A value of the sequence of integer numbers from 20 to 200, increment by 5 | adam <br/> SGD <br/> RMSprop <br/> Adagrad <br/> Adadelta <br/> Adamax <br/> Nadam  | 0.001 <br/> 0.0025 <br/> 0.005 <br/> 0.0075 <br/> 0.01 <br/> 0.025 <br/> 0.05 <br/> 0.075 <br/> 0.1 <br/> 0.25 <br/> 0.5 <br/> 0.75 <br/> 1.0 <br/> 1.1 | Standard <br/> MinMax | None  <br/> l1 <br/> l2 <br/> l1_l2 | Zeros <br/> Ones <br/> RandomNormal <br/> RandomUniform <br/> TruncatedNormal <br/> VarianceScaling <br/> Orthogonal <br/> lecun_uniform <br/> glorot_normal <br/> glorot_uniform <br/> he_normal <br/> lecun_normal <br/> he_uniform | None  <br/> l1 <br/> l2 <br/> l1_l2 | None  <br/> l1 <br/> l2 <br/> l1_l2 | 
+| Description | Activation function to use in the CNNs layer. | Activation function to use in the Denses layer. | Number of samples per gradient update. | Number of epochs to train the model. | Optimizer used in training the model. | Learning rate used in training the model. | Standardization method used to scale the data | Regularizer function applied to the kernel weights matrix. <br/> https://keras.io/regularizers/ |  Initializer for the kernel weights matrix. <br/> https://keras.io/initializers/ | Regularizer function applied to the output of the layer (its activation). <br/> https://keras.io/regularizers/ | Regularizer function applied to the bias vector. <br/> https://keras.io/regularizers/ |
 
 ## Image Dataset Directory Structure
 
