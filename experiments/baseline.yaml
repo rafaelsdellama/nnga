@@ -1,27 +1,37 @@
-# nnga --config-file experiments/baseline.yaml
-
-GA:
-  NRO_MAX_GEN: 10
-  POPULATION_SIZE: 10
-  HYPERMUTATION_CYCLE_SIZE: 2
-  MUTATION_RATE: 0.01
-  ELITISM: 5
-  CONTINUE_EXEC: False
-  ATTRIBUTE_SELECTION: True
-
 DATASET:
-  TRAIN_IMG_PATH: 'C:\Users\Rafael Del Lama\Desktop\dataset\FVC_3C\TRAIN'
-  TRAIN_CSV_PATH: 'C:\Users\Rafael Del Lama\Desktop\dataset\FVC_3C\TRAIN\data.csv'
-  TRAIN_AUGMENTATION: True
-  TRAIN_SHUFFLE: True
-
-  VAL_IMG_PATH: 'C:\Users\Rafael Del Lama\Desktop\dataset\FVC_3C\TEST'
-  VAL_CSV_PATH: 'C:\Users\Rafael Del Lama\Desktop\dataset\FVC_3C\TEST\data.csv'
-
-  PRESERVE_IMG_RATIO: True
-
+  PRESERVE_IMG_RATIO: true
+  TRAIN_AUGMENTATION: true
+  TRAIN_CSV_PATH: /PATH/TO/TRAIN/DATASET/file_name.csv
+  TRAIN_IMG_PATH: /PATH/TO/TRAIN/DATASET
+  TRAIN_SHUFFLE: true
+  VAL_AUGMENTATION: false
+  VAL_CSV_PATH: /PATH/TO/VAL/DATASET/file_name.csv
+  VAL_IMG_PATH: /PATH/TO/VAL/DATASET
+  VAL_SHUFFLE: false
+GA:
+  FEATURE_SELECTION: false
+  CONTINUE_EXEC: false
+  CROSSOVER_RATE: 0.6
+  ELITISM: 2
+  HYPERMUTATION: false
+  HYPERMUTATION_CYCLE_SIZE: 2
+  HYPERMUTATION_RATE: 3
+  IMIGRATION_RATE: 0.05
+  MUTATION_RATE: 0.01
+  NRO_MAX_EXEC: 1
+  NRO_MAX_GEN: 100
+  POPULATION_SIZE: 100
+  RANDOM_IMIGRANTS: false
+  SEED: []
+  TOURNAMENT_SIZE: 3
 MODEL:
-  INPUT_SHAPE: (150, 150, 1)
-  ARCHITECTURE: "MLP"
-
+  ARCHITECTURE: MLP
+  INPUT_SHAPE:
+  - 200
+  - 200
+  - 3
+  LOSS: categorical_crossentropy
+  METRICS:
+  - categorical_accuracy
 OUTPUT_DIR: ./NNGA_output
+

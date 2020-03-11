@@ -12,12 +12,12 @@ class MLP(BaseNeuralNetwork):
 
     def create_model_ga(self):
 
-        if self._cfg.GA.ATTRIBUTE_SELECTION:
+        if self._cfg.GA.FEATURE_SELECTION:
             input_dim = 0
             for i in range(sum(
-                    'attribute_selection_' in s for s in self.keys)):
+                    'feature_selection_' in s for s in self.keys)):
                 if self.indiv[self.keys.index(
-                        'attribute_selection_' + str(i))]:
+                        'feature_selection_' + str(i))]:
                     input_dim += 1
         else:
             input_dim = self._datasets['TRAIN']['CSV'].n_features
@@ -81,8 +81,8 @@ class MLP(BaseNeuralNetwork):
 
             self._model.compile(
                 optimizer=optimizer,
-                loss=self._cfg.MODEL.LOSS,
-                metrics=self._cfg.MODEL.METRICS)
+                loss=self._cfg.SOLVER.LOSS,
+                metrics=self._cfg.SOLVER.METRICS)
 
             self._model.summary(print_fn=self._logger.info)
             return True

@@ -56,7 +56,7 @@ class GA:
             self.__seeds = cfg.GA.SEED
 
         self.continue_exec = cfg.GA.CONTINUE_EXEC
-        self.attribute_selection = cfg.GA.ATTRIBUTE_SELECTION
+        self.feature_selection = cfg.GA.FEATURE_SELECTION
 
         self._path = cfg.OUTPUT_DIR
         self._logger = logger
@@ -135,13 +135,13 @@ class GA:
         if not isinstance(self.continue_exec, bool):
             raise ValueError("GA.CONTINUE_EXEC must be a bool")
 
-        if not isinstance(self.attribute_selection, bool):
-            raise ValueError("GA.ATTRIBUTE_SELECTION must be a bool")
+        if not isinstance(self.feature_selection, bool):
+            raise ValueError("GA.FEATURE_SELECTION must be a bool")
 
-        if self.attribute_selection and 'CSV' in self.datasets['TRAIN']:
+        if self.feature_selection and 'CSV' in self.datasets['TRAIN']:
             for i in range(self.datasets['TRAIN']['CSV'].n_features):
-                self.encoding[f"attribute_selection_{i}"] = \
-                    'attribute_selection'
+                self.encoding[f"feature_selection_{i}"] = \
+                    'feature_selection'
 
         self.chromosome_length = len(self.encoding)
 
@@ -234,7 +234,6 @@ class GA:
         if self.hypermutation and gen % self.cycleSize == 0:
             self.__hypermutation(gen)
 
-        start = 0
         if self.elitism > 0:
             for i in range(self.elitism):
                 self.new_pop.indivs[i] = \
@@ -284,7 +283,7 @@ class GA:
                 self.new_pop.indivs[i + 1].parent_2 = parent_2
 
         if self.randomImmigrants:
-            for i in range(start, self.population_size):
+            for i in range(self.elitism, self.population_size):
                 if random.random() < self.immigrationRate:
                     self.new_pop.indivs[i].chromosome = \
                         self.__generating_indiv()
@@ -366,8 +365,7 @@ class GA:
 
     def __hypermutation(self, gen):
         if self.__hypermutationCycle:
-            self.mutationRate = self.mutationRate / \
-                                (1 + self.hypermutationRate)
+            self.mutationRate = self.mutationRate / self.hypermutationRate
             self.__hypermutationCycle = False
         elif gen % (2 * self.cycleSize) == 0:
 
@@ -383,8 +381,7 @@ class GA:
                           )
 
             if cycle_1 >= cycle_2:
-                self.mutationRate = self.mutationRate * \
-                                    (1 + self.hypermutationRate)
+                self.mutationRate = self.mutationRate * self.hypermutationRate
                 self.__hypermutationCycle = True
 
     def __generating_indiv_binary(self):

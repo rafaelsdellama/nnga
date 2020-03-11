@@ -24,7 +24,7 @@ _C.GA.HYPERMUTATION_RATE = 3
 _C.GA.RANDOM_IMIGRANTS = False
 _C.GA.IMIGRATION_RATE = 0.05
 _C.GA.SEED = []
-_C.GA.ATTRIBUTE_SELECTION = False
+_C.GA.FEATURE_SELECTION = False
 _C.GA.CONTINUE_EXEC = False
 
 _C.DATASET = CN()
@@ -54,8 +54,10 @@ _C.DATASET.PRESERVE_IMG_RATIO = True
 _C.MODEL = CN()
 _C.MODEL.ARCHITECTURE = "MLP"
 _C.MODEL.INPUT_SHAPE = (200, 200, 3)
-_C.MODEL.LOSS = 'categorical_crossentropy'
-_C.MODEL.METRICS = ['categorical_accuracy']
+
+_C.SOLVER = CN()
+_C.SOLVER.LOSS = 'categorical_crossentropy'
+_C.SOLVER.METRICS = ['categorical_accuracy']
 
 
 def export_config(path):

@@ -29,7 +29,7 @@ PARAMETERS_INTERVAL = {
                            'he_normal', 'lecun_normal', 'he_uniform'],
     'activity_regularizer': [None, 'l1', 'l2', 'l1_l2'],
     'bias_regularizer': [None, 'l1', 'l2', 'l1_l2'],
-    'attribute_selection': [True, False]
+    'feature_selection': [True, False]
 }
 
 ENCODING = {

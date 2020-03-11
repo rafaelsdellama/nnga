@@ -37,9 +37,9 @@ class BaseNeuralNetwork:
             "shuffle": True,
         }
 
-        if cfg.GA.ATTRIBUTE_SELECTION:
+        if cfg.GA.FEATURE_SELECTION:
             indexes = [i for i, value in enumerate(self.keys)
-                       if 'attribute_selection_' in value]
+                       if 'feature_selection_' in value]
             self._attributes = [i for i, value in enumerate(indexes)
                                 if self.indiv[value]]
         else:

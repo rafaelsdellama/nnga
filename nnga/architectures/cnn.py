@@ -117,8 +117,8 @@ class CNN(BaseNeuralNetwork):
             ))
 
             self._model.compile(optimizer=optimizer,
-                                loss=self._cfg.MODEL.LOSS,
-                                metrics=self._cfg.MODEL.METRICS)
+                                loss=self._cfg.SOLVER.LOSS,
+                                metrics=self._cfg.SOLVER.METRICS)
 
             self._model.summary(print_fn=self._logger.info)
             return True

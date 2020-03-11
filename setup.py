@@ -10,7 +10,7 @@ setup(
     name='nnga',
     version='0.1.0',
     packages=find_packages(),
-    entry_points=dict(console_scripts=["nnga = nnga.nnga_cli:main"]),
+    entry_points=dict(console_scripts=["nnga-cli = nnga.nnga_cli:main"]),
     description="Neural Network Genetic Algorithm",
     author="Rafael Silva Del Lama",
     author_email="rafael.lama@usp.br",
