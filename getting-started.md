@@ -63,7 +63,7 @@ GA:
 
 # Model experiment configuration
 MODEL:
-  ARCHITECTURE: MLP
+  ARCHITECTURE: "MLP"
   INPUT_SHAPE: [200, 200, 3]
 
 # Solver experiment configuration
@@ -209,23 +209,3 @@ The last option is about the path to store trainned model.
 # path to save checkpoints files
 OUTPUT_DIR: ./NNGA_output
 ```
-
-### Datasets Formats
-The directory structure should look like this:
-
-    data/train/
-        ├── class_1/
-    		├── image0001.jpg
-    		├── ...
-        ├── ...
-        ├── class_N/
-    		├── image0001.jpg
-    		├── ...
-    data/val/
-        ├── class_1/
-    		├── image0001.jpg
-    		├── ...
-        ├── ...
-        ├── class_N/
-    		├── image0001.jpg
-    		├── ...

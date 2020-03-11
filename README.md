@@ -67,7 +67,9 @@ The Genetic Algorithm chromosome that encodes this model is shown below:
 | Values | relu <br/> tanh | relu <br/> tanh  | The number of filters is defined by the function: filters = 2^i, where i is a value of the sequence of integer numbers from 3 to 7, increment by 1	 |  A value of the sequence of integer numbers from 20 to 200, increment by 5 | adam <br/> SGD <br/> RMSprop <br/> Adagrad <br/> Adadelta <br/> Adamax <br/> Nadam  | 0.001 <br/> 0.0025 <br/> 0.005 <br/> 0.0075 <br/> 0.01 <br/> 0.025 <br/> 0.05 <br/> 0.075 <br/> 0.1 <br/> 0.25 <br/> 0.5 <br/> 0.75 <br/> 1.0 <br/> 1.1 | Standard <br/> MinMax | None  <br/> l1 <br/> l2 <br/> l1_l2 | Zeros <br/> Ones <br/> RandomNormal <br/> RandomUniform <br/> TruncatedNormal <br/> VarianceScaling <br/> Orthogonal <br/> lecun_uniform <br/> glorot_normal <br/> glorot_uniform <br/> he_normal <br/> lecun_normal <br/> he_uniform | None  <br/> l1 <br/> l2 <br/> l1_l2 | None  <br/> l1 <br/> l2 <br/> l1_l2 | 
 | Description | Activation function to use in the CNNs layer. | Activation function to use in the Denses layer. | Number of samples per gradient update. | Number of epochs to train the model. | Optimizer used in training the model. | Learning rate used in training the model. | Standardization method used to scale the data | Regularizer function applied to the kernel weights matrix. <br/> https://keras.io/regularizers/ |  Initializer for the kernel weights matrix. <br/> https://keras.io/initializers/ | Regularizer function applied to the output of the layer (its activation). <br/> https://keras.io/regularizers/ | Regularizer function applied to the bias vector. <br/> https://keras.io/regularizers/ |
 
-## Image Dataset Directory Structure
+## Datasets Formats
+
+### Image Dataset Directory Structure
 
 There is a standard way to lay out your image data for modeling.
 After you have collected your images, you must sort them first by dataset, such as train, test, and validation, and second by their class.
@@ -91,6 +93,21 @@ The directory structure should look like this:
         ├── class_N/
     		├── image0001.jpg
     		├── ...
+
+### CSV Dataset Structure
+The CSV structure should look like this:
+
+| id | feature 1 | feature 2 | ... | feature N | class |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| image_001 | 0.33 | 0.06 | ... | 0.12 | class_1 |
+| image_002 | 0.31 | 0.38 | ... | 0.74 | class_1 |
+| image_003 | 0.28 | 0.56 | ... | 0.18 | class_2 |
+| image_004 | 0.02 | 0.78 | ... | 0.65 | class_2 |
+| image_005 | 0.97 | 0.67 | ... | 0.13 | class_3 |
+| ... | ... | ... | ... | ... | ... |
+| image_N | 0.28 | 0.39 | ... | 0.51 | class_N |
+
+
 
 ## Documentation
 Please, read the [getting-started.md](/getting-started.md) for the basics.
