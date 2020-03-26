@@ -145,6 +145,8 @@ class GA:
 
         self.chromosome_length = len(self.encoding)
 
+        self.mutationRate *= self.chromosome_length
+
         self._logger.info(f"GA created \n"
                           f"{vars(self)}")
 
