@@ -75,6 +75,10 @@ class BaseGenerator(Sequence):
     def classes(self):
         return self._classes
 
+    @property
+    def num_indexes(self):
+        return len(self._indexes)
+
     def reset_generator(self):
         self.on_epoch_end()
         self._classes = []

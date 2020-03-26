@@ -21,20 +21,19 @@ class BaseNeuralNetwork:
         self._model = None
 
         self.fitting_parameters = {
-            "generator": None,
-            "steps_per_epoch": None,
+            "x": None,
             "epochs": self.indiv[self.keys.index('epochs')],
             "verbose": 0,
             "callbacks": None,
             "validation_data": None,
+            "shuffle": True,
+            "class_weight": None,
+            "steps_per_epoch": None,
             "validation_steps": None,
             "validation_freq": 1,
             "max_queue_size": 10,
-            "class_weight": None,
-            "steps_per_epoch": None,
             "workers": 0,
             "use_multiprocessing": True,
-            "shuffle": True,
         }
 
         if cfg.GA.FEATURE_SELECTION:
@@ -71,7 +70,7 @@ class BaseNeuralNetwork:
         self._make_generator(x_train, x_val, batch_size)
 
     def _make_generator(self, x_train, x_val, batch_size):
-        self.fitting_parameters['generator'] = GENERATOR.get(
+        self.fitting_parameters['x'] = GENERATOR.get(
             self._cfg.MODEL.ARCHITECTURE)(
             self._datasets['TRAIN'],
             x_train,
@@ -97,22 +96,26 @@ class BaseNeuralNetwork:
             ceil(len(x_val) / batch_size)
 
     def fit(self):
-        self._model.fit_generator(**self.fitting_parameters)
+        self._model.fit(**self.fitting_parameters)
 
     def evaluate(self):
         self.fitting_parameters['validation_data'].reset_generator()
 
-        predict = self._model.predict_generator(
-            generator=self.fitting_parameters['validation_data'],
+        predict = self._model.predict(
+            x=self.fitting_parameters['validation_data'],
             steps=self.fitting_parameters['validation_steps'],
+            verbose=self.fitting_parameters['verbose'],
             max_queue_size=self.fitting_parameters['max_queue_size'],
             workers=self.fitting_parameters['workers'],
-            use_multiprocessing=self.fitting_parameters['use_multiprocessing'],
-            verbose=self.fitting_parameters['verbose'])
+            use_multiprocessing=self.fitting_parameters['use_multiprocessing']
+        )
 
         lbl = [np.argmax(t) for t in
                self.fitting_parameters['validation_data'].classes]
         predict = [np.argmax(t) for t in predict]
+
+        lbl = lbl[0:self.fitting_parameters['validation_data'].num_indexes]
+        predict = predict[0:self.fitting_parameters['validation_data'].num_indexes]
 
         acc = balanced_accuracy_score(lbl, predict)
         confusion_m = confusion_matrix(lbl, predict)
