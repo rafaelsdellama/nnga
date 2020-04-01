@@ -130,3 +130,5 @@ dmypy.json
 .idea/
 experiments/test.yaml
 /experiments/exp_0.yaml
+experiments/covid.yaml
+NNGA_output/covid/log.txt

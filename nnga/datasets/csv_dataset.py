@@ -31,18 +31,20 @@ class CSVDataset(BaseDataset):
         f = open(self._dataset_path)
         self._features = f.readline().replace("\n", "").split(';')
 
-        col_list = ["class"]
-        self._features.remove('class')
+        col_list = []
+        if "class" in self._features:
+            col_list.append("class")
+            self._features.remove('class')
 
         if 'id' in self._features:
-            self._features.remove('id')
             col_list.append('id')
+            self._features.remove('id')
 
         df = load_csv_file(self._dataset_path, usecols=col_list)
 
         self._metadata = {
             row['id'] if 'id' in row else index:
-                {"line_path": index, "label": row['class']}
+                {"line_path": index, "label": row['class'] if 'class' in row else None}
             for index, row in df.iterrows()
         }
 
