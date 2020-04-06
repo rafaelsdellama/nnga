@@ -14,16 +14,20 @@ from nnga.utils.helper import dump_tensors
 
 
 class GA:
-    """Genetic Algorithm class"""
+    """ This class implements the Genetic Algorithm
+        Parameters
+        ----------
+            cfg {yacs.config.CfgNode} -- Loaded experiment config
+
+            logger {logging} -- Simple python logging
+
+            datasets: BaseDataset
+                dataset to be used in the train/test
+        Returns
+        -------
+    """
 
     def __init__(self, cfg, logger, datasets):
-        """
-        Create datasets, Models following experiment config
-            Arguments:
-                cfg {yacs.config.CfgNode} -- Loaded experiment config
-                logger {logging} -- Simple python logging
-        """
-
         self.datasets = datasets
         self._cfg = cfg
         self.encoding = ENCODING.get(cfg.MODEL.ARCHITECTURE)
@@ -151,12 +155,22 @@ class GA:
                           f"{vars(self)}")
 
     def __generate_initial_population(self):
+        """Generate a initical population"""
         for i in range(self.population_size):
             self.new_pop.indivs[i].chromosome = self.__generating_indiv()
             self.new_pop.indivs[i].fitness = \
                 self.__calculate_fitness(self.new_pop.indivs[i].chromosome, 0)
 
     def __starting_population(self, seed):
+        """ Start the population
+            Generate a new pop or read from file
+            Parameters
+            ----------
+                seed: int
+                    Seed to be used
+            Returns
+            -------
+        """
         # Read pop to continue the exec
         if self.continue_exec:
 
@@ -187,6 +201,7 @@ class GA:
         return gen_init
 
     def __population_statistic(self):
+        """ Calculate the population statistic"""
         self.new_pop.bestIndiv = []
         self.new_pop.sumFitness = 0
 
@@ -214,6 +229,16 @@ class GA:
                                      self.new_pop.bestIndiv[0]].chromosome})
 
     def __select_individual_by_tournament(self, pop):
+        """ Start the population
+            Generate a new pop or read from file
+            Parameters
+            ----------
+                pop: Population
+                    Pop to be used to select the individual by tournament
+            Returns
+            -------
+        """
+
         # Pick individuals for tournament
         fighters = random.sample(
             range(0, self.population_size),
@@ -231,6 +256,14 @@ class GA:
         return winner
 
     def __generating_new_population(self, gen):
+        """ Generate the new pop from next generation
+            Parameters
+            ----------
+                gen: int
+                    Gen number
+            Returns
+            -------
+        """
         self.old_pop = copy.deepcopy(self.new_pop)
 
         if self.hypermutation and gen % self.cycleSize == 0:
@@ -296,6 +329,17 @@ class GA:
                         )
 
     def __crossover(self, parent_1, parent_2):
+        """ Generate the new pop from next generation
+            Parameters
+            ----------
+                parent_1: Indiv
+                    Indiv to be used to create a new Indiv by crossover
+                parent_2: Indiv
+                Indiv to be used to create a new Indiv by crossover
+            Returns
+            -------
+                Return two new Indivs
+        """
         # Pick crossover points
         crossover_points = random.sample(range(0, self.chromosome_length), 2)
 
@@ -329,10 +373,11 @@ class GA:
         return child_1, child_2
 
     def run(self):
+        """Run the Genetic Algorithm len(SEEDs) times"""
         self._logger.info(f"\n\n*************************  "
                           f"Genetic Algorithm   "
                           f"*************************")
-
+        # TODO: PARALELISM
         for i, seed in enumerate(self.__seeds):
             self._logger.info(f"============================ Execution: "
                               f"{i + 1}/{self.nrMaxExec} - seed: {seed}  "
@@ -347,9 +392,18 @@ class GA:
             self.__statistic = []
 
     def __fit(self, seed):
+        """Fit the Genetic Algorithm using the seed
+        Parameters
+            ----------
+                seed: int
+                    Seed to be used
+            Returns
+            -------
+        """
 
         gen_init = self.__starting_population(seed)
 
+        # TODO: GA stopping criterion
         for gen in range(gen_init, self.nrMaxGen + 1):
             self.__generating_new_population(gen)
             self.__population_statistic()
@@ -358,7 +412,22 @@ class GA:
             save_pop(self._path, seed, self.new_pop)
             save_statistic(self._path, seed, self.__statistic)
 
+        self._evaluate_GA_results(
+            indiv=self.new_pop.indivs[self.new_pop.bestIndiv[0]].chromosome,
+            gen=self.nrMaxGen,
+            seed=seed)
+
     def __print_population_info(self, pop, gen):
+        """Print population info
+        Parameters
+            ----------
+                pop: Population
+                    Pop to be print info
+                gen: int
+                    Gen number
+            Returns
+            -------
+        """
         self._logger.info(f"Generation: {gen}\n"
                           f"Fitness best indiv: {pop.maxFitness}\n"
                           f"Best indivs: {pop.bestIndiv}\n"
@@ -366,6 +435,14 @@ class GA:
                           f"Mutation rate: {self.mutationRate}\n\n")
 
     def __hypermutation(self, gen):
+        """Hypermutation: change the mutation rate if necessary
+        Parameters
+            ----------
+                gen: int
+                    Gen number
+            Returns
+            -------
+        """
         if self.__hypermutationCycle:
             self.mutationRate = self.mutationRate / self.hypermutationRate
             self.__hypermutationCycle = False
@@ -387,6 +464,13 @@ class GA:
                 self.__hypermutationCycle = True
 
     def __generating_indiv_binary(self):
+        """Generate new indiv binary
+        Parameters
+            ----------
+            Returns
+            -------
+                New indiv chromosome
+        """
         # Set up an initial array of all zeros
         chromosome = np.zeros(self.chromosome_length)
 
@@ -400,6 +484,13 @@ class GA:
         return chromosome
 
     def __generating_indiv(self):
+        """Generate new indiv custom
+        Parameters
+            ----------
+            Returns
+            -------
+                New indiv chromosome
+        """
         chromosome = []
         keys = list(self.encoding.keys())
 
@@ -411,6 +502,14 @@ class GA:
         return np.array(chromosome, dtype=object)
 
     def __randomly_mutate_binary(self, chromosome):
+        """Randomly mutate indiv binary
+        Parameters
+            ----------
+                chromosome: list
+                    Indiv chromosome
+            Returns
+            -------
+        """
         for i in range(self.chromosome_length):
             if random.random() < self.mutationRate:
                 if chromosome[i] == 1:
@@ -419,6 +518,15 @@ class GA:
                     chromosome[i] = 1
 
     def __randomly_mutate(self, chromosome):
+        """Randomly mutate indiv custom
+        Parameters
+            ----------
+                chromosome: list
+                    Indiv chromosome
+            Returns
+            -------
+        """
+        # TODO: change learn rate and others atributes to continuous
         keys = list(self.encoding.keys())
 
         for i in range(self.chromosome_length):
@@ -438,23 +546,65 @@ class GA:
                 chromosome[i] = random.choice(options)
 
     def __calculate_fitness(self, indiv, gen):
+        """Calculate fitness from indiv
+        Parameters
+            ----------
+                indiv: Indiv
+                    Indiv to calculate the fitness
+                gen: int
+                    Gen number to determinate the
+                    train_test_split seed
+            Returns
+            -------
+        """
         keys = list(self.encoding.keys())
         self._logger.info(f"Indiv: {dict(zip(keys, indiv))}")
+
         model = MODELS.get(
             self._cfg.MODEL.ARCHITECTURE)(self._cfg,
                                           self._logger,
                                           self.datasets,
-                                          indiv, keys,
-                                          gen)
+                                          indiv, keys)
 
-        if model.create_model_ga():
-            model.fit()
-            fitness = model.evaluate()
-        else:
-            fitness = 0.0
+        fitness = model.train_test_split(gen)
 
         del model
         dump_tensors()
 
         self._logger.info(f"Fitness: {fitness}\n")
         return fitness
+
+    def _evaluate_GA_results(self, indiv, gen, seed):
+        """Calculate fitness from indiv
+        Parameters
+            ----------
+                indiv: Indiv
+                    Indiv to calculate the fitness
+                gen: int
+                    Gen number to determinate the
+                    train_test_split seed
+                seed: int
+                    Seeed used from GA
+            Returns
+            -------
+        """
+        keys = list(self.encoding.keys())
+        self._logger.info(f"Indiv: {dict(zip(keys, indiv))}")
+
+        model = MODELS.get(
+            self._cfg.MODEL.ARCHITECTURE)(self._cfg,
+                                          self._logger,
+                                          self.datasets,
+                                          indiv, keys)
+
+        # TODO: K parameter to cross_validation
+        self._logger.info(f"Cross validation statistics: "
+                          f"{model.cross_validation(k=2, seed=gen)}")
+        self._logger.info(f"Fitness solution: {model.train()}")
+        model.save_model(seed)
+        model.save_history(seed)
+        model.save_metrics(seed)
+        model.save_roc_curve(seed)
+
+        del model
+        dump_tensors()

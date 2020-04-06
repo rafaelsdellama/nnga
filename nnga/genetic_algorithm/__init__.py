@@ -2,7 +2,7 @@ import numpy as np
 from nnga.architectures.mlp import MLP
 from nnga.architectures.cnn import CNN
 from nnga.architectures.cnn_mlp import CNN_MLP
-
+# TODO: set search space on cfg
 PARAMETERS_INTERVAL = {
     'padding': ['valid', 'same'],
     'units': list(range(20, 101, 5)),

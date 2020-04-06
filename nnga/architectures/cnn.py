@@ -7,11 +7,41 @@ from nnga.architectures import INICIALIZER, REGULARIZER, create_optimizer
 
 
 class CNN(BaseNeuralNetwork):
+    """ This class implements the CNN defined by genetic algorithm indiv
+        Parameters
+        ----------
+            cfg {yacs.config.CfgNode} -- Loaded experiment config
 
-    def __init__(self, cfg, logger, datasets, indiv, keys, seed):
-        super().__init__(cfg, logger, datasets, indiv, keys, seed)
+            logger {logging} -- Simple python logging
 
-    def create_model_ga(self):
+            datasets: ImageDataset
+                dataset to be used in the train/test
+
+            indiv: Indiv
+                Indiv that determine the CNN architecture
+
+            keys: List
+                List of Indiv keys
+        Returns
+        -------
+    """
+
+    def __init__(self, cfg, logger, datasets, indiv, keys):
+        super().__init__(cfg, logger, datasets, indiv, keys)
+
+    def create_model_ga(self, summary=True):
+        """ This method create the CNN defined by genetic algorithm indiv
+            Parameters
+            ----------
+                summary: bool
+                    True: print the CNN architecture
+                    False: does not print the CNN architecture
+            Returns
+            -------
+                True: if the CNN architecture is valid
+                False: if the CNN architecture is not valid
+            """
+
         input_shape = self._cfg.MODEL.INPUT_SHAPE
 
         optimizer = create_optimizer(
@@ -120,7 +150,8 @@ class CNN(BaseNeuralNetwork):
                                 loss=self._cfg.SOLVER.LOSS,
                                 metrics=self._cfg.SOLVER.METRICS)
 
-            self._model.summary(print_fn=self._logger.info)
+            if summary:
+                self._model.summary(print_fn=self._logger.info)
             return True
         except ValueError:
             return False

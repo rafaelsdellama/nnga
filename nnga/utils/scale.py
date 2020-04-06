@@ -1,4 +1,30 @@
 def scale_features(sample, header, scale_parameters, scale_method):
+    """
+        Parameters
+        ----------
+        sample : list
+            List containing all to features to be scaled
+
+        header : list
+            Features name
+
+        scale_parameters : dict
+            Dict containing the scale parameters
+                - Mean
+                - Stdev
+                - Min
+                - Max
+
+        scale_method : str
+            Method to be used to scale the data
+                - Standard
+                - MinMax
+
+        Returns
+        -------
+            sample scaled
+
+    """
 
     if scale_method == 'Standard':
         for i, key in enumerate(header):

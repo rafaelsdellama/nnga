@@ -19,7 +19,7 @@ class BaseDataset(Sequence):
 
     def __init__(self, cfg, logger, is_validation=False):
 
-        self._metadata = []
+        self._metadata = {}
         self._indexes = []
         self._indexes_labels = []
         self._class_to_id = None
@@ -128,6 +128,9 @@ class BaseDataset(Sequence):
         return self._class_weigths
 
     def _make_index(self):
+        """Using the metadata structure populate attributes
+        _indexes, _indexes
+        """
         for key, value in self._metadata.items():
             self._indexes.append(key)
             self._indexes_labels.append(value['label'])
@@ -153,10 +156,42 @@ class BaseDataset(Sequence):
         return self._indexes_labels
 
     def get_metadata_by_idx(self, idx):
+        """
+        Parameters
+        ----------
+            idx : str
+                _metadata index
+        Returns
+        -------
+            metadata corresponding the idx
+
+        """
         return self._metadata[idx]
 
     def label_encode(self, label):
+        """
+        Encode label
+        Parameters
+        ----------
+            label : str
+                Class label
+        Returns
+        -------
+            str label encoded
+
+        """
         return self._class_to_id[label]
 
-    def label_dencode(self, label):
+    def label_decode(self, label):
+        """
+        Decode the label
+        Parameters
+        ----------
+            label : str
+                label encoded
+        Returns
+        -------
+            str label decoded
+
+        """
         return self._id_to_class[label]

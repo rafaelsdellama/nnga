@@ -69,7 +69,6 @@ def read_dataset(main_folder: str, format: str = "png", labeling: str = None):
 
     for path in paths:
         try:
-            # TODO How to test whether the image and label are paired?
             dataset["labels"].append(__infer_label(path, labeling))
             dataset["data"].append(path)
         except (ValueError, FileExistsError):

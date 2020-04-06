@@ -10,5 +10,4 @@ def dump_tensors(gpu_only=True):
     ops.reset_default_graph()
     # k.clear_session()
     tf.keras.backend.clear_session()
-    print(gc.collect())
     gc.collect()

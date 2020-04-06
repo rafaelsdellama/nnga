@@ -22,6 +22,8 @@ def train(cfg, logger):
         RuntimeError: For wrong config options
     """
 
+    # TODO: task train model withoud GA
+
     datasets = {
         'TRAIN': {},
         'VAL': {}

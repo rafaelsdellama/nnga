@@ -5,6 +5,18 @@ from nnga.utils.data_collector import read_dataset
 
 
 class ImageDataset(BaseDataset):
+    """ImageDataset loader
+          class implements {BaseDataset} and provide a loader
+    Arguments
+        cfg : {yacs.config.CfgNode}
+            Experiment config data.
+            All the information to configure the dataset loader is stored
+            in experiment config.
+        is_validation : {bool}
+            Flag to sinalize when dataset loader is a validation dataset
+            it's important select information on experiment
+            config to configure dataset loader corretly for validation
+      """
 
     def __init__(self, cfg, logger, is_validation=False):
         self._is_validation = is_validation

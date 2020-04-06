@@ -108,6 +108,26 @@ The CSV structure should look like this:
 | image_N | 0.28 | 0.39 | ... | 0.51 | class_N |
 
 
+The file can be sep = ',' and decimal point = '.':
+```bash
+id, feature 1, feature 2, ..., feature N, class 
+image_001, 0.33, 0.06, ..., 0.12, class_1 
+image_002, 0.31, 0.38, ..., 0.74, class_1 
+image_003, 0.28, 0.56, ..., 0.18, class_2 
+image_004, 0.02, 0.78, ..., 0.65, class_2 
+image_005, 0.97, 0.67, ..., 0.13, class_3 
+image_N, 0.28, 0.39, ..., 0.51, class_N 
+```
+Or the file can be sep = ';' and decimal point = ',':
+```bash
+id; feature 1; feature 2; ...; feature N; class 
+image_001; 0,33; 0,06; ...; 0,12; class_1 
+image_002; 0,31; 0,38; ...; 0,74; class_1 
+image_003; 0,28; 0,56; ...; 0,18; class_2 
+image_004; 0,02; 0,78; ...; 0,65; class_2 
+image_005; 0,97; 0,67; ...; 0,13; class_3 
+image_N; 0,28; 0,39; ...; 0,51; class_N 
+```
 
 ## Documentation
 Please, read the [getting-started.md](/getting-started.md) for the basics.

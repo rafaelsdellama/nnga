@@ -6,12 +6,40 @@ from nnga.architectures import INICIALIZER, REGULARIZER, create_optimizer
 
 
 class MLP(BaseNeuralNetwork):
+    """ This class implements the MLP defined by genetic algorithm indiv
+        Parameters
+        ----------
+            cfg {yacs.config.CfgNode} -- Loaded experiment config
 
-    def __init__(self, cfg, logger, datasets, indiv, keys, seed):
-        super().__init__(cfg, logger, datasets, indiv, keys, seed)
+            logger {logging} -- Simple python logging
 
-    def create_model_ga(self):
+            datasets: ImageDataset
+                dataset to be used in the train/test
 
+            indiv: Indiv
+                Indiv that determine the MLP architecture
+
+            keys: List
+                List of Indiv keys
+        Returns
+        -------
+    """
+
+    def __init__(self, cfg, logger, datasets, indiv, keys):
+        super().__init__(cfg, logger, datasets, indiv, keys)
+
+    def create_model_ga(self, summary=True):
+        """ This method create the MLP defined by genetic algorithm indiv
+            Parameters
+            ----------
+                summary: bool
+                    True: print the MLP architecture
+                    False: does not print the MLP architecture
+            Returns
+            -------
+                True: if the MLP architecture is valid
+                False: if the MLP architecture is not valid
+            """
         if self._cfg.GA.FEATURE_SELECTION:
             input_dim = 0
             for i in range(sum(
@@ -84,7 +112,8 @@ class MLP(BaseNeuralNetwork):
                 loss=self._cfg.SOLVER.LOSS,
                 metrics=self._cfg.SOLVER.METRICS)
 
-            self._model.summary(print_fn=self._logger.info)
+            if summary:
+                self._model.summary(print_fn=self._logger.info)
             return True
         except ValueError:
             return False
