@@ -47,7 +47,7 @@ class CNN_MLP(BaseNeuralNetwork):
             for i in range(sum(
                     'feature_selection_' in s for s in self.keys)):
                 if self.indiv[self.keys.index(
-                        'feature_selection_' + str(i))]:
+                        f'feature_selection_{i}')]:
                     input_dim += 1
         else:
             input_dim = self._datasets['TRAIN']['CSV'].n_features
@@ -78,7 +78,7 @@ class CNN_MLP(BaseNeuralNetwork):
                 filters=self.indiv[self.keys.index('filters_0')],
                 kernel_size=self.indiv[self.keys.index('kernel_size_0')],
                 padding=self.indiv[self.keys.index('padding_0')],
-                activation=self.indiv[self.keys.index('activation_conv')],
+                activation=self.indiv[self.keys.index('activation_cnn')],
                 input_shape=input_shape,
                 kernel_initializer=kernel_initializer,
                 kernel_regularizer=kernel_regularizer,
@@ -86,11 +86,11 @@ class CNN_MLP(BaseNeuralNetwork):
                 bias_regularizer=bias_regularizer
             ))
 
-            if self.indiv[self.keys.index('batchNormalization_0')]:
+            if self.indiv[self.keys.index('batch_normalization_0')]:
                 cnn.add(BatchNormalization())
 
             if self.indiv[self.keys.index(
-                    'maxPool_0')]:
+                    'max_pool_0')]:
                 cnn.add(MaxPooling2D(
                     pool_size=self.indiv[self.keys.index('pool_size_0')],
                     padding=self.indiv[self.keys.index('padding_0')]))
@@ -99,19 +99,19 @@ class CNN_MLP(BaseNeuralNetwork):
                 'dropout_cnn_0')]))
 
             # Hidden CNN layers
-            for i in range(sum(
-                    'activate_cnn_' in s for s in self.keys)):
+            for i in range(1, sum(
+                    'filters_' in s for s in self.keys)):
                 if self.indiv[self.keys.index(
-                        'activate_cnn_' + str(i + 1))]:
+                        f'activate_cnn_{i}')]:
                     cnn.add(Conv2D(
                         filters=self.indiv[self.keys.index(
-                            'filters_' + str(i + 1))],
+                            f'filters_{i}')],
                         kernel_size=self.indiv[self.keys.index(
-                            'kernel_size_' + str(i + 1))],
+                            f'kernel_size_{i}')],
                         padding=self.indiv[self.keys.index(
-                            'padding_' + str(i + 1))],
+                            f'padding_{i}')],
                         activation=self.indiv[self.keys.index(
-                            'activation_conv')],
+                            'activation_cnn')],
                         input_shape=input_shape,
                         kernel_initializer=kernel_initializer,
                         kernel_regularizer=kernel_regularizer,
@@ -119,33 +119,46 @@ class CNN_MLP(BaseNeuralNetwork):
                         bias_regularizer=bias_regularizer
                     ))
 
-                if self.indiv[self.keys.index(
-                        'batchNormalization_' + str(i + 1))]:
-                    cnn.add(BatchNormalization())
+                    if self.indiv[self.keys.index(
+                            f'batch_normalization_{i}')]:
+                        cnn.add(BatchNormalization())
 
-                if self.indiv[self.keys.index(
-                        'maxPool_' + str(i + 1))]:
-                    cnn.add(MaxPooling2D(
-                        pool_size=self.indiv[self.keys.index(
-                            'pool_size_' + str(i + 1))],
-                        padding=self.indiv[self.keys.index(
-                            'padding_' + str(i + 1))]))
+                    if self.indiv[self.keys.index(
+                            f'max_pool_{i}')]:
+                        cnn.add(MaxPooling2D(
+                            pool_size=self.indiv[self.keys.index(
+                                f'pool_size_{i}')],
+                            padding=self.indiv[self.keys.index(
+                                f'padding_{i}')]))
 
-                cnn.add(Dropout(
-                    self.indiv[self.keys.index(
-                        'dropout_cnn_' + str(i + 1))]))
+                    cnn.add(Dropout(
+                        self.indiv[self.keys.index(
+                            f'dropout_cnn_{i}')]))
 
             cnn.add(Flatten())
 
             cnn_mlp = concatenate([mlp.output, cnn.output])
 
             # Fully connected
-            for i in range(sum('units_' in s for s in self.keys)):
+            cnn_mlp = Dense(
+                units=self.indiv[self.keys.index(
+                    f'units_0')],
+                activation=self.indiv[self.keys.index(
+                    'activation_dense')],
+                kernel_initializer=kernel_initializer,
+                kernel_regularizer=kernel_regularizer,
+                activity_regularizer=activity_regularizer
+            )(cnn_mlp)
+
+            cnn_mlp = Dropout(self.indiv[self.keys.index(
+                f'dropout_dense_0')])(cnn_mlp)
+
+            for i in range(1, sum('units_' in s for s in self.keys)):
                 if self.indiv[self.keys.index(
-                        'activate_' + str(i + 1))]:
+                        f'activate_dense_{i}')]:
                     cnn_mlp = Dense(
                         units=self.indiv[self.keys.index(
-                            'units_' + str(i + 1))],
+                            f'units_{i}')],
                         activation=self.indiv[self.keys.index(
                             'activation_dense')],
                         kernel_initializer=kernel_initializer,
@@ -154,7 +167,7 @@ class CNN_MLP(BaseNeuralNetwork):
                     )(cnn_mlp)
 
                     cnn_mlp = Dropout(self.indiv[self.keys.index(
-                        'dropout_dense_' + str(i + 1))])(cnn_mlp)
+                        f'dropout_dense_{i}')])(cnn_mlp)
 
             cnn_mlp = Dense(
                 units=self._datasets['TRAIN']['IMG'].n_classes,
@@ -176,5 +189,6 @@ class CNN_MLP(BaseNeuralNetwork):
             if summary:
                 self._model.summary(print_fn=self._logger.info)
             return True
-        except ValueError:
+        except ValueError as e:
+            print(e)
             return False

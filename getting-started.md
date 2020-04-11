@@ -60,16 +60,37 @@ GA:
   IMIGRATION_RATE: 0.05  
   TOURNAMENT_SIZE: 3
   FEATURE_SELECTION: false    
+  SEARCH_SPACE:
+    PADDING: ['valid', 'same']
+    MAX_DENSE_LAYERS: 5
+    MAX_CNN_LAYERS: 5
+    UNITS: [20, 50, 80, 100, 150, 200, 250, 500]
+    FILTERS: [4, 5, 6, 7, 8, 9]
+    KERNEL_SIZE: [2, 3, 4, 5, 6]
+    POOL_SIZE: [2, 3, 4, 5]
+    BATCH_SIZE: [3, 4, 5, 6, 7, 8]
+    EPOCHS: [30, 45, 60, 90, 120, 150, 200]
+    DROPOUT: [0.0, 0.1, 0.2, 0.3, 0.4]
+    OPTIMIZER: ['Adam', 'SGD']
+    LEARNING_RATE: [0.0001, 0.001, 0.01, 0.05, 0.1]
+    SCALER: ['Standard', 'MinMax']
+    ACTIVATION_DENSE: ['relu', 'tanh']
+    ACTIVATION_CNN: ['relu', 'tanh']
+    KERNEL_REGULARIZER: [None]
+    KERNEL_INITIALIZER: ['glorot_uniform']
+    ACTIVITY_REGULARIZER: [None]
+    BIAS_REGULARIZER: [None]
 
 # Model experiment configuration
 MODEL:
   ARCHITECTURE: "MLP"
-  INPUT_SHAPE: [200, 200, 3]
+  INPUT_SHAPE: [150, 150, 3]
 
 # Solver experiment configuration
 SOLVER:
   LOSS: "categorical_crossentropy"
   METRICS: ["categorical_accuracy"]
+  CROSS_VALIDATION_FOLDS: 10
 
 OUTPUT_DIR: ./NNGA_output
 ```
@@ -117,6 +138,7 @@ DATASET:
 The next section is about Genetic Algorithm configuration:
 ```yaml
 # Genetic Algorithm configuration
+GA:
   #flag to continue the last GA run for a few more generations
   #If true, read the last pop from csv file and continue
   #If false, restart the GA
@@ -173,7 +195,67 @@ The next section is about Genetic Algorithm configuration:
   TOURNAMENT_SIZE: 3
 
   # flat to activates feature selection
-  FEATURE_SELECTION: false    
+  FEATURE_SELECTION: false  
+
+   # Genetic Algorithm search space configuration
+  SEARCH_SPACE:
+
+    # Padding option to be used by Conv layers
+    PADDING: ['valid', 'same']
+
+    # Maximum number of dense layers
+    MAX_DENSE_LAYERS: 5
+
+    # Maximum number of cnn layers
+    MAX_CNN_LAYERS: 5
+
+    # Amount of neurons in the dense layer
+    UNITS: [20, 50, 80, 100, 150, 200, 250, 500]
+    
+    # Number of filters to be used by Conv layers
+    FILTERS: [4, 5, 6, 7, 8, 9]
+  
+    # Kernel size to be used by Conv layer
+    KERNEL_SIZE: [2, 3, 4, 5, 6]
+
+    # Pooling size to be used by Pooling layer
+    POOL_SIZE: [2, 3, 4, 5]
+
+    # Batch size to be used during the model train
+    BATCH_SIZE: [3, 4, 5, 6, 7, 8]
+  
+    # Number of epochs to train the model
+    EPOCHS: [30, 45, 60, 90, 120, 150, 200]
+  
+    # Dropout rate
+    DROPOUT: [0.0, 0.1, 0.2, 0.3, 0.4]
+
+    # Optimizer used in training the model
+    OPTIMIZER: ['Adam', 'SGD']
+    
+    # Learning rate used in training the model.
+    LEARNING_RATE: [0.0001, 0.001, 0.01, 0.05, 0.1]
+    
+    # Standardization method used to scale the csv data
+    SCALER: ['Standard', 'MinMax']
+    
+    # Activation function to use in the Dense layers.
+    ACTIVATION_DENSE: ['relu', 'tanh']
+    
+    # Activation function to use in the CNN layers.
+    ACTIVATION_CNN: ['relu', 'tanh']
+    
+    # Regularizer function applied to the kernel weights matrix.
+    KERNEL_REGULARIZER: [None]
+    
+    # Initializer for the kernel weights matrix.
+    KERNEL_INITIALIZER: ['glorot_uniform']
+    
+    # Regularizer function applied to the output of the layer (its activation). 
+    ACTIVITY_REGULARIZER: [None]
+    
+    # Regularizer function applied to the bias vector. 
+    BIAS_REGULARIZER: [None]
 ```
 
 ------------------------------
@@ -186,7 +268,7 @@ MODEL:
   ARCHITECTURE: MLP
 
   # Define input shape of experiment
-  INPUT_SHAPE: [200, 200, 3]
+  INPUT_SHAPE: [150, 150, 3]
 ```
 
 ------------------------------
@@ -201,6 +283,9 @@ SOLVER:
   # List of Metric functions to be used
   # The values follow the keras API
   METRICS: ["categorical_accuracy"]
+  
+  # Number of folds to be user by the cross validation method
+  CROSS_VALIDATION_FOLDS: 10
 ```
 
 ------------------------------

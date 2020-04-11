@@ -40,12 +40,13 @@ class MLP(BaseNeuralNetwork):
                 True: if the MLP architecture is valid
                 False: if the MLP architecture is not valid
             """
+
         if self._cfg.GA.FEATURE_SELECTION:
             input_dim = 0
             for i in range(sum(
                     'feature_selection_' in s for s in self.keys)):
                 if self.indiv[self.keys.index(
-                        'feature_selection_' + str(i))]:
+                        f'feature_selection_{i}')]:
                     input_dim += 1
         else:
             input_dim = self._datasets['TRAIN']['CSV'].n_features
@@ -81,11 +82,11 @@ class MLP(BaseNeuralNetwork):
                 self.indiv[self.keys.index(
                     'dropout_dense_0')]))
 
-            for i in range(sum('dropout_hidden_' in s for s in self.keys)):
-                if self.indiv[self.keys.index('activate_' + str(i + 1))]:
+            for i in range(1, sum('units_' in s for s in self.keys)):
+                if self.indiv[self.keys.index(f'activate_dense_{i}')]:
                     self._model.add(Dense(
                         units=self.indiv[self.keys.index(
-                            'units_' + str(i + 1))],
+                            f'units_{i}')],
                         activation=self.indiv[self.keys.index(
                             'activation_dense')],
                         kernel_initializer=kernel_initializer,
@@ -96,7 +97,7 @@ class MLP(BaseNeuralNetwork):
 
                     self._model.add(Dropout(
                         self.indiv[self.keys.index(
-                            'dropout_dense_' + str(i + 1))]))
+                            f'dropout_dense_{i}')]))
 
             self._model.add(Dense(
                 units=self._datasets['TRAIN']['CSV'].n_classes,
@@ -115,5 +116,6 @@ class MLP(BaseNeuralNetwork):
             if summary:
                 self._model.summary(print_fn=self._logger.info)
             return True
-        except ValueError:
+        except ValueError as e:
+            print(e)
             return False

@@ -7,7 +7,7 @@ import operator
 import tensorflow as tf
 
 from nnga.genetic_algorithm.population import Population
-from nnga.genetic_algorithm import ENCODING, PARAMETERS_INTERVAL, MODELS
+from nnga.genetic_algorithm import MODELS, set_parameters
 from nnga.utils.data_io import load_statistic, load_pop, \
     save_statistic, save_pop
 from nnga.utils.helper import dump_tensors
@@ -28,9 +28,9 @@ class GA:
     """
 
     def __init__(self, cfg, logger, datasets):
+
         self.datasets = datasets
         self._cfg = cfg
-        self.encoding = ENCODING.get(cfg.MODEL.ARCHITECTURE)
 
         self.nrMaxExec = cfg.GA.NRO_MAX_EXEC
         self.nrMaxGen = cfg.GA.NRO_MAX_GEN
@@ -61,6 +61,8 @@ class GA:
 
         self.continue_exec = cfg.GA.CONTINUE_EXEC
         self.feature_selection = cfg.GA.FEATURE_SELECTION
+
+        self.cv_folds = cfg.SOLVER.CROSS_VALIDATION_FOLDS
 
         self._path = cfg.OUTPUT_DIR
         self._logger = logger
@@ -142,17 +144,29 @@ class GA:
         if not isinstance(self.feature_selection, bool):
             raise ValueError("GA.FEATURE_SELECTION must be a bool")
 
+        if not isinstance(self.cv_folds, int) or self.cv_folds <= 1:
+            raise ValueError("SOLVER.CROSS_VALIDATION_FOLDS must be a int "
+                             "number (1 < SOLVER.CROSS_VALIDATION_FOLDS)")
+
         if self.feature_selection and 'CSV' in self.datasets['TRAIN']:
-            for i in range(self.datasets['TRAIN']['CSV'].n_features):
-                self.encoding[f"feature_selection_{i}"] = \
-                    'feature_selection'
+            self._features = self.datasets['TRAIN']['CSV'].features
+        else:
+            self._features = []
+            self.feature_selection = False
 
-        self.chromosome_length = len(self.encoding)
+        self.__encoding, self.__name_features, self.__parameters_interval = \
+            set_parameters(cfg.GA.SEARCH_SPACE,
+                           cfg.MODEL.ARCHITECTURE,
+                           self._features)
+        self.__encoding_keys = list(self.__encoding.keys())
 
-        self.mutationRate *= self.chromosome_length
+        self.chromosome_length = len(self.__encoding)
 
-        self._logger.info(f"GA created \n"
-                          f"{vars(self)}")
+        # self.mutationRate *= self.chromosome_length
+
+        self._logger.info(f"GA created!")
+        # self._logger.info(f"GA created \n"
+        #                   f"{vars(self)}")
 
     def __generate_initial_population(self):
         """Generate a initical population"""
@@ -403,7 +417,6 @@ class GA:
 
         gen_init = self.__starting_population(seed)
 
-        # TODO: GA stopping criterion
         for gen in range(gen_init, self.nrMaxGen + 1):
             self.__generating_new_population(gen)
             self.__population_statistic()
@@ -412,7 +425,7 @@ class GA:
             save_pop(self._path, seed, self.new_pop)
             save_statistic(self._path, seed, self.__statistic)
 
-        self._evaluate_GA_results(
+        self._evaluate_ga_results(
             indiv=self.new_pop.indivs[self.new_pop.bestIndiv[0]].chromosome,
             gen=self.nrMaxGen,
             seed=seed)
@@ -492,12 +505,11 @@ class GA:
                 New indiv chromosome
         """
         chromosome = []
-        keys = list(self.encoding.keys())
 
-        for key in keys:
+        for key in self.__encoding_keys:
             chromosome.append(
                 random.choice(
-                    PARAMETERS_INTERVAL[self.encoding[key]]))
+                    self.__parameters_interval[self.__encoding[key]]['value']))
 
         return np.array(chromosome, dtype=object)
 
@@ -526,12 +538,11 @@ class GA:
             Returns
             -------
         """
-        # TODO: change learn rate and others atributes to continuous
-        keys = list(self.encoding.keys())
 
         for i in range(self.chromosome_length):
             if random.random() < self.mutationRate:
-                options = PARAMETERS_INTERVAL[self.encoding[keys[i]]].copy()
+                options = self.__parameters_interval[self.__encoding[
+                    self.__encoding_keys[i]]]['value'].copy()
 
                 # Create a index of windows
                 windows_min = options.index(chromosome[i]) - 2 \
@@ -542,8 +553,9 @@ class GA:
                     else len(options)
 
                 options = options[windows_min:windows_max]
-                options.remove(chromosome[i])
-                chromosome[i] = random.choice(options)
+                if len(options) > 1:
+                    options.remove(chromosome[i])
+                    chromosome[i] = random.choice(options)
 
     def __calculate_fitness(self, indiv, gen):
         """Calculate fitness from indiv
@@ -557,14 +569,17 @@ class GA:
             Returns
             -------
         """
-        keys = list(self.encoding.keys())
-        self._logger.info(f"Indiv: {dict(zip(keys, indiv))}")
+
+        self._logger.info(f"Indiv: {dict(zip(self.__encoding_keys, indiv))}")
+
+        if self.feature_selection:
+            self.__print_features_selected(indiv)
 
         model = MODELS.get(
             self._cfg.MODEL.ARCHITECTURE)(self._cfg,
                                           self._logger,
                                           self.datasets,
-                                          indiv, keys)
+                                          indiv, self.__encoding_keys)
 
         fitness = model.train_test_split(gen)
 
@@ -574,7 +589,7 @@ class GA:
         self._logger.info(f"Fitness: {fitness}\n")
         return fitness
 
-    def _evaluate_GA_results(self, indiv, gen, seed):
+    def _evaluate_ga_results(self, indiv, gen, seed):
         """Calculate fitness from indiv
         Parameters
             ----------
@@ -588,18 +603,19 @@ class GA:
             Returns
             -------
         """
-        keys = list(self.encoding.keys())
-        self._logger.info(f"Indiv: {dict(zip(keys, indiv))}")
+        self._logger.info(f"Indiv: {dict(zip(self.__encoding_keys, indiv))}")
+
+        if self.feature_selection:
+            self.__print_features_selected(indiv)
 
         model = MODELS.get(
             self._cfg.MODEL.ARCHITECTURE)(self._cfg,
                                           self._logger,
                                           self.datasets,
-                                          indiv, keys)
+                                          indiv, self.__encoding_keys)
 
-        # TODO: K parameter to cross_validation
-        self._logger.info(f"Cross validation statistics: "
-                          f"{model.cross_validation(k=2, seed=gen)}")
+        cv = model.cross_validation(k=self.cv_folds, seed=gen)
+        self._logger.info(f"Cross validation statistics: {cv}")
         self._logger.info(f"Fitness solution: {model.train()}")
         model.save_model(seed)
         model.save_history(seed)
@@ -608,3 +624,12 @@ class GA:
 
         del model
         dump_tensors()
+
+    def __print_features_selected(self, indiv):
+        features_name = []
+        for i, key in enumerate(self.__encoding_keys):
+            if 'feature_selection_' in key and indiv[i]:
+                features_name.append(self.__name_features[key])
+
+        self._logger.info(f"Features selected "
+                          f"{len(features_name)}: {features_name}")
