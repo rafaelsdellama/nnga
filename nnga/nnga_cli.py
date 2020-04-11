@@ -23,6 +23,8 @@ def train(cfg, logger):
     """
 
     # TODO: task train model withoud GA
+    # TODO: pyRadiomics
+    # TODO: Segmentation
 
     datasets = {
         'TRAIN': {},
