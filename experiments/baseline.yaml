@@ -57,5 +57,6 @@ SOLVER:
   LOSS: 'categorical_crossentropy'
   METRICS: ['categorical_accuracy']
   CROSS_VALIDATION_FOLDS: 10
+  TEST_SIZE: 0.2
 OUTPUT_DIR: ./NNGA_output
 

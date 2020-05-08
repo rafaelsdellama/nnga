@@ -18,3 +18,6 @@ class Population:
         self.meanFitness = None
         self.maxFitness = None
         self.bestIndivs = None
+
+    def __len__(self):
+        return len(self.indivs)

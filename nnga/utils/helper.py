@@ -1,5 +1,6 @@
 # https://forums.fast.ai/t/gpu-memory-not-being-freed-after-training-is-over/10265/6
 import tensorflow as tf
+
 # from keras import backend as k
 import gc
 from tensorflow.python.framework import ops

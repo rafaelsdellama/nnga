@@ -1,0 +1,9 @@
+indiv,fitness
+"['tanh' 6 3 'SGD' 0.1 None 'glorot_uniform' None None 15 0.4 True 10 0.2
+ 'Standard' True False True False]",0.7025923615746602
+"['relu' 8 3 'SGD' 0.05 None 'glorot_uniform' None None 10 0.4 False 15 0.4
+ 'MinMax' True True True False]",0.6129185507236635
+"['relu' 6 3 'SGD' 0.1 None 'glorot_uniform' None None 15 0.4 True 15 0.1
+ 'Standard' True True False False]",0.4808226538409202
+"['tanh' 6 4 'Adam' 0.1 None 'glorot_uniform' None None 15 0.4 True 10 0.2
+ 'Standard' True False True True]",0.7750743332082368

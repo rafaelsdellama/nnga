@@ -50,7 +50,7 @@ class BaseDataset(Sequence):
         if self._shuffle:
             c = list(zip(self._indexes, self._indexes_labels))
             random.shuffle(c)
-            self._indexes, self._indexes_labels = zip(*c)
+            self._indexes[:], self._indexes_labels[:] = zip(*c)
 
     def _load_metadata(self):
         """Create metadata for classification.
@@ -65,8 +65,10 @@ class BaseDataset(Sequence):
         _labels, _class_to_id, _id_to_class
         """
         unique_labels = list(
-            sorted(set([value["label"]
-                        for _, value in self._metadata.items()])))
+            sorted(
+                set([value["label"] for _, value in self._metadata.items()])
+            )
+        )
         self._labels = unique_labels
 
         self._class_to_id = {l: i for i, l in enumerate(self._labels)}
@@ -133,7 +135,7 @@ class BaseDataset(Sequence):
         """
         for key, value in self._metadata.items():
             self._indexes.append(key)
-            self._indexes_labels.append(value['label'])
+            self._indexes_labels.append(value["label"])
 
     @property
     def indexes(self):

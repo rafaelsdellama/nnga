@@ -8,8 +8,12 @@ import tensorflow as tf
 
 from nnga.genetic_algorithm.population import Population
 from nnga.genetic_algorithm import MODELS, set_parameters
-from nnga.utils.data_io import load_statistic, load_pop, \
-    save_statistic, save_pop
+from nnga.utils.data_io import (
+    load_statistic,
+    load_pop,
+    save_statistic,
+    save_pop,
+)
 from nnga.utils.helper import dump_tensors
 
 
@@ -45,95 +49,133 @@ class GA:
         self.cycleSize = cfg.GA.HYPERMUTATION_CYCLE_SIZE
 
         self.hypermutationRate = cfg.GA.HYPERMUTATION_RATE
-        self.__hypermutationCycle = False
+        self._hypermutationCycle = False
 
         self.randomImmigrants = cfg.GA.RANDOM_IMIGRANTS
         self.immigrationRate = cfg.GA.IMIGRATION_RATE
 
-        self.old_pop = Population(self.population_size)
-        self.new_pop = Population(self.population_size)
-        self.__statistic = []
-
-        if len(cfg.GA.SEED) == 0:
-            self.__seeds = list(range(self.nrMaxExec))
-        else:
-            self.__seeds = cfg.GA.SEED
+        self._statistic = []
 
         self.continue_exec = cfg.GA.CONTINUE_EXEC
         self.feature_selection = cfg.GA.FEATURE_SELECTION
 
         self.cv_folds = cfg.SOLVER.CROSS_VALIDATION_FOLDS
+        self.test_size = cfg.SOLVER.TEST_SIZE
 
         self._path = cfg.OUTPUT_DIR
         self._logger = logger
 
         # Check variables
         if not isinstance(self.nrMaxExec, int) or self.nrMaxExec <= 0:
-            raise ValueError("GA.NRO_MAX_EXEC must be a int number "
-                             "(0 < GA.NRO_MAX_EXEC)")
+            raise ValueError(
+                "GA.NRO_MAX_EXEC must be a int number " "(0 < GA.NRO_MAX_EXEC)"
+            )
 
         if not isinstance(self.nrMaxGen, int) or self.nrMaxGen <= 0:
-            raise ValueError("GA.NRO_MAX_GEN must be a int number "
-                             "(0 < GA.NRO_MAX_GEN)")
+            raise ValueError(
+                "GA.NRO_MAX_GEN must be a int number " "(0 < GA.NRO_MAX_GEN)"
+            )
 
-        if not isinstance(self.population_size, int) or \
-                self.population_size <= 0:
-            raise ValueError("GA.POPULATION_SIZE must be a int number "
-                             "(0 < GA.POPULATION_SIZE)")
+        if (
+            not isinstance(self.population_size, int)
+            or self.population_size <= 0
+        ):
+            raise ValueError(
+                "GA.POPULATION_SIZE must be a int number "
+                "(0 < GA.POPULATION_SIZE)"
+            )
 
-        if not isinstance(self.crossoverRate, float) or \
-                self.crossoverRate <= 0 or self.crossoverRate >= 1:
-            raise ValueError("GA.CROSSOVER_RATE must be a float number "
-                             "(0 < GA.CROSSOVER_RATE < 1)")
+        if (
+            not isinstance(self.crossoverRate, float)
+            or self.crossoverRate <= 0
+            or self.crossoverRate >= 1
+        ):
+            raise ValueError(
+                "GA.CROSSOVER_RATE must be a float number "
+                "(0 < GA.CROSSOVER_RATE < 1)"
+            )
 
-        if not isinstance(self.mutationRate, float) or \
-                self.mutationRate <= 0 or self.mutationRate >= 1:
-            raise ValueError("GA.MUTATION_RATE must be a float number "
-                             "(0 < GA.MUTATION_RATE < 1)")
+        if (
+            not isinstance(self.mutationRate, float)
+            or self.mutationRate <= 0
+            or self.mutationRate >= 1
+        ):
+            raise ValueError(
+                "GA.MUTATION_RATE must be a float number "
+                "(0 < GA.MUTATION_RATE < 1)"
+            )
 
-        if not isinstance(self.elitism, int) or \
-                self.elitism <= 0 or \
-                self.elitism > self.population_size:
-            raise ValueError("GA.ELITISM must be a int number "
-                             "(0 < GA.ELITISM < GA.POPULATION_SIZE)")
+        if (
+            not isinstance(self.elitism, int)
+            or self.elitism <= 0
+            or self.elitism > self.population_size
+        ):
+            raise ValueError(
+                "GA.ELITISM must be a int number "
+                "(0 < GA.ELITISM < GA.POPULATION_SIZE)"
+            )
 
-        if not isinstance(self.tournament_size, int) or \
-                self.tournament_size <= 0 or \
-                self.tournament_size > self.population_size:
-            raise ValueError("GA.TOURNAMENT_SIZE must be a int number "
-                             "(0 < GA.TOURNAMENT_SIZE < GA.POPULATION_SIZE)")
+        if (
+            not isinstance(self.tournament_size, int)
+            or self.tournament_size <= 0
+            or self.tournament_size > self.population_size
+        ):
+            raise ValueError(
+                "GA.TOURNAMENT_SIZE must be a int number "
+                "(0 < GA.TOURNAMENT_SIZE < GA.POPULATION_SIZE)"
+            )
 
         if not isinstance(self.hypermutation, bool):
             raise ValueError("GA.HYPERMUTATION must be a bool")
 
-        if not isinstance(self.cycleSize, int) or \
-                self.cycleSize <= 0 or \
-                self.cycleSize > self.nrMaxGen:
-            raise ValueError("GA.HYPERMUTATION_CYCLE_SIZE must be "
-                             "a int number "
-                             "(0 < GA.HYPERMUTATION_CYCLE_SIZE < "
-                             "GA.NRO_MAX_GEN)")
+        if (
+            not isinstance(self.cycleSize, int)
+            or self.cycleSize <= 0
+            or self.cycleSize > self.nrMaxGen
+        ):
+            raise ValueError(
+                "GA.HYPERMUTATION_CYCLE_SIZE must be "
+                "a int number "
+                "(0 < GA.HYPERMUTATION_CYCLE_SIZE < "
+                "GA.NRO_MAX_GEN)"
+            )
 
-        if not (isinstance(self.hypermutationRate, float) or
-                isinstance(self.hypermutationRate, int)) or \
-                self.hypermutationRate <= 0:
-            raise ValueError("GA.HYPERMUTATION_RATE must be a int "
-                             "or float number "
-                             "(0 < GA.HYPERMUTATION_RATE)")
+        if (
+            not (
+                isinstance(self.hypermutationRate, float)
+                or isinstance(self.hypermutationRate, int)
+            )
+            or self.hypermutationRate <= 0
+        ):
+            raise ValueError(
+                "GA.HYPERMUTATION_RATE must be a int "
+                "or float number "
+                "(0 < GA.HYPERMUTATION_RATE)"
+            )
 
         if not isinstance(self.randomImmigrants, bool):
             raise ValueError("GA.RANDOM_IMIGRANTS must be a bool")
 
-        if not isinstance(self.immigrationRate, float) or \
-                self.immigrationRate <= 0 or self.immigrationRate >= 1:
-            raise ValueError("GA.IMIGRATION_RATE must be a float number "
-                             "(0 < GA.IMIGRATION_RATE < 1)")
+        if (
+            not isinstance(self.immigrationRate, float)
+            or self.immigrationRate <= 0
+            or self.immigrationRate >= 1
+        ):
+            raise ValueError(
+                "GA.IMIGRATION_RATE must be a float number "
+                "(0 < GA.IMIGRATION_RATE < 1)"
+            )
 
-        if not isinstance(self.__seeds, list) or \
-                not all(isinstance(x, int) for x in self.__seeds) or \
-                len(self.__seeds) != self.nrMaxExec:
-            raise ValueError("GA.SEED must be a list of numbers"
-                             "(len(GA.IMIGRATION_RATE) = GA.NRO_MAX_EXEC)")
+        if len(cfg.GA.SEED) != 0:
+            if (
+                not isinstance(cfg.GA.SEED, list)
+                or not all(isinstance(x, int) for x in cfg.GA.SEED)
+                or len(cfg.GA.SEED) != self.nrMaxExec
+            ):
+                raise ValueError(
+                    "GA.SEED must be a list of numbers"
+                    "(len(GA.IMIGRATION_RATE) = GA.NRO_MAX_EXEC)"
+                )
 
         if not isinstance(self.continue_exec, bool):
             raise ValueError("GA.CONTINUE_EXEC must be a bool")
@@ -145,37 +187,62 @@ class GA:
             raise ValueError("GA.FEATURE_SELECTION must be a bool")
 
         if not isinstance(self.cv_folds, int) or self.cv_folds <= 1:
-            raise ValueError("SOLVER.CROSS_VALIDATION_FOLDS must be a int "
-                             "number (1 < SOLVER.CROSS_VALIDATION_FOLDS)")
+            raise ValueError(
+                "SOLVER.CROSS_VALIDATION_FOLDS must be a int "
+                "number (1 < SOLVER.CROSS_VALIDATION_FOLDS)"
+            )
 
-        if self.feature_selection and 'CSV' in self.datasets['TRAIN']:
-            self._features = self.datasets['TRAIN']['CSV'].features
+        if (
+            not isinstance(self.test_size, float)
+            or self.test_size <= 0
+            or self.test_size >= 1
+        ):
+            raise ValueError(
+                "SOLVER.CROSS_VALIDATION_FOLDS must be a float "
+                "number (0 < SOLVER.TEST_SIZE < 1)"
+            )
+
+        self.old_pop = Population(self.population_size)
+        self.new_pop = Population(self.population_size)
+
+        if len(cfg.GA.SEED) == 0:
+            self._seeds = list(range(self.nrMaxExec))
+        else:
+            self._seeds = cfg.GA.SEED
+
+        if self.feature_selection and "CSV" in self.datasets["TRAIN"]:
+            self._features = self.datasets["TRAIN"]["CSV"].features
         else:
             self._features = []
             self.feature_selection = False
 
-        self.__encoding, self.__name_features, self.__parameters_interval = \
-            set_parameters(cfg.GA.SEARCH_SPACE,
-                           cfg.MODEL.ARCHITECTURE,
-                           self._features)
-        self.__encoding_keys = list(self.__encoding.keys())
+        (
+            self._encoding,
+            self._name_features,
+            self._parameters_interval,
+        ) = set_parameters(
+            cfg.GA.SEARCH_SPACE, cfg.MODEL.ARCHITECTURE, self._features
+        )
+        self._encoding_keys = list(self._encoding.keys())
 
-        self.chromosome_length = len(self.__encoding)
+        self.chromosome_length = len(self._encoding)
 
         # self.mutationRate *= self.chromosome_length
 
         self._logger.info(f"GA created!")
+        self._logger.info(f"Chromosome_lenght: {self.chromosome_length}")
         # self._logger.info(f"GA created \n"
         #                   f"{vars(self)}")
 
-    def __generate_initial_population(self):
+    def _generate_initial_population(self):
         """Generate a initical population"""
         for i in range(self.population_size):
-            self.new_pop.indivs[i].chromosome = self.__generating_indiv()
-            self.new_pop.indivs[i].fitness = \
-                self.__calculate_fitness(self.new_pop.indivs[i].chromosome, 0)
+            self.new_pop.indivs[i].chromosome = self._generating_indiv()
+            self.new_pop.indivs[i].fitness = self._calculate_fitness(
+                self.new_pop.indivs[i].chromosome, i, 0
+            )
 
-    def __starting_population(self, seed):
+    def _starting_population(self, seed):
         """ Start the population
             Generate a new pop or read from file
             Parameters
@@ -193,56 +260,66 @@ class GA:
             gen_init = statistic.shape[0]
 
             for i in range(gen_init):
-                self.__statistic.append(
-                    {'mean_fitness': statistic['mean_fitness'][i],
-                     'best_fitness': statistic['best_fitness'][i],
-                     'best_indiv': statistic['best_indiv'][i]
-                     })
+                self._statistic.append(
+                    {
+                        "mean_fitness": statistic["mean_fitness"][i],
+                        "best_fitness": statistic["best_fitness"][i],
+                        "best_indiv": statistic["best_indiv"][i],
+                    }
+                )
 
             for i in range(self.population_size):
-                self.new_pop.indivs[i].chromosome = np.array(ast.literal_eval(
-                    last_pop['indiv'][i].replace(" ", ", ")), dtype=object)
-                self.new_pop.indivs[i].fitness = last_pop['fitness'][i]
+                self.new_pop.indivs[i].chromosome = np.array(
+                    ast.literal_eval(last_pop["indiv"][i].replace(" ", ", ")),
+                    dtype=object,
+                )
+                self.new_pop.indivs[i].fitness = last_pop["fitness"][i]
 
         # Starting a new pop
         else:
-            self.__generate_initial_population()
+            self._generate_initial_population()
             gen_init = 1
 
-        self.__population_statistic()
-        self.__print_population_info(self.new_pop, gen_init - 1)
+        self._population_statistic()
+        self._print_population_info(self.new_pop, gen_init - 1)
 
         return gen_init
 
-    def __population_statistic(self):
+    def _population_statistic(self):
         """ Calculate the population statistic"""
         self.new_pop.bestIndiv = []
         self.new_pop.sumFitness = 0
 
         for i in range(0, self.population_size):
-            self.new_pop.sumFitness = \
+            self.new_pop.sumFitness = (
                 self.new_pop.sumFitness + self.new_pop.indivs[i].fitness
+            )
             self.new_pop.bestIndiv.append((i, self.new_pop.indivs[i].fitness))
 
-        self.new_pop.bestIndiv.sort(
-            key=operator.itemgetter(1),
-            reverse=True
-        )
+        self.new_pop.bestIndiv.sort(key=operator.itemgetter(1), reverse=True)
         self.new_pop.bestIndiv = self.new_pop.bestIndiv[
-                                 0: self.elitism if self.elitism != 0 else 2]
+            0 : self.elitism if self.elitism != 0 else 2
+        ]
         self.new_pop.bestIndiv = [t[0] for t in self.new_pop.bestIndiv]
 
-        self.new_pop.maxFitness = \
-            self.new_pop.indivs[self.new_pop.bestIndiv[0]].fitness
-        self.new_pop.meanFitness = \
+        self.new_pop.maxFitness = self.new_pop.indivs[
+            self.new_pop.bestIndiv[0]
+        ].fitness
+        self.new_pop.meanFitness = (
             self.new_pop.sumFitness / self.population_size
+        )
 
-        self.__statistic.append({'mean_fitness': self.new_pop.meanFitness,
-                                 'best_fitness': self.new_pop.maxFitness,
-                                 'best_indiv': self.new_pop.indivs[
-                                     self.new_pop.bestIndiv[0]].chromosome})
+        self._statistic.append(
+            {
+                "mean_fitness": self.new_pop.meanFitness,
+                "best_fitness": self.new_pop.maxFitness,
+                "best_indiv": self.new_pop.indivs[
+                    self.new_pop.bestIndiv[0]
+                ].chromosome,
+            }
+        )
 
-    def __select_individual_by_tournament(self, pop):
+    def _select_individual_by_tournament(self, pop):
         """ Start the population
             Generate a new pop or read from file
             Parameters
@@ -255,11 +332,10 @@ class GA:
 
         # Pick individuals for tournament
         fighters = random.sample(
-            range(0, self.population_size),
-            self.tournament_size
+            range(0, self.population_size), self.tournament_size
         )
 
-        # Identify undividual with highest fitness
+        # Identify individual with highest fitness
         winner = fighters[0]
         winner_fitness = pop[fighters[0]].fitness
         for fighter in fighters:
@@ -269,7 +345,7 @@ class GA:
 
         return winner
 
-    def __generating_new_population(self, gen):
+    def _generating_new_population(self, gen):
         """ Generate the new pop from next generation
             Parameters
             ----------
@@ -281,68 +357,65 @@ class GA:
         self.old_pop = copy.deepcopy(self.new_pop)
 
         if self.hypermutation and gen % self.cycleSize == 0:
-            self.__hypermutation(gen)
+            self._hypermutation(gen)
 
         if self.elitism > 0:
             for i in range(self.elitism):
-                self.new_pop.indivs[i] = \
-                    self.old_pop.indivs[self.old_pop.bestIndiv[i]]
-                self.new_pop.indivs[i].fitness = \
-                    self.__calculate_fitness(
-                        self.new_pop.indivs[0].chromosome,
-                        gen
-                    )
+                # self.new_pop.indivs[i] = \
+                #     self.old_pop.indivs[self.old_pop.bestIndiv[i]]
+                self.new_pop.indivs[i].fitness = self._calculate_fitness(
+                    self.new_pop.indivs[i].chromosome, i, gen
+                )
+                self.new_pop.indivs[i].fitness = self.old_pop.indivs[
+                    self.old_pop.bestIndiv[i]
+                ].fitness
 
         for i in range(self.elitism, self.population_size, 2):
-            parent_1 = self.__select_individual_by_tournament(
+            parent_1 = self._select_individual_by_tournament(
                 self.old_pop.indivs
             )
-            parent_2 = self.__select_individual_by_tournament(
+            parent_2 = self._select_individual_by_tournament(
                 self.old_pop.indivs
             )
 
             # Crossover
-            child_1, child_2 = self.__crossover(
+            child_1, child_2 = self._crossover(
                 self.old_pop.indivs[parent_1].chromosome,
-                self.old_pop.indivs[parent_2].chromosome)
+                self.old_pop.indivs[parent_2].chromosome,
+            )
 
             # Mutation
-            self.__randomly_mutate(child_1)
-            self.__randomly_mutate(child_2)
+            self._randomly_mutate(child_1)
+            self._randomly_mutate(child_2)
 
             # child_1
             self.new_pop.indivs[i].chromosome = child_1
-            self.new_pop.indivs[i].fitness = \
-                self.__calculate_fitness(
-                    child_1,
-                    gen
-                )
+            self.new_pop.indivs[i].fitness = self._calculate_fitness(
+                child_1, i, gen
+            )
             self.new_pop.indivs[i].parent_1 = parent_1
             self.new_pop.indivs[i].parent_2 = parent_2
 
             # child_2
             if i + 1 < self.population_size:
                 self.new_pop.indivs[i + 1].chromosome = child_2
-                self.new_pop.indivs[i + 1].fitness = \
-                    self.__calculate_fitness(
-                        child_2,
-                        gen
-                    )
+                self.new_pop.indivs[i + 1].fitness = self._calculate_fitness(
+                    child_2, i + 1, gen
+                )
                 self.new_pop.indivs[i + 1].parent_1 = parent_1
                 self.new_pop.indivs[i + 1].parent_2 = parent_2
 
         if self.randomImmigrants:
             for i in range(self.elitism, self.population_size):
                 if random.random() < self.immigrationRate:
-                    self.new_pop.indivs[i].chromosome = \
-                        self.__generating_indiv()
-                    self.new_pop.indivs[i].fitness = \
-                        self.__calculate_fitness(
-                            self.new_pop.indivs[i].chromosome,
-                            gen
-                        )
+                    self.new_pop.indivs[
+                        i
+                    ].chromosome = self._generating_indiv()
+                    self.new_pop.indivs[i].fitness = self._calculate_fitness(
+                        self.new_pop.indivs[i].chromosome, i, gen
+                    )
 
-    def __crossover(self, parent_1, parent_2):
+    def _crossover(self, parent_1, parent_2):
         """ Generate the new pop from next generation
             Parameters
             ----------
@@ -366,46 +439,64 @@ class GA:
                 crossover_points[0] = crossover_points[1]
                 crossover_points[1] = aux
 
-            child_1 = np.hstack((
-                parent_1[0:crossover_points[0]],
-                parent_2[crossover_points[0]:crossover_points[1]],
-                parent_1[crossover_points[1]:]))
+            child_1 = np.hstack(
+                (
+                    parent_1[0 : crossover_points[0]],
+                    parent_2[crossover_points[0] : crossover_points[1]],
+                    parent_1[crossover_points[1] :],
+                )
+            )
 
-            child_2 = np.hstack((
-                parent_2[0:crossover_points[0]],
-                parent_1[crossover_points[0]:crossover_points[1]],
-                parent_2[crossover_points[1]:]))
+            child_2 = np.hstack(
+                (
+                    parent_2[0 : crossover_points[0]],
+                    parent_1[crossover_points[0] : crossover_points[1]],
+                    parent_2[crossover_points[1] :],
+                )
+            )
 
         # one point crossover
         else:
-            child_1 = np.hstack((parent_1[0:crossover_points[0]],
-                                 parent_2[crossover_points[0]:]))
+            child_1 = np.hstack(
+                (
+                    parent_1[0 : crossover_points[0]],
+                    parent_2[crossover_points[0] :],
+                )
+            )
 
-            child_2 = np.hstack((parent_2[0:crossover_points[0]],
-                                 parent_1[crossover_points[0]:]))
+            child_2 = np.hstack(
+                (
+                    parent_2[0 : crossover_points[0]],
+                    parent_1[crossover_points[0] :],
+                )
+            )
 
         return child_1, child_2
 
     def run(self):
         """Run the Genetic Algorithm len(SEEDs) times"""
-        self._logger.info(f"\n\n*************************  "
-                          f"Genetic Algorithm   "
-                          f"*************************")
+        self._logger.info(
+            f"\n\n*************************  "
+            f"Genetic Algorithm   "
+            f"*************************"
+        )
         # TODO: PARALELISM
-        for i, seed in enumerate(self.__seeds):
-            self._logger.info(f"============================ Execution: "
-                              f"{i + 1}/{self.nrMaxExec} - seed: {seed}  "
-                              f"============================")
+        for i, seed in enumerate(self._seeds):
+            self._logger.info(
+                f"============================ Execution: "
+                f"{i + 1}/{self.nrMaxExec} - seed: {seed}  "
+                f"============================"
+            )
 
             random.seed(seed)
             np.random.seed(seed)
             tf.random.set_seed(seed)
-            self.__fit(seed)
+            self._fit(seed)
 
             # Reset global variables
-            self.__statistic = []
+            self._statistic = []
 
-    def __fit(self, seed):
+    def _fit(self, seed):
         """Fit the Genetic Algorithm using the seed
         Parameters
             ----------
@@ -415,22 +506,23 @@ class GA:
             -------
         """
 
-        gen_init = self.__starting_population(seed)
+        gen_init = self._starting_population(seed)
 
         for gen in range(gen_init, self.nrMaxGen + 1):
-            self.__generating_new_population(gen)
-            self.__population_statistic()
-            self.__print_population_info(self.new_pop, gen)
+            self._generating_new_population(gen)
+            self._population_statistic()
+            self._print_population_info(self.new_pop, gen)
 
             save_pop(self._path, seed, self.new_pop)
-            save_statistic(self._path, seed, self.__statistic)
+            save_statistic(self._path, seed, self._statistic)
 
         self._evaluate_ga_results(
             indiv=self.new_pop.indivs[self.new_pop.bestIndiv[0]].chromosome,
             gen=self.nrMaxGen,
-            seed=seed)
+            seed=seed,
+        )
 
-    def __print_population_info(self, pop, gen):
+    def _print_population_info(self, pop, gen):
         """Print population info
         Parameters
             ----------
@@ -441,13 +533,15 @@ class GA:
             Returns
             -------
         """
-        self._logger.info(f"Generation: {gen}\n"
-                          f"Fitness best indiv: {pop.maxFitness}\n"
-                          f"Best indivs: {pop.bestIndiv}\n"
-                          f"Fitness mean: {pop.meanFitness}\n"
-                          f"Mutation rate: {self.mutationRate}\n\n")
+        self._logger.info(
+            f"Generation: {gen}\n"
+            f"Fitness best indiv: {pop.maxFitness}\n"
+            f"Best indivs: {pop.bestIndiv}\n"
+            f"Fitness mean: {pop.meanFitness}\n"
+            f"Mutation rate: {self.mutationRate}\n\n"
+        )
 
-    def __hypermutation(self, gen):
+    def _hypermutation(self, gen):
         """Hypermutation: change the mutation rate if necessary
         Parameters
             ----------
@@ -456,27 +550,27 @@ class GA:
             Returns
             -------
         """
-        if self.__hypermutationCycle:
+        if self._hypermutationCycle:
             self.mutationRate = self.mutationRate / self.hypermutationRate
-            self.__hypermutationCycle = False
+            self._hypermutationCycle = False
         elif gen % (2 * self.cycleSize) == 0:
 
             df = pd.DataFrame(
-                self.__statistic,
-                columns=['mean_fitness', 'best_fitness', 'best_indiv']
+                self._statistic,
+                columns=["mean_fitness", "best_fitness", "best_indiv"],
             )
-            cycle_1 = sum(df['best_fitness'][
-                          gen - 2 * self.cycleSize:gen - self.cycleSize]
-                          )
-            cycle_2 = sum(df['best_fitness'][
-                          gen - self.cycleSize:gen]
-                          )
+            cycle_1 = sum(
+                df["best_fitness"][
+                    gen - 2 * self.cycleSize : gen - self.cycleSize
+                ]
+            )
+            cycle_2 = sum(df["best_fitness"][gen - self.cycleSize : gen])
 
             if cycle_1 >= cycle_2:
                 self.mutationRate = self.mutationRate * self.hypermutationRate
-                self.__hypermutationCycle = True
+                self._hypermutationCycle = True
 
-    def __generating_indiv_binary(self):
+    def _generating_indiv_binary(self):
         """Generate new indiv binary
         Parameters
             ----------
@@ -496,7 +590,7 @@ class GA:
 
         return chromosome
 
-    def __generating_indiv(self):
+    def _generating_indiv(self):
         """Generate new indiv custom
         Parameters
             ----------
@@ -506,14 +600,16 @@ class GA:
         """
         chromosome = []
 
-        for key in self.__encoding_keys:
+        for key in self._encoding_keys:
             chromosome.append(
                 random.choice(
-                    self.__parameters_interval[self.__encoding[key]]['value']))
+                    self._parameters_interval[self._encoding[key]]["value"]
+                )
+            )
 
         return np.array(chromosome, dtype=object)
 
-    def __randomly_mutate_binary(self, chromosome):
+    def _randomly_mutate_binary(self, chromosome):
         """Randomly mutate indiv binary
         Parameters
             ----------
@@ -529,7 +625,7 @@ class GA:
                 else:
                     chromosome[i] = 1
 
-    def __randomly_mutate(self, chromosome):
+    def _randomly_mutate(self, chromosome):
         """Randomly mutate indiv custom
         Parameters
             ----------
@@ -541,28 +637,35 @@ class GA:
 
         for i in range(self.chromosome_length):
             if random.random() < self.mutationRate:
-                options = self.__parameters_interval[self.__encoding[
-                    self.__encoding_keys[i]]]['value'].copy()
+                options = self._parameters_interval[
+                    self._encoding[self._encoding_keys[i]]
+                ]["value"].copy()
 
                 # Create a index of windows
-                windows_min = options.index(chromosome[i]) - 2 \
-                    if options.index(chromosome[i]) - 2 >= 0 \
+                windows_min = (
+                    options.index(chromosome[i]) - 2
+                    if options.index(chromosome[i]) - 2 >= 0
                     else 0
-                windows_max = options.index(chromosome[i]) + 3 \
-                    if options.index(chromosome[i]) + 3 <= len(options) \
+                )
+                windows_max = (
+                    options.index(chromosome[i]) + 3
+                    if options.index(chromosome[i]) + 3 <= len(options)
                     else len(options)
+                )
 
                 options = options[windows_min:windows_max]
                 if len(options) > 1:
                     options.remove(chromosome[i])
                     chromosome[i] = random.choice(options)
 
-    def __calculate_fitness(self, indiv, gen):
+    def _calculate_fitness(self, indiv, i, gen):
         """Calculate fitness from indiv
         Parameters
             ----------
                 indiv: Indiv
                     Indiv to calculate the fitness
+                i: int
+                    id of the individual in the population
                 gen: int
                     Gen number to determinate the
                     train_test_split seed
@@ -570,23 +673,36 @@ class GA:
             -------
         """
 
-        self._logger.info(f"Indiv: {dict(zip(self.__encoding_keys, indiv))}")
+        self._logger.info(
+            f"Indiv {i}: {dict(zip(self._encoding_keys, indiv))}"
+        )
 
         if self.feature_selection:
-            self.__print_features_selected(indiv)
+            self._print_features_selected(indiv)
 
-        model = MODELS.get(
-            self._cfg.MODEL.ARCHITECTURE)(self._cfg,
-                                          self._logger,
-                                          self.datasets,
-                                          indiv, self.__encoding_keys)
+        model = MODELS.get(self._cfg.MODEL.ARCHITECTURE)(
+            self._cfg, self._logger, self.datasets, indiv, self._encoding_keys
+        )
 
-        fitness = model.train_test_split(gen)
+        evaluate = model.train_test_split(gen, self.test_size)
+        fitness = 1 / (1 + evaluate[0])
+        metrics = model.compute_metrics()
+
+        if metrics is not None:
+            self._logger.info(
+                f"balanced accuracy: {metrics['balanced_accuracy_score']}"
+            )
+            self._logger.info(
+                f"confusion matrix: \n{metrics['confusion_matrix']}"
+            )
+        self._logger.info(
+            f"evaluate (loss value & metrics values): {evaluate}"
+        )
+        self._logger.info(f"Fitness: {fitness}\n")
 
         del model
         dump_tensors()
 
-        self._logger.info(f"Fitness: {fitness}\n")
         return fitness
 
     def _evaluate_ga_results(self, indiv, gen, seed):
@@ -603,20 +719,31 @@ class GA:
             Returns
             -------
         """
-        self._logger.info(f"Indiv: {dict(zip(self.__encoding_keys, indiv))}")
+        self._logger.info(f"Indiv: {dict(zip(self._encoding_keys, indiv))}")
 
         if self.feature_selection:
-            self.__print_features_selected(indiv)
+            self._print_features_selected(indiv)
 
-        model = MODELS.get(
-            self._cfg.MODEL.ARCHITECTURE)(self._cfg,
-                                          self._logger,
-                                          self.datasets,
-                                          indiv, self.__encoding_keys)
+        model = MODELS.get(self._cfg.MODEL.ARCHITECTURE)(
+            self._cfg, self._logger, self.datasets, indiv, self._encoding_keys
+        )
 
         cv = model.cross_validation(k=self.cv_folds, seed=gen)
-        self._logger.info(f"Cross validation statistics: {cv}")
-        self._logger.info(f"Fitness solution: {model.train()}")
+        self._logger.info(f"Cross validation statistics:\n{cv}")
+
+        evaluate = model.train()
+        fitness = 1 / (1 + evaluate[0])
+        metrics = model.compute_metrics()
+
+        self._logger.info(
+            f"balanced accuracy: {metrics['balanced_accuracy_score']}"
+        )
+        self._logger.info(f"confusion matrix: \n{metrics['confusion_matrix']}")
+        self._logger.info(
+            f"evaluate (loss value & metrics values): {evaluate}"
+        )
+        self._logger.info(f"Fitness solution: {fitness}")
+
         model.save_model(seed)
         model.save_history(seed)
         model.save_metrics(seed)
@@ -625,11 +752,12 @@ class GA:
         del model
         dump_tensors()
 
-    def __print_features_selected(self, indiv):
+    def _print_features_selected(self, indiv):
         features_name = []
-        for i, key in enumerate(self.__encoding_keys):
-            if 'feature_selection_' in key and indiv[i]:
-                features_name.append(self.__name_features[key])
+        for i, key in enumerate(self._encoding_keys):
+            if "feature_selection_" in key and indiv[i]:
+                features_name.append(self._name_features[key])
 
-        self._logger.info(f"Features selected "
-                          f"{len(features_name)}: {features_name}")
+        self._logger.info(
+            f"Features selected " f"{len(features_name)}: {features_name}"
+        )

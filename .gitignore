@@ -135,3 +135,5 @@ experiments/covid.yaml
 NNGA_output/covid/log.txt
 experiments/fvc_mlp_test.yaml
 experiments/covid_mlp_test.yaml
+/experiments/
+/Pytest_output/

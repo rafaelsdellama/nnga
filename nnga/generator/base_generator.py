@@ -25,8 +25,16 @@ class BaseGenerator(Sequence):
             else Does not preserve the image ratio
     """
 
-    def __init__(self, dataset, indexes, batch_size, shuffle, attributes,
-                 scale_method, preserve_img_ratio):
+    def __init__(
+        self,
+        dataset,
+        indexes,
+        batch_size,
+        shuffle,
+        attributes,
+        scale_method,
+        preserve_img_ratio,
+    ):
         self._dataset = dataset
         self._batch_size = batch_size
         self._indexes = indexes
@@ -68,8 +76,10 @@ class BaseGenerator(Sequence):
         """
         # Generate indexes of the batch
         indexes = list(
-            self._indexes[idx * self._batch_size:
-                          (idx + 1) * self._batch_size])
+            self._indexes[
+                idx * self._batch_size : (idx + 1) * self._batch_size
+            ]
+        )
 
         # to handle with the end of epoch complete the rest of dataset
         # n = len(indexes)

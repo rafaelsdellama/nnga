@@ -7,8 +7,8 @@ with open("requirements.txt", "r") as f:
         requirements.append(line)
 
 setup(
-    name='nnga',
-    version='0.1.0',
+    name="nnga",
+    version="0.1.0",
     packages=find_packages(),
     entry_points=dict(console_scripts=["nnga-cli = nnga.nnga_cli:main"]),
     description="Neural Network Genetic Algorithm",

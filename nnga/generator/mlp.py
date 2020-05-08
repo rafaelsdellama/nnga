@@ -25,10 +25,25 @@ class MLP_Generator(BaseGenerator):
             else Does not preserve the image ratio
     """
 
-    def __init__(self, dataset, indexes, batch_size, shuffle, attributes,
-                 scale_method, preserve_img_ratio):
-        super().__init__(dataset, indexes, batch_size, shuffle, attributes,
-                         scale_method, preserve_img_ratio)
+    def __init__(
+        self,
+        dataset,
+        indexes,
+        batch_size,
+        shuffle,
+        attributes,
+        scale_method,
+        preserve_img_ratio,
+    ):
+        super().__init__(
+            dataset,
+            indexes,
+            batch_size,
+            shuffle,
+            attributes,
+            scale_method,
+            preserve_img_ratio,
+        )
 
     def _data_generation(self, indexes):
         """
@@ -48,21 +63,24 @@ class MLP_Generator(BaseGenerator):
         # TODO: Data augmentation
 
         attributes = [
-            self._dataset['CSV'].load_sample_by_idx(
-                idx,
-                self._scale_method)
+            self._dataset["CSV"].load_sample_by_idx(idx, self._scale_method)
             for idx in indexes
         ]
 
         labels = []
         for i, idx in enumerate(indexes):
-            np_label = np.zeros(self._dataset['CSV'].n_classes)
-            np_label[self._dataset['CSV'].label_encode(
-                self._dataset['CSV'].get_metadata_by_idx(idx)["label"])] = 1
+            np_label = np.zeros(self._dataset["CSV"].n_classes)
+            np_label[
+                self._dataset["CSV"].label_encode(
+                    self._dataset["CSV"].get_metadata_by_idx(idx)["label"]
+                )
+            ] = 1
             labels.append(np_label)
 
-            attributes[i] = [attributes[i][index]
-                             for index in self._attributes_selected]
+            if self._attributes_selected is not None:
+                attributes[i] = [
+                    attributes[i][index] for index in self._attributes_selected
+                ]
 
         self._classes.extend(labels)
 

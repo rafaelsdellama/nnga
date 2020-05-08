@@ -1,14 +1,17 @@
 from math import ceil
 import numpy as np
-from sklearn.metrics import confusion_matrix, balanced_accuracy_score
+import math
 from sklearn.model_selection import StratifiedKFold
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import StratifiedShuffleSplit
 from nnga.generator import GENERATOR
 from nnga.utils.helper import dump_tensors
-from nnga.utils.metrics import cross_validation_statistics, \
-    compute_metrics
-from nnga.utils.data_io import save_history, save_model, \
-    save_roc_curve, save_metrics
+from nnga.utils.metrics import cross_validation_statistics, compute_metrics
+from nnga.utils.data_io import (
+    save_history,
+    save_model,
+    save_roc_curve,
+    save_metrics,
+)
 
 
 class BaseNeuralNetwork:
@@ -42,10 +45,13 @@ class BaseNeuralNetwork:
 
         self._model_history = None
         self._model = None
+        _, _, _, self._labels = self.get_info_dataset(self._datasets["TRAIN"])
+        self._idx_train = None
+        self._idx_val = None
 
         self.fitting_parameters = {
             "x": None,
-            "epochs": self.indiv[self.keys.index('epochs')],
+            "epochs": self.indiv[self.keys.index("epochs")],
             "verbose": 0,
             "callbacks": None,
             "validation_data": None,
@@ -60,10 +66,14 @@ class BaseNeuralNetwork:
         }
 
         if cfg.GA.FEATURE_SELECTION:
-            indexes = [i for i, value in enumerate(self.keys)
-                       if 'feature_selection_' in value]
-            self._attributes = [i for i, value in enumerate(indexes)
-                                if self.indiv[value]]
+            indexes = [
+                i
+                for i, value in enumerate(self.keys)
+                if "feature_selection_" in value
+            ]
+            self._attributes = [
+                i for i, value in enumerate(indexes) if self.indiv[value]
+            ]
         else:
             self._attributes = None
 
@@ -80,17 +90,17 @@ class BaseNeuralNetwork:
                 -List with dataset class_weights
                 -List with labels
         """
-        if 'CSV' in dataset:
-            idx = dataset['CSV'].indexes
-            idx_labels = dataset['CSV'].indexes_labels
-            class_weights = dataset['CSV'].class_weights
-            labels = dataset['CSV'].labels
+        if "CSV" in dataset:
+            idx = dataset["CSV"].indexes
+            idx_labels = dataset["CSV"].indexes_labels
+            class_weights = dataset["CSV"].class_weights
+            labels = dataset["CSV"].labels
 
-        if 'IMG' in dataset:
-            idx = dataset['IMG'].indexes
-            idx_labels = dataset['IMG'].indexes_labels
-            class_weights = dataset['IMG'].class_weights
-            labels = dataset['IMG'].labels
+        if "IMG" in dataset:
+            idx = dataset["IMG"].indexes
+            idx_labels = dataset["IMG"].indexes_labels
+            class_weights = dataset["IMG"].class_weights
+            labels = dataset["IMG"].labels
 
         return np.array(idx), np.array(idx_labels), class_weights, labels
 
@@ -121,66 +131,89 @@ class BaseNeuralNetwork:
 
             Returns
             -------
-                Dict with cross validation statistic
+                Pandas DataFrame with cross validation results
         """
-        batch_size = 2 ** self.indiv[self.keys.index('batch_size')]
+        batch_size = 2 ** self.indiv[self.keys.index("batch_size")]
         idx, idx_labels, class_weights, _ = self.get_info_dataset(
-            self._datasets['TRAIN'])
-        self.fitting_parameters['class_weight'] = class_weights
+            self._datasets["TRAIN"]
+        )
+        self.fitting_parameters["class_weight"] = class_weights
 
         skf = StratifiedKFold(n_splits=k, shuffle=shuffle, random_state=seed)
         skf.get_n_splits(idx, idx_labels)
 
-        accuracy = []
-        for fold, (idx_train, idx_val) in enumerate(skf.split(
-                idx, idx_labels)):
+        evaluate_results = []
+        for fold, (idx_train, idx_val) in enumerate(
+            skf.split(idx, idx_labels)
+        ):
             self._logger.info(f"Cross Validation - Fold {fold + 1}/{k}:")
             if self.create_model_ga(summary=False):
-                self._make_generator(self._datasets['TRAIN'], idx[idx_train],
-                                     self._datasets['TRAIN'], idx[idx_val],
-                                     batch_size)
+                self._make_generator(
+                    self._datasets["TRAIN"],
+                    idx[idx_train],
+                    self._datasets["TRAIN"],
+                    idx[idx_val],
+                    batch_size,
+                )
                 self.fit()
-                acc = self.evaluate()
+                evaluate = self.evaluate()
+
+                metrics = self.compute_metrics()
+                self._logger.info(
+                    f"balanced accuracy: {metrics['balanced_accuracy_score']}"
+                )
+                self._logger.info(
+                    f"confusion matrix: \n{metrics['confusion_matrix']}"
+                )
 
             else:
-                acc = 0
+                evaluate = [float("inf"), 1e-5]
 
-            accuracy.append(acc)
+            evaluate_results.append(evaluate)
             dump_tensors()
 
-        return cross_validation_statistics(accuracy)
+        return cross_validation_statistics(evaluate_results)
 
-    def train_test_split(self, seed=0):
+    def train_test_split(self, seed=0, test_size=0.2):
         """Execute train test split using the train dataset
         Parameters
             ----------
                 seed: int
                     Seed to be used to separate train test folds
+                test_size: float
+                    size of test fold
 
             Returns
             -------
-                Return the fitness (float)
+                loss value & metrics values
         """
         if self.create_model_ga():
-            batch_size = 2 ** self.indiv[self.keys.index('batch_size')]
+            batch_size = 2 ** self.indiv[self.keys.index("batch_size")]
             idx, idx_labels, class_weights, _ = self.get_info_dataset(
-                self._datasets['TRAIN'])
-            self.fitting_parameters['class_weight'] = class_weights
+                self._datasets["TRAIN"]
+            )
+            self.fitting_parameters["class_weight"] = class_weights
 
-            idx_train, idx_val, _, _ = \
-                train_test_split(idx, idx_labels, test_size=0.2,
-                                 random_state=seed)
+            sss = StratifiedShuffleSplit(n_splits=1, test_size=test_size, random_state=seed)
+            sss.get_n_splits(idx, idx_labels)
+            idx_train, idx_val = next(sss.split(idx, idx_labels))
+            idx_train = idx[idx_train]
+            idx_val = idx[idx_val]
 
-            self._make_generator(self._datasets['TRAIN'], idx_train,
-                                 self._datasets['TRAIN'], idx_val,
-                                 batch_size)
+            self._make_generator(
+                self._datasets["TRAIN"],
+                idx_train,
+                self._datasets["TRAIN"],
+                idx_val,
+                batch_size,
+            )
 
             self.fit()
 
             return self.evaluate()
 
         else:
-            return 0.0
+            return [float("inf"), 1e-5]
 
     def train(self):
         """Train the model using the train dataset and evaluate
@@ -190,25 +223,30 @@ class BaseNeuralNetwork:
 
             Returns
             -------
-                Return the fitness (float)
+                loss value & metrics values
         """
         if self.create_model_ga():
-            batch_size = 2 ** self.indiv[self.keys.index('batch_size')]
+            batch_size = 2 ** self.indiv[self.keys.index("batch_size")]
             idx_train, _, class_weights, _ = self.get_info_dataset(
-                self._datasets['TRAIN'])
-            idx_val, _, _, _ = self.get_info_dataset(self._datasets['VAL'])
-            self.fitting_parameters['class_weight'] = class_weights
+                self._datasets["TRAIN"]
+            )
+            idx_val, _, _, _ = self.get_info_dataset(self._datasets["VAL"])
+            self.fitting_parameters["class_weight"] = class_weights
 
-            self._make_generator(self._datasets['TRAIN'], idx_train,
-                                 self._datasets['VAL'], idx_val,
-                                 batch_size)
+            self._make_generator(
+                self._datasets["TRAIN"],
+                idx_train,
+                self._datasets["VAL"],
+                idx_val,
+                batch_size,
+            )
 
             self.fit()
 
             return self.evaluate()
 
         else:
-            return 0.0
+            return [float("inf"), 1e-5]
 
     def _make_generator(self, x_train, idx_train, x_val, idx_val, batch_size):
         """Make train and val generator
@@ -228,33 +266,44 @@ class BaseNeuralNetwork:
             Returns
             -------
         """
-        self.fitting_parameters['x'] = \
-            GENERATOR.get(self._cfg.MODEL.ARCHITECTURE)(
-                x_train,
-                idx_train,
-                batch_size,
-                self._cfg.DATASET.TRAIN_SHUFFLE,
-                self._attributes,
-                self.indiv[self.keys.index('scaler')],
-                self._cfg.DATASET.PRESERVE_IMG_RATIO
-            )
+        self.fitting_parameters["x"] = GENERATOR.get(
+            self._cfg.MODEL.ARCHITECTURE
+        )(
+            x_train,
+            idx_train,
+            batch_size,
+            self._cfg.DATASET.TRAIN_SHUFFLE,
+            self._attributes,
+            self.indiv[self.keys.index("scaler")]
+            if "scaler" in self.keys
+            else None,
+            self._cfg.DATASET.PRESERVE_IMG_RATIO,
+        )
 
-        self.fitting_parameters['steps_per_epoch'] = \
-            ceil(len(idx_train) / batch_size)
+        self.fitting_parameters["steps_per_epoch"] = ceil(
+            len(idx_train) / batch_size
+        )
 
-        self.fitting_parameters['validation_data'] = \
-            GENERATOR.get(self._cfg.MODEL.ARCHITECTURE)(
-                x_val,
-                idx_val,
-                batch_size,
-                self._cfg.DATASET.VAL_SHUFFLE,
-                self._attributes,
-                self.indiv[self.keys.index('scaler')],
-                self._cfg.DATASET.PRESERVE_IMG_RATIO
-            )
+        self.fitting_parameters["validation_data"] = GENERATOR.get(
+            self._cfg.MODEL.ARCHITECTURE
+        )(
+            x_val,
+            idx_val,
+            batch_size,
+            self._cfg.DATASET.VAL_SHUFFLE,
+            self._attributes,
+            self.indiv[self.keys.index("scaler")]
+            if "scaler" in self.keys
+            else None,
+            self._cfg.DATASET.PRESERVE_IMG_RATIO,
+        )
 
-        self.fitting_parameters['validation_steps'] = \
-            ceil(len(idx_val) / batch_size)
+        self.fitting_parameters["validation_steps"] = ceil(
+            len(idx_val) / batch_size
+        )
+
+        self._idx_train = idx_train
+        self._x_val = x_val
 
     def fit(self):
         """Fit the model"""
@@ -272,22 +321,24 @@ class BaseNeuralNetwork:
                 predict: class label predicted buy the model
                 predict_encoded: predict proba predicted buy the model
         """
-        self.fitting_parameters['validation_data'].reset_generator()
+        self.fitting_parameters["validation_data"].reset_generator()
 
         predict_encoded = self._model.predict(
-            x=self.fitting_parameters['validation_data'],
-            steps=self.fitting_parameters['validation_steps'],
-            verbose=self.fitting_parameters['verbose'],
-            max_queue_size=self.fitting_parameters['max_queue_size'],
-            workers=self.fitting_parameters['workers'],
-            use_multiprocessing=self.fitting_parameters['use_multiprocessing']
+            x=self.fitting_parameters["validation_data"],
+            steps=self.fitting_parameters["validation_steps"],
+            verbose=self.fitting_parameters["verbose"],
+            max_queue_size=self.fitting_parameters["max_queue_size"],
+            workers=self.fitting_parameters["workers"],
+            use_multiprocessing=self.fitting_parameters["use_multiprocessing"],
         )
 
-        lbl_encoded = self.fitting_parameters['validation_data'].classes
+        lbl_encoded = self.fitting_parameters["validation_data"].classes
         lbl_encoded = lbl_encoded[
-                      -self.fitting_parameters['validation_data'].num_indexes:]
+            -self.fitting_parameters["validation_data"].num_indexes :
+        ]
         predict_encoded = predict_encoded[
-                  -self.fitting_parameters['validation_data'].num_indexes:]
+            -self.fitting_parameters["validation_data"].num_indexes :
+        ]
 
         lbl = [np.argmax(t) for t in lbl_encoded]
         predict = [np.argmax(t) for t in predict_encoded]
@@ -295,23 +346,26 @@ class BaseNeuralNetwork:
         return lbl, lbl_encoded, predict, predict_encoded
 
     def evaluate(self):
-        """Evaluate the model using predict function
+        """Evaluate the model using evaluate function
         Parameters
             ----------
 
             Returns
             -------
-                Acc from the model
+                 loss value & metrics values
         """
-        lbl, _, predict, _ = self.predict()
+        evaluate = self._model.evaluate(
+            x=self.fitting_parameters["validation_data"],
+            steps=self.fitting_parameters["validation_steps"],
+            verbose=self.fitting_parameters["verbose"],
+            max_queue_size=self.fitting_parameters["max_queue_size"],
+            workers=self.fitting_parameters["workers"],
+            use_multiprocessing=self.fitting_parameters["use_multiprocessing"],
+        )
 
-        acc = balanced_accuracy_score(lbl, predict)
-        confusion_m = confusion_matrix(lbl, predict)
-
-        self._logger.info(f"balanced accuracy: {acc}")
-        self._logger.info(f"confusion matrix: \n{confusion_m}")
-
-        return acc
+        if math.isnan(evaluate[0]):
+            evaluate[0] = float("inf")
+        return evaluate
 
     def compute_metrics(self):
         """Compute all metrics
@@ -322,11 +376,14 @@ class BaseNeuralNetwork:
             -------
                 Dict containing all metric results
         """
-        lbl, _, predict, predict_encoded = self.predict()
-        idx, _, _, labels = self.get_info_dataset(self._datasets['VAL'])
+        if self.fitting_parameters["validation_data"] is None:
+            return None
 
-        return compute_metrics(lbl, predict,
-                               predict_encoded, labels, idx)
+        lbl, _, predict, predict_encoded = self.predict()
+
+        return compute_metrics(
+            lbl, predict, predict_encoded, self._labels, self._idx_val
+        )
 
     def save_metrics(self, seed):
         """Save model metrics
@@ -352,7 +409,7 @@ class BaseNeuralNetwork:
             -------
         """
         lbl, _, _, predict_proba = self.predict()
-        _, _, _, labels = self.get_info_dataset(self._datasets['TRAIN'])
+        _, _, _, labels = self.get_info_dataset(self._datasets["TRAIN"])
         save_roc_curve(self._path, seed, lbl, predict_proba, labels)
 
     def summary(self):

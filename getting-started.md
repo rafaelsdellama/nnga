@@ -91,6 +91,7 @@ SOLVER:
   LOSS: "categorical_crossentropy"
   METRICS: ["categorical_accuracy"]
   CROSS_VALIDATION_FOLDS: 10
+  TEST_SIZE: 0.2
 
 OUTPUT_DIR: ./NNGA_output
 ```
@@ -286,6 +287,13 @@ SOLVER:
   
   # Number of folds to be user by the cross validation method
   CROSS_VALIDATION_FOLDS: 10
+
+  # Test fold size to be used on train test split
+  # The train test split is performed to evaluate individuals of the GA, 
+  # where the training dataset is divided into training and testing, 
+  # where the random seed is determined by the generation id, that is, 
+  # each generation the training and test folds change
+  TEST_SIZE: 0.2
 ```
 
 ------------------------------

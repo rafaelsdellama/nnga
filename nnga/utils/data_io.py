@@ -82,7 +82,7 @@ def save_statistic(path, seed, statistic):
             Seed from GA
 
         statistic: DataFrame
-            Pandas DataFrame with the statistic data
+            List of dict
 
         Returns
         -------
@@ -93,17 +93,16 @@ def save_statistic(path, seed, statistic):
     plot_dir = Path(path, str(seed), f"Generations_GA.png").as_posix()
 
     df = pd.DataFrame(
-        statistic,
-        columns=['mean_fitness', 'best_fitness', 'best_indiv']
+        statistic, columns=["mean_fitness", "best_fitness", "best_indiv"]
     )
     df.to_csv(statistic_dir, index=False, header=True)
 
-    plt.plot(list(df['mean_fitness']), 'r')
-    plt.plot(list(df['best_fitness']), 'g')
+    plt.plot(list(df["mean_fitness"]), "r")
+    plt.plot(list(df["best_fitness"]), "g")
     plt.xlabel("Generations")
     plt.ylabel("Fitness")
     plt.title("Generations GA")
-    plt.legend(['Mean Fitness', 'Best Fitness'])
+    plt.legend(["Mean Fitness", "Best Fitness"])
 
     plt.savefig(plot_dir)
     plt.clf()  # Clear the current figure.
@@ -139,7 +138,7 @@ def save_pop(path, seed, pop):
         pop_list.append(pop.indivs[i].chromosome)
         fitness_list.append(pop.indivs[i].fitness)
 
-    last_pop = pd.DataFrame({'indiv': pop_list, 'fitness': fitness_list})
+    last_pop = pd.DataFrame({"indiv": pop_list, "fitness": fitness_list})
     last_pop.to_csv(pop_dir, index=False, header=True)
 
 
@@ -164,38 +163,44 @@ def save_history(path, seed, model_history):
     create_dir(Path(path, str(seed)))
     legend = []
     plot_dir = Path(path, str(seed), f"history_model.png").as_posix()
-    if 'acc' in model_history:
-        plt.plot(model_history['acc'], 'r')
-        legend.append('Training accuracy')
-    elif 'accuracy' in model_history:
-        plt.plot(model_history['accuracy'], 'r')
-        legend.append('Training accuracy')
-    elif 'categorical_accuracy' in model_history:
-        plt.plot(model_history['categorical_accuracy'], 'r')
-        legend.append('Training accuracy')
+    if "acc" in model_history:
+        plt.plot(model_history["acc"], "r")
+        legend.append("Training accuracy")
+    elif "accuracy" in model_history:
+        plt.plot(model_history["accuracy"], "r")
+        legend.append("Training accuracy")
+    elif "categorical_accuracy" in model_history:
+        plt.plot(model_history["categorical_accuracy"], "r")
+        legend.append("Training accuracy")
 
-    if 'val_acc' in model_history:
-        plt.plot(model_history['val_acc'], 'g')
-        legend.append('Validation accuracy')
-    elif 'val_accuracy' in model_history:
-        plt.plot(model_history['val_accuracy'], 'g')
-        legend.append('Validation accuracy')
-    elif 'val_categorical_accuracy' in model_history:
-        plt.plot(model_history['val_categorical_accuracy'], 'g')
-        legend.append('Validation accuracy')
+    if "val_acc" in model_history:
+        plt.plot(model_history["val_acc"], "g")
+        legend.append("Validation accuracy")
+    elif "val_accuracy" in model_history:
+        plt.plot(model_history["val_accuracy"], "g")
+        legend.append("Validation accuracy")
+    elif "val_categorical_accuracy" in model_history:
+        plt.plot(model_history["val_categorical_accuracy"], "g")
+        legend.append("Validation accuracy")
 
-    if 'loss' in model_history:
-        plt.plot(model_history['loss'], 'b', linestyle='--')
-        legend.append('Training loss')
-    if 'val_loss' in model_history:
-        plt.plot(model_history['val_loss'], 'y', linestyle='--')
-        legend.append('Validation loss')
+    if "loss" in model_history:
+        plt.plot(model_history["loss"], "b", linestyle="--")
+        legend.append("Training loss")
+    if "val_loss" in model_history:
+        plt.plot(model_history["val_loss"], "y", linestyle="--")
+        legend.append("Validation loss")
 
-    plt.xticks(np.arange(0,
-                         len(model_history['loss']) / 10
-                         if len(model_history['loss']) > 10 else 5,
-                         len(model_history['loss']) / 10
-                         if len(model_history['loss']) > 10 else 1))
+    plt.xticks(
+        np.arange(
+            0,
+            len(model_history["loss"]) / 10
+            if len(model_history["loss"]) > 10
+            else 5,
+            len(model_history["loss"]) / 10
+            if len(model_history["loss"]) > 10
+            else 1,
+        )
+    )
     plt.xlabel("Num of Epochs")
     plt.ylabel("Accuracy / Loss")
     plt.title("Training vs Validation")
@@ -228,9 +233,9 @@ def save_model(path, seed, model):
     create_dir(Path(path, str(seed)))
 
     model_dir = Path(path, str(seed), f"model").as_posix()
-    with open(model_dir + '.json', 'w') as json_file:
+    with open(model_dir + ".json", "w") as json_file:
         json_file.write(model.to_json())
-    model.save_weights(model_dir + '.h5')
+    model.save_weights(model_dir + ".h5")
 
 
 def save_roc_curve(path, seed, lbl, predict_proba, labels):
@@ -288,13 +293,13 @@ def save_metrics(path, seed, metrics):
     create_dir(Path(path, str(seed)))
     file_name = Path(path, str(seed), f"metrics.txt").as_posix()
 
-    file = open(file_name, 'w')
+    file = open(file_name, "w")
 
     for key, value in metrics.items():
         file.write(key)
-        file.write('\n')
+        file.write("\n")
         file.write(value)
-        file.write('\n\n')
+        file.write("\n\n")
 
     file.close()
 
@@ -312,6 +317,7 @@ def load_csv_file(path, usecols, chunksize=None):
             List with the column names to be read
 
         chunksize: int
+            To be used in pd.read_csv
 
         Returns
         -------
@@ -325,16 +331,22 @@ def load_csv_file(path, usecols, chunksize=None):
     if not os.path.exists(path):
         raise FileNotFoundError("File not found with provided path.")
 
-    with open(path, 'r') as csvfile:
+    with open(path, "r") as csvfile:
         try:
             dialect = csv.Sniffer().sniff(
-                csvfile.read(1024 * 100), delimiters=[',', ';'])
+                csvfile.read(1024 * 100), delimiters=[",", ";"]
+            )
 
-            if dialect.delimiter == ',':
+            if dialect.delimiter == ",":
                 df = pd.read_csv(path, usecols=usecols, chunksize=chunksize)
-            elif dialect.delimiter == ';':
-                df = pd.read_csv(path, usecols=usecols, sep=';', decimal=',',
-                                 chunksize=chunksize)
+            elif dialect.delimiter == ";":
+                df = pd.read_csv(
+                    path,
+                    usecols=usecols,
+                    sep=";",
+                    decimal=",",
+                    chunksize=chunksize,
+                )
 
         except csv.Error:
             # Could not conclude the delimiter, defaulting to comma
@@ -370,16 +382,18 @@ def load_image(path, input_shape, preserve_ratio=True):
     if not os.path.exists(path):
         raise FileNotFoundError("File not found with provided path.")
 
-    flag = cv2.IMREAD_COLOR \
-        if input_shape[2] == 3 \
-        else cv2.IMREAD_GRAYSCALE
+    if len(input_shape) == 3 and input_shape[2] == 1:
+        input_shape = (input_shape[0], input_shape[1])
+
+    flag = cv2.IMREAD_COLOR if len(input_shape) == 3 else cv2.IMREAD_GRAYSCALE
     img = cv2.imread(path, flag)
 
     if preserve_ratio:
         scale_height = input_shape[0] / img.shape[0]
         scale_width = input_shape[1] / img.shape[1]
-        scale_percent = scale_height \
-            if scale_height < scale_width else scale_width
+        scale_percent = (
+            scale_height if scale_height < scale_width else scale_width
+        )
         width = int(img.shape[1] * scale_percent)
         height = int(img.shape[0] * scale_percent)
         dim = (width, height)
@@ -394,12 +408,14 @@ def load_image(path, input_shape, preserve_ratio=True):
         border_left = int((input_shape[1] - resized.shape[1]) / 2)
         border_right = border_width - border_left
 
-        final_img = cv2.copyMakeBorder(resized,
-                                       border_top,
-                                       border_bottom,
-                                       border_left,
-                                       border_right,
-                                       cv2.BORDER_CONSTANT)
+        final_img = cv2.copyMakeBorder(
+            resized,
+            border_top,
+            border_bottom,
+            border_left,
+            border_right,
+            cv2.BORDER_CONSTANT,
+        )
     else:
         dim = (input_shape[1], input_shape[0])
         final_img = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)

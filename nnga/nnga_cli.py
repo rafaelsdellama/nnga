@@ -4,6 +4,7 @@ https://medium.com/@trstringer/the-easy-and-nice-way-to-do-cli-apps-in-python-5d
 import argparse
 import os
 from pathlib import Path
+import traceback
 
 from nnga.configs import cfg, export_config
 from nnga.utils.logger import setup_logger
@@ -22,53 +23,67 @@ def train(cfg, logger):
         RuntimeError: For wrong config options
     """
 
-    # TODO: task train model withoud GA
+    # TODO: task train model withoud GA - pre-trained models
+    # TODO: predcit with saved model
     # TODO: pyRadiomics
     # TODO: Segmentation
 
-    datasets = {
-        'TRAIN': {},
-        'VAL': {}
-    }
+    datasets = {"TRAIN": {}, "VAL": {}}
 
-    if cfg.MODEL.ARCHITECTURE == 'MLP':
-        datasets['TRAIN']['CSV'] = CSVDataset(cfg, logger)
-        logger.info(f"Train csv dataset loaded! "
-                    f"{len(datasets['TRAIN']['CSV'])} samples with "
-                    f"{datasets['TRAIN']['CSV'].n_features} "
-                    f"features was found!")
+    if cfg.MODEL.ARCHITECTURE == "MLP":
+        datasets["TRAIN"]["CSV"] = CSVDataset(cfg, logger)
+        logger.info(
+            f"Train csv dataset loaded! "
+            f"{len(datasets['TRAIN']['CSV'])} samples with "
+            f"{datasets['TRAIN']['CSV'].n_features} "
+            f"features was found!"
+        )
 
-        datasets['VAL']['CSV'] = CSVDataset(cfg, logger, is_validation=True)
-        logger.info(f"Validation csv dataset loaded! "
-                    f"{len(datasets['VAL']['CSV'])} samples with "
-                    f"{datasets['VAL']['CSV'].n_features} features was found!")
+        datasets["VAL"]["CSV"] = CSVDataset(cfg, logger, is_validation=True)
+        logger.info(
+            f"Validation csv dataset loaded! "
+            f"{len(datasets['VAL']['CSV'])} samples with "
+            f"{datasets['VAL']['CSV'].n_features} features was found!"
+        )
 
-    elif cfg.MODEL.ARCHITECTURE == 'CNN':
-        datasets['TRAIN']['IMG'] = ImageDataset(cfg, logger)
-        logger.info(f"Train images dataset loaded! "
-                    f"{len(datasets['TRAIN']['IMG'])} was found!")
+    elif cfg.MODEL.ARCHITECTURE == "CNN":
+        datasets["TRAIN"]["IMG"] = ImageDataset(cfg, logger)
+        logger.info(
+            f"Train images dataset loaded! "
+            f"{len(datasets['TRAIN']['IMG'])} was found!"
+        )
 
-        datasets['VAL']['IMG'] = ImageDataset(cfg, logger, is_validation=True)
-        logger.info(f"Validation images dataset loaded! "
-                    f"{len(datasets['VAL']['IMG'])} was found!")
+        datasets["VAL"]["IMG"] = ImageDataset(cfg, logger, is_validation=True)
+        logger.info(
+            f"Validation images dataset loaded! "
+            f"{len(datasets['VAL']['IMG'])} was found!"
+        )
 
-    elif cfg.MODEL.ARCHITECTURE == 'CNN/MLP':
-        datasets['TRAIN']['CSV'] = CSVDataset(cfg, logger)
-        logger.info(f"Train csv dataset loaded! "
-                    f"{len(datasets['TRAIN']['CSV'])} samples with "
-                    f"{datasets['TRAIN']['CSV'].n_features} "
-                    f"features was found!")
-        datasets['TRAIN']['IMG'] = ImageDataset(cfg, logger)
-        logger.info(f"Train images dataset loaded! "
-                    f"{len(datasets['TRAIN']['IMG'])} was found!")
+    elif cfg.MODEL.ARCHITECTURE == "CNN/MLP":
+        datasets["TRAIN"]["CSV"] = CSVDataset(cfg, logger)
+        logger.info(
+            f"Train csv dataset loaded! "
+            f"{len(datasets['TRAIN']['CSV'])} samples with "
+            f"{datasets['TRAIN']['CSV'].n_features} "
+            f"features was found!"
+        )
+        datasets["TRAIN"]["IMG"] = ImageDataset(cfg, logger)
+        logger.info(
+            f"Train images dataset loaded! "
+            f"{len(datasets['TRAIN']['IMG'])} was found!"
+        )
 
-        datasets['VAL']['CSV'] = CSVDataset(cfg, logger, is_validation=True)
-        logger.info(f"Validation csv dataset loaded! "
-                    f"{len(datasets['VAL']['CSV'])} samples with "
-                    f"{datasets['VAL']['CSV'].n_features} features was found!")
-        datasets['VAL']['IMG'] = ImageDataset(cfg, logger, is_validation=True)
-        logger.info(f"Validation images dataset loaded! "
-                    f"{len(datasets['VAL']['IMG'])} was found!")
+        datasets["VAL"]["CSV"] = CSVDataset(cfg, logger, is_validation=True)
+        logger.info(
+            f"Validation csv dataset loaded! "
+            f"{len(datasets['VAL']['CSV'])} samples with "
+            f"{datasets['VAL']['CSV'].n_features} features was found!"
+        )
+        datasets["VAL"]["IMG"] = ImageDataset(cfg, logger, is_validation=True)
+        logger.info(
+            f"Validation images dataset loaded! "
+            f"{len(datasets['VAL']['IMG'])} was found!"
+        )
 
     else:
         raise RuntimeError(
@@ -117,7 +132,7 @@ def main():
         print(f"Config Created on {args.create_config}")
         exit(0)
 
-    if args.config_file != '':
+    if args.config_file != "":
         cfg.merge_from_file(args.config_file)
 
     if args.opts is not None:
@@ -137,14 +152,19 @@ def main():
     logger.info(args)
 
     logger.info("Loaded configuration file {}".format(args.config_file))
-    if args.config_file != '':
+    if args.config_file != "":
         with open(args.config_file, "r") as cf:
             config_str = "\n" + cf.read()
             logger.info(config_str)
 
     logger.info(f"CFG: \n{cfg}")
-    train(cfg, logger)
+
+    try:
+        train(cfg, logger)
+    except Exception:
+        msg = f"Failed:\n{traceback.format_exc()}"
+        logger.error(msg)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

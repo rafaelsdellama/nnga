@@ -33,10 +33,13 @@ class ImageDataset(BaseDataset):
         if not isinstance(self._preserve_ratio, bool):
             raise ValueError("DATASET.PRESERVE_IMG_RATIO must be a bool")
 
-        if not isinstance(self.image_shape, tuple) or \
-                len(self.image_shape) != 3:
-            raise ValueError("MODEL.INPUT_SHAPE must be a tuple"
-                             "(width, height, channels)")
+        if (
+            not isinstance(self.image_shape, tuple)
+            or len(self.image_shape) != 3
+        ):
+            raise ValueError(
+                "MODEL.INPUT_SHAPE must be a tuple" "(width, height, channels)"
+            )
 
     def _load_metadata(self):
         """Create metadata for classification.
@@ -44,10 +47,12 @@ class ImageDataset(BaseDataset):
             represents dataset. Any huge data is load here
             just create a kind of index.
         """
-        data = read_dataset(self._dataset_path, format="png, jpg, jpeg, tif", )
+        data = read_dataset(self._dataset_path, format="png, jpg, jpeg, tif",)
 
         self._metadata = {
-            Path(img_path).name.split('.')[0]:
-                {"image_path": img_path, "label": label}
+            Path(img_path).name.split(".")[0]: {
+                "image_path": img_path,
+                "label": label,
+            }
             for img_path, label in zip(data["data"], data["labels"])
         }
