@@ -382,10 +382,7 @@ def load_image(path, input_shape, preserve_ratio=True):
     if not os.path.exists(path):
         raise FileNotFoundError("File not found with provided path.")
 
-    if len(input_shape) == 3 and input_shape[2] == 1:
-        input_shape = (input_shape[0], input_shape[1])
-
-    flag = cv2.IMREAD_COLOR if len(input_shape) == 3 else cv2.IMREAD_GRAYSCALE
+    flag = cv2.IMREAD_COLOR if input_shape[2] == 3 else cv2.IMREAD_GRAYSCALE
     img = cv2.imread(path, flag)
 
     if preserve_ratio:
