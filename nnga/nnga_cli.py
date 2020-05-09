@@ -23,8 +23,8 @@ def train(cfg, logger):
         RuntimeError: For wrong config options
     """
 
-    # TODO: task train model withoud GA - pre-trained models
     # TODO: predcit with saved model
+    # TODO: task train model withoud GA - pre-trained models
     # TODO: pyRadiomics
     # TODO: Segmentation
 

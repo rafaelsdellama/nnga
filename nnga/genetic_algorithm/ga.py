@@ -687,14 +687,18 @@ class GA:
         evaluate = model.train_test_split(gen, self.test_size)
         #fitness = 1 / (1 + evaluate[0])
         metrics = model.compute_metrics()
-        fitness = float(metrics['balanced_accuracy_score'])
+        if metrics is not None:
+            fitness = float(metrics['balanced_accuracy_score'])
 
-        self._logger.info(
-            f"balanced accuracy: {metrics['balanced_accuracy_score']}"
-        )
-        self._logger.info(
-            f"confusion matrix: \n{metrics['confusion_matrix']}"
-        )
+            self._logger.info(
+                f"balanced accuracy: {metrics['balanced_accuracy_score']}"
+            )
+            self._logger.info(
+                f"confusion matrix: \n{metrics['confusion_matrix']}"
+            )
+        else:
+            fitness = 0.0
+
         self._logger.info(
             f"evaluate (loss value & metrics values): {evaluate}"
         )
@@ -734,12 +738,18 @@ class GA:
         evaluate = model.train()
         #fitness = 1 / (1 + evaluate[0])
         metrics = model.compute_metrics()
-        fitness = float(metrics['balanced_accuracy_score'])
+        if metrics is not None:
+            fitness = float(metrics['balanced_accuracy_score'])
 
-        self._logger.info(
-            f"balanced accuracy: {metrics['balanced_accuracy_score']}"
-        )
-        self._logger.info(f"confusion matrix: \n{metrics['confusion_matrix']}")
+            self._logger.info(
+                f"balanced accuracy: {metrics['balanced_accuracy_score']}"
+            )
+            self._logger.info(
+                f"confusion matrix: \n{metrics['confusion_matrix']}"
+            )
+        else:
+            fitness = 0.0
+
         self._logger.info(
             f"evaluate (loss value & metrics values): {evaluate}"
         )
