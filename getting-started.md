@@ -31,8 +31,11 @@ nnga-cli --create-config experiments/first.yaml
 
 Here we could see an example of experiment file:
 ```yaml
+TASK: "Classification"
+
 # Dataset experiment configuration
 DATASET:
+  SCALER: "Standard"
   PRESERVE_IMG_RATIO: true
   TRAIN_AUGMENTATION: true
   TRAIN_CSV_PATH: /PATH/TO/TRAIN/DATASET/file_name.csv
@@ -58,8 +61,7 @@ GA:
   HYPERMUTATION_RATE: 3
   RANDOM_IMIGRANTS: false
   IMIGRATION_RATE: 0.05  
-  TOURNAMENT_SIZE: 3
-  FEATURE_SELECTION: false    
+  TOURNAMENT_SIZE: 3  
   SEARCH_SPACE:
     PADDING: ['valid', 'same']
     MAX_DENSE_LAYERS: 5
@@ -84,14 +86,22 @@ GA:
 # Model experiment configuration
 MODEL:
   ARCHITECTURE: "MLP"
+  BACKBONE: "GASearch"
+  FEATURE_SELECTION: false  
   INPUT_SHAPE: [150, 150, 3]
+  DROPOUT: 0.2
 
 # Solver experiment configuration
 SOLVER:
   LOSS: "categorical_crossentropy"
   METRICS: ["categorical_accuracy"]
+  CROSS_VALIDATION: true
   CROSS_VALIDATION_FOLDS: 10
   TEST_SIZE: 0.2
+  BATCH_SIZE: 128
+  EPOCHS: 100
+  OPTIMIZER: "Adam"
+  BASE_LEARNING_RATE: 0.0001
 
 OUTPUT_DIR: ./NNGA_output
 ```
@@ -100,7 +110,15 @@ OUTPUT_DIR: ./NNGA_output
 
 Let's go to take a closer look of all options available in an experiment.  
 
-The first section is about datasets: 
+The first important option is about what task the experiment will do. Nowadays 2 options are available Classification and Segmentation.
+```yaml
+# Task experiment configuration
+# Options available here are:
+# - Classification
+# - Segmentation
+TASK: "Classification"
+```
+The second section is about datasets: 
 ```yaml
 # Dataset experiment configuration
 DATASET:
@@ -108,6 +126,11 @@ DATASET:
   #If true, resize the image while maintaining the aspect ratio, adding a black background
   #If false, resize the image to INPUT_SHAPE without worrying about maintaining the aspect ratio
   PRESERVE_IMG_RATIO: true
+  
+  # Standardization method used to scale the csv data
+  # Is used only when the BACKBONE is not "GASearch" and 
+  # ARCHITECTURE are MLP or CNN/MLP
+  SCALER: 'Standard'
 
   # path to train dataset
   # you could use an env var to root of ml-datasets repo, like:
@@ -195,9 +218,6 @@ GA:
   # Number of individuals selected by selection per tournament
   TOURNAMENT_SIZE: 3
 
-  # flat to activates feature selection
-  FEATURE_SELECTION: false  
-
    # Genetic Algorithm search space configuration
   SEARCH_SPACE:
 
@@ -266,10 +286,35 @@ The following section is about model construction:
 MODEL:
   # Define the architecture to be used
   # Available options for architecture are MLP, CNN and CNN/MLP
-  ARCHITECTURE: MLP
+  ARCHITECTURE: "MLP"
+  
+  # The backbone define the specific ARCHITECTURE to be used
+  # In Classification tasks on top of this backbone will be created 3 Dense
+  # layers and the final layer with number of neurons equal number of classes.
+  # Available options for backbone are:
+  #
+  # GASearch -> the backbone is defined by the GA. This option not use pre trained models.
+  #
+  # For CNN and CNN/MLP, is used pre-trained models like: VGG16, VGG19, ResNet50, ResNet101, 
+  # ResNet152, ResNet50V2, ResNet101V2,ResNet152V2, InceptionV3, InceptionResNetV2, MobileNet, 
+  # MobileNetV2, DenseNet121, DenseNet169, DenseNet201, NASNetMobile, NASNetLarge
+  #
+  # For MLP is created a MLP with 3 Dense layers and the final layer with number of neurons equal number of classes.
+  #
+  #
+  # In Segmentation tasks this backbone will be used as an encoder, the final
+  # arange depends of segmentation architecture
+  BACKBONE: "GASearch"
+
+  # flat to activates feature selection
+  FEATURE_SELECTION: false  
 
   # Define input shape of experiment
   INPUT_SHAPE: [150, 150, 3]
+  
+  # Define the Dropout rate to be used by the model
+  # Is used only when the BACKBONE is not "GASearch"
+  DROPOUT: 0.2
 ```
 
 ------------------------------
@@ -285,7 +330,11 @@ SOLVER:
   # The values follow the keras API
   METRICS: ["categorical_accuracy"]
   
-  # Number of folds to be user by the cross validation method
+  # flat to activates cross validation
+  CROSS_VALIDATION: true
+
+  # Number of folds to be user by the cross validation method,
+  # if CROSS_VALIDATION is activated
   CROSS_VALIDATION_FOLDS: 10
 
   # Test fold size to be used on train test split
@@ -294,6 +343,22 @@ SOLVER:
   # where the random seed is determined by the generation id, that is, 
   # each generation the training and test folds change
   TEST_SIZE: 0.2
+  
+  # Batch size to be used during the model train
+  # Is used only when the BACKBONE is not "GASearch"
+  BATCH_SIZE: 128
+
+  # Number of epochs to train the model
+  # Is used only when the BACKBONE is not "GASearch"
+  EPOCHS: 100
+
+  # Optimizer used in training the model
+  # Is used only when the BACKBONE is not "GASearch"
+  OPTIMIZER: "Adam"
+
+  # Learning rate used in training the model.
+  # Is used only when the BACKBONE is not "GASearch"
+  BASE_LEARNING_RATE: 0.0001
 ```
 
 ------------------------------

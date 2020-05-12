@@ -3,8 +3,8 @@
 import pytest
 from pathlib import Path
 
-from nnga.datasets.image_dataset import ImageDataset
-from nnga.datasets.csv_dataset import CSVDataset
+from nnga.datasets.classification.image_dataset import ImageDataset
+from nnga.datasets.classification.csv_dataset import CSVDataset
 from nnga.genetic_algorithm.ga import GA
 from nnga.utils.logger import setup_logger
 from nnga import ROOT

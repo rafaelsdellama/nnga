@@ -24,14 +24,20 @@ from tensorflow.keras.initializers import (
     he_uniform,
 )
 
+from tensorflow.keras.applications import (
+    VGG16, VGG19, ResNet50, ResNet101, ResNet152, ResNet50V2, ResNet101V2,
+    ResNet152V2, InceptionV3, InceptionResNetV2, MobileNet, MobileNetV2, DenseNet121,
+    DenseNet169, DenseNet201, NASNetMobile, NASNetLarge
 
-REGULARIZER = {
+)
+
+REGULARIZERS = {
     "l1": l1(0.01),
     "l2": l2(0.01),
     "l1_l2": l1_l2(l1=0.01, l2=0.01),
 }
 
-INICIALIZER = {
+INICIALIZERS = {
     "Zeros": Zeros(),
     "Ones": Ones(),
     "RandomNormal": RandomNormal(mean=0.0, stddev=0.05),
@@ -49,7 +55,7 @@ INICIALIZER = {
     "he_uniform": he_uniform(),
 }
 
-OPTIMIZER = {
+OPTIMIZERS = {
     "Adam": Adam,
     "SGD": SGD,
     "RMSprop": RMSprop,
@@ -59,6 +65,22 @@ OPTIMIZER = {
     "Nadam": Nadam,
 }
 
-
-def create_optimizer(op, lr):
-    return OPTIMIZER.get(op)(lr=lr)
+BACKBONES = {
+    "VGG16": VGG16,
+    "VGG19": VGG19,
+    "ResNet50": ResNet50,
+    "ResNet101": ResNet101,
+    "ResNet152": ResNet152,
+    "ResNet50V2": ResNet50V2,
+    "ResNet101V2": ResNet101V2,
+    "ResNet152V2": ResNet152V2,
+    "InceptionV3": InceptionV3,
+    "InceptionResNetV2": InceptionResNetV2,
+    "MobileNet": MobileNet,
+    "MobileNetV2": MobileNetV2,
+    "DenseNet121": DenseNet121,
+    "DenseNet169": DenseNet169,
+    "DenseNet201": DenseNet201,
+    "NASNetMobile": NASNetMobile,
+    "NASNetLarge": NASNetLarge,
+}

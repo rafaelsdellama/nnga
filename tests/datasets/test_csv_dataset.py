@@ -2,7 +2,7 @@
 import pytest
 from pathlib import Path
 
-from nnga.datasets.csv_dataset import CSVDataset
+from nnga.datasets.classification.csv_dataset import CSVDataset
 from nnga import ROOT
 from nnga.configs import cfg
 

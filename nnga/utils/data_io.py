@@ -6,6 +6,8 @@ import numpy as np
 import cv2
 import scikitplot as skplt
 import csv
+from nnga.configs import export_config
+import json
 
 
 def create_dir(path):
@@ -87,10 +89,11 @@ def save_statistic(path, seed, statistic):
         Returns
         -------
     """
-    create_dir(Path(path, str(seed)))
+    out_dir = Path(path, str(seed))
+    create_dir(out_dir)
 
-    statistic_dir = Path(path, str(seed), f"results.csv").as_posix()
-    plot_dir = Path(path, str(seed), f"Generations_GA.png").as_posix()
+    statistic_dir = Path(out_dir, f"results.csv").as_posix()
+    plot_dir = Path(out_dir, f"Generations_GA.png").as_posix()
 
     df = pd.DataFrame(
         statistic, columns=["mean_fitness", "best_fitness", "best_indiv"]
@@ -128,8 +131,9 @@ def save_pop(path, seed, pop):
         Returns
         -------
     """
-    create_dir(Path(path, str(seed)))
-    pop_dir = Path(path, str(seed), f"pop.csv").as_posix()
+    out_dir = Path(path, str(seed))
+    create_dir(out_dir)
+    pop_dir = Path(out_dir, f"pop.csv").as_posix()
 
     pop_list = []
     fitness_list = []
@@ -160,9 +164,11 @@ def save_history(path, seed, model_history):
         Returns
         -------
     """
-    create_dir(Path(path, str(seed)))
+    out_dir = Path(path, str(seed), 'metrics')
+    create_dir(out_dir)
+
     legend = []
-    plot_dir = Path(path, str(seed), f"history_model.png").as_posix()
+    plot_dir = Path(out_dir, "history_model.png").as_posix()
     if "acc" in model_history:
         plt.plot(model_history["acc"], "r")
         legend.append("Training accuracy")
@@ -230,12 +236,36 @@ def save_model(path, seed, model):
         Returns
         -------
     """
-    create_dir(Path(path, str(seed)))
+    out_dir = Path(path, str(seed))
+    create_dir(out_dir)
 
-    model_dir = Path(path, str(seed), f"model").as_posix()
+    model_dir = Path(out_dir, "model").as_posix()
     with open(model_dir + ".json", "w") as json_file:
         json_file.write(model.to_json())
     model.save_weights(model_dir + ".h5")
+
+
+def save_cfg(path, seed, cfg):
+    """
+        Save config
+
+        Parameters
+        ----------
+        path : str
+            Directory path
+
+        seed: int
+            Seed from GA
+
+        cfg: {yacs.config.CfgNode}
+            Loaded experiment config
+
+        Returns
+        -------
+    """
+    out_dir = Path(path, str(seed))
+    create_dir(out_dir)
+    export_config(Path(out_dir, f"config.yaml").as_posix())
 
 
 def save_roc_curve(path, seed, lbl, predict_proba, labels):
@@ -262,9 +292,10 @@ def save_roc_curve(path, seed, lbl, predict_proba, labels):
         Returns
         -------
     """
-    create_dir(Path(path, str(seed)))
+    out_dir = Path(path, str(seed), 'metrics')
+    create_dir(out_dir)
 
-    plot_dir = Path(path, str(seed), f"roc_curve.png").as_posix()
+    plot_dir = Path(out_dir, f"roc_curve.png").as_posix()
     skplt.metrics.plot_roc([labels[i] for i in lbl], predict_proba)
     plt.savefig(plot_dir)
     plt.clf()
@@ -290,10 +321,12 @@ def save_metrics(path, seed, metrics):
         Returns
         -------
     """
-    create_dir(Path(path, str(seed)))
-    file_name = Path(path, str(seed), f"metrics.txt").as_posix()
+    out_dir = Path(path, str(seed), 'metrics')
+    create_dir(out_dir)
 
-    file = open(file_name, "w")
+    file_name = Path(out_dir, "metrics.txt").as_posix()
+
+    file = open(file_name, "a")
 
     for key, value in metrics.items():
         file.write(key)
@@ -301,6 +334,60 @@ def save_metrics(path, seed, metrics):
         file.write(value)
         file.write("\n\n")
 
+    file.close()
+
+
+def save_scale_parameters(path, scale_parameters, seed=''):
+    """
+        Save all Metrics
+
+        Parameters
+        ----------
+        path : str
+            Directory path
+
+        scale_parameters: Dict
+            Dict containing the scale parameters
+
+        seed: int
+            Seed from GA
+
+        Returns
+        -------
+    """
+    out_dir = Path(path, str(seed))
+    create_dir(out_dir)
+    file_name = Path(out_dir, f"scale_parameters.json").as_posix()
+
+    file = open(file_name, "w")
+    json.dump(scale_parameters, file)
+    file.close()
+
+
+def save_feature_selected(path, feature_selected, seed=''):
+    """
+        Save all Metrics
+
+        Parameters
+        ----------
+        path : str
+            Directory path
+
+        feature_selected: List
+            List with features selected
+
+        seed: int
+            Seed from GA
+
+        Returns
+        -------
+    """
+    out_dir = Path(path, str(seed))
+    create_dir(out_dir)
+    file_name = Path(out_dir, f"feature_selected.json").as_posix()
+
+    file = open(file_name, "w")
+    json.dump(feature_selected, file)
     file.close()
 
 
@@ -353,6 +440,37 @@ def load_csv_file(path, usecols, chunksize=None):
             df = pd.read_csv(path, usecols=usecols, chunksize=chunksize)
 
     return df
+
+
+def load_csv_line(path, sep, idx):
+    """
+            Load csv line
+
+            Parameters
+            ----------
+            path : str
+                CSV directory path
+
+            sep: str
+                Separator from file
+
+            idx: int
+                Row index to be read
+
+            Returns
+            -------
+            header: list, sample: list
+
+        """
+    f = open(path)
+    header = f.readline().replace("\n", "").split(sep)
+
+    for _ in range(idx):
+        f.readline()
+
+    sample = f.readline().replace("\n", "").split(sep)
+
+    return header, sample
 
 
 def load_image(path, input_shape, preserve_ratio=True):

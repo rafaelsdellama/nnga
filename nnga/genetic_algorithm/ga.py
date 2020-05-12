@@ -7,13 +7,15 @@ import operator
 import tensorflow as tf
 
 from nnga.genetic_algorithm.population import Population
-from nnga.genetic_algorithm import MODELS, set_parameters
+from nnga.genetic_algorithm import set_parameters
+from nnga import ARCHITECTURES
 from nnga.utils.data_io import (
     load_statistic,
     load_pop,
     save_statistic,
     save_pop,
 )
+from nnga.model_training import ModelTraining
 from nnga.utils.helper import dump_tensors
 
 
@@ -57,10 +59,7 @@ class GA:
         self._statistic = []
 
         self.continue_exec = cfg.GA.CONTINUE_EXEC
-        self.feature_selection = cfg.GA.FEATURE_SELECTION
-
-        self.cv_folds = cfg.SOLVER.CROSS_VALIDATION_FOLDS
-        self.test_size = cfg.SOLVER.TEST_SIZE
+        self.feature_selection = cfg.MODEL.FEATURE_SELECTION
 
         self._path = cfg.OUTPUT_DIR
         self._logger = logger
@@ -184,23 +183,7 @@ class GA:
             raise ValueError("GA.CONTINUE_EXEC must be a bool")
 
         if not isinstance(self.feature_selection, bool):
-            raise ValueError("GA.FEATURE_SELECTION must be a bool")
-
-        if not isinstance(self.cv_folds, int) or self.cv_folds <= 1:
-            raise ValueError(
-                "SOLVER.CROSS_VALIDATION_FOLDS must be a int "
-                "number (1 < SOLVER.CROSS_VALIDATION_FOLDS)"
-            )
-
-        if (
-            not isinstance(self.test_size, float)
-            or self.test_size <= 0
-            or self.test_size >= 1
-        ):
-            raise ValueError(
-                "SOLVER.CROSS_VALIDATION_FOLDS must be a float "
-                "number (0 < SOLVER.TEST_SIZE < 1)"
-            )
+            raise ValueError("MODEL.FEATURE_SELECTION must be a bool")
 
         self.old_pop = Population(self.population_size)
         self.new_pop = Population(self.population_size)
@@ -210,8 +193,8 @@ class GA:
         else:
             self._seeds = cfg.GA.SEED
 
-        if self.feature_selection and "CSV" in self.datasets["TRAIN"]:
-            self._features = self.datasets["TRAIN"]["CSV"].features
+        if self.feature_selection and "MLP" in cfg.MODEL.ARCHITECTURE:
+            self._features = self.datasets["TRAIN"].features
         else:
             self._features = []
             self.feature_selection = False
@@ -221,8 +204,10 @@ class GA:
             self._name_features,
             self._parameters_interval,
         ) = set_parameters(
-            cfg.GA.SEARCH_SPACE, cfg.MODEL.ARCHITECTURE, self._features
+            cfg.GA.SEARCH_SPACE, cfg.MODEL.ARCHITECTURE,
+            cfg.MODEL.BACKBONE, self._features
         )
+
         self._encoding_keys = list(self._encoding.keys())
 
         self.chromosome_length = len(self._encoding)
@@ -361,14 +346,14 @@ class GA:
 
         if self.elitism > 0:
             for i in range(self.elitism):
-                # self.new_pop.indivs[i] = \
-                #     self.old_pop.indivs[self.old_pop.bestIndiv[i]]
+                self.new_pop.indivs[i] = \
+                    self.old_pop.indivs[self.old_pop.bestIndiv[i]]
                 self.new_pop.indivs[i].fitness = self._calculate_fitness(
                     self.new_pop.indivs[i].chromosome, i, gen
                 )
-                self.new_pop.indivs[i].fitness = self.old_pop.indivs[
-                    self.old_pop.bestIndiv[i]
-                ].fitness
+                # self.new_pop.indivs[i].fitness = self.old_pop.indivs[
+                #     self.old_pop.bestIndiv[i]
+                # ].fitness
 
         for i in range(self.elitism, self.population_size, 2):
             parent_1 = self._select_individual_by_tournament(
@@ -679,14 +664,29 @@ class GA:
 
         if self.feature_selection:
             self._print_features_selected(indiv)
+            indexes = [
+                i
+                for i, value in enumerate(self._encoding_keys)
+                if "feature_selection_" in value
+            ]
+            attributes_selected = [
+                i for i, value in enumerate(indexes) if indiv[value]
+            ]
+        else:
+            attributes_selected = None
 
-        model = MODELS.get(self._cfg.MODEL.ARCHITECTURE)(
-            self._cfg, self._logger, self.datasets, indiv, self._encoding_keys
-        )
+        MakeModel = ARCHITECTURES.get(self._cfg.MODEL.ARCHITECTURE)
+        model = MakeModel(self._cfg, self._logger, self.datasets['TRAIN'].input_shape,
+                          self.datasets['TRAIN'].n_classes, indiv=indiv,
+                          keys=self._encoding_keys)
 
-        evaluate = model.train_test_split(gen, self.test_size)
+        model_trainner = ModelTraining(self._cfg, model, self._logger, self.datasets,
+                                       indiv, self._encoding_keys, attributes_selected)
+
+        evaluate = model_trainner.train_test_split(seed=gen)
         #fitness = 1 / (1 + evaluate[0])
-        metrics = model.compute_metrics()
+        metrics = model_trainner.compute_metrics()
+
         if metrics is not None:
             fitness = float(metrics['balanced_accuracy_score'])
 
@@ -704,7 +704,7 @@ class GA:
         )
         self._logger.info(f"Fitness: {fitness}\n")
 
-        del model
+        del model_trainner
         dump_tensors()
 
         return fitness
@@ -727,17 +727,33 @@ class GA:
 
         if self.feature_selection:
             self._print_features_selected(indiv)
+            indexes = [
+                i
+                for i, value in enumerate(self._encoding_keys)
+                if "feature_selection_" in value
+            ]
+            attributes_selected = [
+                i for i, value in enumerate(indexes) if indiv[value]
+            ]
+        else:
+            attributes_selected = None
 
-        model = MODELS.get(self._cfg.MODEL.ARCHITECTURE)(
-            self._cfg, self._logger, self.datasets, indiv, self._encoding_keys
-        )
+        MakeModel = ARCHITECTURES.get(self._cfg.MODEL.ARCHITECTURE)
+        model = MakeModel(self._cfg, self._logger, self.datasets['TRAIN'].input_shape,
+                          self.datasets['TRAIN'].n_classes, indiv=indiv,
+                          keys=self._encoding_keys)
 
-        cv = model.cross_validation(k=self.cv_folds, seed=gen)
-        self._logger.info(f"Cross validation statistics:\n{cv}")
+        model_trainner = ModelTraining(self._cfg, model, self._logger, self.datasets,
+                                       indiv, self._encoding_keys, attributes_selected)
 
-        evaluate = model.train()
+        if self._cfg.SOLVER.CROSS_VALIDATION:
+            cv = model_trainner.cross_validation(seed=seed, save=True)
+            self._logger.info(f"Cross validation statistics:\n{cv}")
+
+        evaluate = model_trainner.fit()
         #fitness = 1 / (1 + evaluate[0])
-        metrics = model.compute_metrics()
+        metrics = model_trainner.compute_metrics(seed=seed, save=True)
+
         if metrics is not None:
             fitness = float(metrics['balanced_accuracy_score'])
 
@@ -756,9 +772,7 @@ class GA:
         self._logger.info(f"Fitness solution: {fitness}")
 
         model.save_model(seed)
-        model.save_history(seed)
-        model.save_metrics(seed)
-        model.save_roc_curve(seed)
+        self.datasets['TRAIN'].save_parameters(self._path, seed)
 
         del model
         dump_tensors()

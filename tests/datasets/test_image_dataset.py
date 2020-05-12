@@ -2,7 +2,7 @@
 import pytest
 from pathlib import Path
 
-from nnga.datasets.image_dataset import ImageDataset
+from nnga.datasets.classification.image_dataset import ImageDataset
 from nnga import ROOT
 from nnga.configs import cfg
 
