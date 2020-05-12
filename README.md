@@ -93,7 +93,7 @@ Parameters:
 
 The Genetic Algorithm chromosome that encodes this model is shown below:
 
-![indiv_mlp_feature](/doc/images/indiv_mlp_feature.jpg)
+<img src="./doc/images/indiv_mlp_feature.jpg" width="121" height="55">
 
 #### Multilayer Perceptron (MLP)
 Parameters:
@@ -156,7 +156,7 @@ Parameters:
 
 The Genetic Algorithm chromosome that encodes this model is shown below:
 
-![indiv_mlp_feature](/doc/images/indiv_mlp_feature.jpg)
+<img src="./doc/images/indiv_mlp_feature.jpg" width="121" height="55">
 
 #### Hybrid CNN-MLP Model (CNN/MLP)
 Parameters:

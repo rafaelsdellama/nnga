@@ -23,18 +23,12 @@ def train(cfg, logger):
     Raises:
         RuntimeError: For wrong config options
     """
-    # TODO: save feature selected
-    # TODO: save scaler parameters
-    # TODO: save config
-    # TODO: GA only for feature selection
-    # TODO: task train model withoud GA - pre-trained models
-    # TODO: update documentation
 
     # TODO: predcit with saved model
     # TODO: update tests
 
-    # TODO: tensorboard
     # TODO: Segmentation
+    # TODO: tensorboard
     # TODO: pyRadiomics and dataset creator
 
     if cfg.TASK not in TASKS:
