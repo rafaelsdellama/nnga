@@ -1,9 +1,14 @@
 import os
 import numpy as np
 from pathlib import Path
-from nnga.utils.data_io import load_image
-from nnga.datasets.classification.base_dataset import BaseDataset
+from nnga.utils.data_io import (
+    load_image,
+    save_encoder_parameters,
+    save_decoder_parameters,
+)
+from nnga.datasets.base_dataset import BaseDataset
 from nnga.utils.data_collector import read_dataset
+from nnga.utils.data_manipulation import adjust_image_shape, normalize_image
 
 
 class ImageDataset(BaseDataset):
@@ -23,11 +28,13 @@ class ImageDataset(BaseDataset):
     def __init__(self, cfg, logger, is_validation=False):
         self._is_validation = is_validation
         if self._is_validation:
-            self._dataset_img_path = os.path.expandvars(cfg.DATASET.VAL_IMG_PATH)
+            self._dataset_img_path = os.path.expandvars(
+                cfg.DATASET.VAL_IMG_PATH
+            )
         else:
-            self._dataset_img_path = os.path.expandvars(cfg.DATASET.TRAIN_IMG_PATH)
-
-        super().__init__(cfg, logger, is_validation)
+            self._dataset_img_path = os.path.expandvars(
+                cfg.DATASET.TRAIN_IMG_PATH
+            )
 
         self.image_shape = cfg.MODEL.INPUT_SHAPE
         self.preserve_ratio = cfg.DATASET.PRESERVE_IMG_RATIO
@@ -42,6 +49,8 @@ class ImageDataset(BaseDataset):
             raise ValueError(
                 "MODEL.INPUT_SHAPE must be a tuple" "(width, height, channels)"
             )
+
+        super().__init__(cfg, logger, is_validation)
 
     @property
     def input_shape(self):
@@ -59,15 +68,24 @@ class ImageDataset(BaseDataset):
             represents dataset. Any huge data is load here
             just create a kind of index.
         """
-        data = read_dataset(self._dataset_img_path, format="png, jpg, jpeg, tif",)
+        data = read_dataset(
+            self._dataset_img_path, format="png, jpg, jpeg, tif",
+        )
 
         self._metadata = {
             Path(img_path).name.split(".")[0]: {
                 "image_path": img_path,
-                "label": label,
+                "label": str(label),
             }
             for img_path, label in zip(data["data"], data["labels"])
         }
+
+    def save_parameters(self):
+        """
+        Save parameters from dataset
+        """
+        save_encoder_parameters(self._output_dir, self._class_to_id)
+        save_decoder_parameters(self._output_dir, self._id_to_class)
 
     def _data_generation(self, indexes):
         """
@@ -85,23 +103,20 @@ class ImageDataset(BaseDataset):
         """
         # TODO: Data augmentation
         images = [
-            load_image(
-                self._metadata[idx]["image_path"],
-                self.image_shape,
-                self.preserve_ratio,
+            normalize_image(
+                adjust_image_shape(
+                    load_image(self._metadata[idx]["image_path"],),
+                    self.image_shape,
+                    self.preserve_ratio,
+                )
             )
-            / 255.0
             for idx in indexes
         ]
 
         labels = []
         for idx in indexes:
             np_label = np.zeros(len(self._labels))
-            np_label[
-                self.label_encode(
-                    self._metadata[idx]["label"]
-                )
-            ] = 1
+            np_label[self.label_encode(self._metadata[idx]["label"])] = 1
             labels.append(np_label)
 
         self._generator_classes.extend(labels)

@@ -1,12 +1,7 @@
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import (
     Dense,
-    Flatten,
-    Conv2D,
-    MaxPooling2D,
     Dropout,
-    BatchNormalization,
-    Input,
     concatenate,
 )
 
@@ -19,6 +14,8 @@ from nnga.architectures import (
     OPTIMIZERS,
     REGULARIZERS,
 )
+from tensorflow.keras import backend as K
+
 
 class CNN_MLP(BaseNeuralNetwork):
     """ This class implements the Hibrid Model defined by genetic algorithm indiv
@@ -47,10 +44,19 @@ class CNN_MLP(BaseNeuralNetwork):
         -------
     """
 
-    def __init__(self, cfg, logger, input_shape, output_dim, include_top=True,
-                 indiv=None, keys=None):
-        super().__init__(cfg, logger, input_shape, output_dim, include_top
-                         , indiv, keys)
+    def __init__(
+        self,
+        cfg,
+        logger,
+        input_shape,
+        output_dim,
+        include_top=True,
+        indiv=None,
+        keys=None,
+    ):
+        super().__init__(
+            cfg, logger, input_shape, output_dim, include_top, indiv, keys
+        )
 
     def create_model_ga(self):
         """ This method create the Hibrid Model defined by genetic algorithm indiv
@@ -75,19 +81,34 @@ class CNN_MLP(BaseNeuralNetwork):
             self.indiv[self.keys.index("bias_regularizer")]
         )
 
-        mlp = MLP(self._cfg, self._logger, self.input_shape[0],
-                  self.output_dim, False,
-                  self.indiv, self.keys).get_model()
-        cnn = CNN(self._cfg, self._logger, self.input_shape[1],
-                  self.output_dim, False,
-                  self.indiv, self.keys).get_model()
+        mlp = MLP(
+            self._cfg,
+            self._logger,
+            self.input_shape[0],
+            self.output_dim,
+            False,
+            self.indiv,
+            self.keys,
+        ).get_model()
+        cnn = CNN(
+            self._cfg,
+            self._logger,
+            self.input_shape[1],
+            self.output_dim,
+            False,
+            self.indiv,
+            self.keys,
+        ).get_model()
 
         cnn_mlp = concatenate([mlp.output, cnn.output])
 
         if self.include_top:
             # Fully connected
             for i in range(sum("units_" in s for s in self.keys)):
-                if i == 0 or self.indiv[self.keys.index(f"activate_dense_{i}")]:
+                if (
+                    i == 0
+                    or self.indiv[self.keys.index(f"activate_dense_{i}")]
+                ):
                     cnn_mlp = Dense(
                         units=self.indiv[self.keys.index(f"units_{i}")],
                         activation=self.indiv[
@@ -121,32 +142,43 @@ class CNN_MLP(BaseNeuralNetwork):
             -------
 
             """
-        mlp = MLP(self._cfg, self._logger, self.input_shape[0],
-                  self.output_dim, include_top=False).get_model()
-        cnn = CNN(self._cfg, self._logger, self.input_shape[1],
-                  self.output_dim, include_top=False).get_model()
+        mlp = MLP(
+            self._cfg,
+            self._logger,
+            self.input_shape[0],
+            self.output_dim,
+            include_top=False,
+            indiv=self.indiv,
+            keys=self.keys,
+        ).get_model()
+        cnn = CNN(
+            self._cfg,
+            self._logger,
+            self.input_shape[1],
+            self.output_dim,
+            include_top=False,
+            indiv=self.indiv,
+            keys=self.keys,
+        ).get_model()
 
         cnn_mlp = concatenate([mlp.output, cnn.output])
 
         if self.include_top:
+            C = K.int_shape(cnn_mlp)[-1]
+            cnn_mlp = Dense(units=max(C, self.output_dim), activation="relu",)(
+                cnn_mlp
+            )
+            cnn_mlp = Dropout(self._cfg.MODEL.DROPOUT)(cnn_mlp)
             cnn_mlp = Dense(
-                units=pow(self.output_dim, 8),
-                activation='relu',
+                units=max(C / 2, self.output_dim), activation="relu",
             )(cnn_mlp)
             cnn_mlp = Dropout(self._cfg.MODEL.DROPOUT)(cnn_mlp)
             cnn_mlp = Dense(
-                units=pow(self.output_dim, 6),
-                activation='relu',
+                units=max(C / 4, self.output_dim), activation="relu",
             )(cnn_mlp)
             cnn_mlp = Dropout(self._cfg.MODEL.DROPOUT)(cnn_mlp)
-            cnn_mlp = Dense(
-                units=pow(self.output_dim, 4),
-                activation='relu',
-            )(cnn_mlp)
-            cnn_mlp = Dropout(self._cfg.MODEL.DROPOUT)(cnn_mlp)
-            cnn_mlp = Dense(
-                units=self.output_dim,
-                activation='softmax',
-            )(cnn_mlp)
+            cnn_mlp = Dense(units=self.output_dim, activation="softmax",)(
+                cnn_mlp
+            )
 
         self._model = Model(inputs=[mlp.input, cnn.input], outputs=cnn_mlp)

@@ -151,7 +151,9 @@ def set_parameters(parameters, architecture, backbone, features):
         PARAMETERS_INTERVAL[key]["value"] = value
 
     check_parameters()
-    ENCODING, NAME_FEATURES_SELECTION = create_encoding(architecture, backbone, features)
+    ENCODING, NAME_FEATURES_SELECTION = create_encoding(
+        architecture, backbone, features
+    )
 
     return ENCODING, NAME_FEATURES_SELECTION, PARAMETERS_INTERVAL
 
@@ -238,7 +240,7 @@ def create_encoding(architecture, backbone, features):
     """
     ENCODING = {}
     NAME_FEATURES_SELECTION = {}
-    if backbone == 'GASearch':
+    if backbone == "GASearch":
         ENCODING.update(PARAMETERS_ARCHITECTURE["DEFAULT"])
 
         if architecture == "CNN" or architecture == "CNN/MLP":

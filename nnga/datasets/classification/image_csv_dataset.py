@@ -1,11 +1,17 @@
-import os
 import numpy as np
 from pathlib import Path
-from nnga.utils.data_io import load_image, load_csv_file
+from statistics import mean, stdev
 from nnga.datasets.classification.csv_dataset import CSVDataset
 from nnga.datasets.classification.image_dataset import ImageDataset
 from nnga.utils.data_collector import read_dataset
-from nnga.utils.data_io import load_csv_file, save_feature_selected
+from nnga.utils.data_io import (
+    load_image,
+    load_csv_file,
+    save_encoder_parameters,
+    save_decoder_parameters,
+    save_scale_parameters,
+)
+from nnga.utils.data_manipulation import adjust_image_shape, normalize_image
 
 
 class ImageCSVDataset(CSVDataset, ImageDataset):
@@ -21,6 +27,7 @@ class ImageCSVDataset(CSVDataset, ImageDataset):
             it's important select information on experiment
             config to configure dataset loader corretly for validation
       """
+
     def __init__(self, cfg, logger, is_validation=False):
         super().__init__(cfg, logger, is_validation)
 
@@ -57,17 +64,22 @@ class ImageCSVDataset(CSVDataset, ImageDataset):
         if "id" in self._features:
             col_list.append("id")
             self._features.remove("id")
+        else:
+            raise RuntimeError(
+                "The id column does not found!\n" "Check the dataset!"
+            )
 
         for df in load_csv_file(
-                self._dataset_csv_path, usecols=col_list, chunksize=10
+            self._dataset_csv_path, usecols=col_list, chunksize=10
         ):
             for index, row in df.iterrows():
-                self._metadata[row["id"] if "id" in row else index] = {
+                self._metadata[str(row["id"])] = {
                     "line_path": index,
-                    "label": row["class"] if "class" in row else None,
                 }
 
-        data = read_dataset(self._dataset_img_path, format="png, jpg, jpeg, tif",)
+        data = read_dataset(
+            self._dataset_img_path, format="png, jpg, jpeg, tif",
+        )
 
         _metadata_aux = {
             Path(img_path).name.split(".")[0]: {
@@ -85,19 +97,27 @@ class ImageCSVDataset(CSVDataset, ImageDataset):
         for key in self._metadata.keys():
             self._metadata[key].update(_metadata_aux[key])
 
-    def save_parameters(self, path, seed=''):
+    def _make_scale_parameters(self):
+        """Calculate the scale parameters to be used
+        """
+        for key in self._features:
+            df = load_csv_file(self._dataset_csv_path, usecols=[key])
+            df[key] = df[key].astype(float)
+
+            self.scale_parameters[key] = {
+                "min": min(df[key].values),
+                "max": max(df[key].values),
+                "mean": mean(df[key].values),
+                "stdev": stdev(df[key].values),
+            }
+
+    def save_parameters(self):
         """
         Save parameters from dataset
-
-        Parameters
-        ----------
-        path : str
-            Directory path
-        seed: int
-            Seed from GA
         """
-        if self.attributes_selected is not None:
-            save_feature_selected(path, [self._features[i] for i in self.attributes_selected], seed)
+        save_scale_parameters(self._output_dir, self.scale_parameters)
+        save_encoder_parameters(self._output_dir, self._class_to_id)
+        save_decoder_parameters(self._output_dir, self._id_to_class)
 
     def _data_generation(self, indexes):
         """
@@ -115,33 +135,27 @@ class ImageCSVDataset(CSVDataset, ImageDataset):
         """
         # TODO: Data augmentation
         images = [
-            load_image(
-                self._metadata[idx]["image_path"],
-                self.image_shape,
-                self.preserve_ratio,
+            normalize_image(
+                adjust_image_shape(
+                    load_image(self._metadata[idx]["image_path"],),
+                    self.image_shape,
+                    self.preserve_ratio,
+                )
             )
-            / 255.0
             for idx in indexes
         ]
 
-        attributes = [
-            self.load_sample_by_idx(idx)
-            for idx in indexes
-        ]
+        attributes = [self.load_sample_by_idx(idx) for idx in indexes]
 
         labels = []
         for i, idx in enumerate(indexes):
             np_label = np.zeros(len(self._labels))
-            np_label[
-                self.label_encode(
-                    self._metadata[idx]["label"]
-                )
-            ] = 1
+            np_label[self.label_encode(self._metadata[idx]["label"])] = 1
             labels.append(np_label)
 
-            if self.attributes_selected is not None:
+            if self.features_selected is not None:
                 attributes[i] = [
-                    attributes[i][index] for index in self.attributes_selected
+                    attributes[i][index] for index in self.features_selected
                 ]
 
         self._generator_classes.extend(labels)

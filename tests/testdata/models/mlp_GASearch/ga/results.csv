@@ -1,0 +1,13 @@
+mean_fitness,best_fitness,best_indiv
+0.2765625,0.6125,"['tanh' 3 10 'Adam' 0.05 None 'glorot_uniform' None None 15 0.0 True 15
+ 0.1 'MinMax']"
+0.4296875,0.6125,"['tanh' 3 10 'Adam' 0.05 None 'glorot_uniform' None None 15 0.0 True 15
+ 0.1 'MinMax']"
+0.5890624999999999,0.625,"['tanh' 3 10 'Adam' 0.05 None 'glorot_uniform' None None 15 0.0 True 15
+ 0.1 'MinMax']"
+0.628125,0.675,"['tanh' 3 10 'Adam' 0.05 None 'glorot_uniform' None None 15 0.0 True 15
+ 0.1 'MinMax']"
+0.640625,0.675,"['tanh' 3 10 'Adam' 0.05 None 'glorot_uniform' None None 15 0.0 True 15
+ 0.1 'MinMax']"
+0.5859375,0.6125,"['tanh' 3 10 'Adam' 0.05 None 'glorot_uniform' None None 15 0.0 True 15
+ 0.1 'MinMax']"

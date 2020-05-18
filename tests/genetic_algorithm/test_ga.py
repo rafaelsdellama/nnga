@@ -1,150 +1,89 @@
 """Tests for GA."""
-
 import pytest
 from pathlib import Path
-
-from nnga.datasets.classification.image_dataset import ImageDataset
-from nnga.datasets.classification.csv_dataset import CSVDataset
-from nnga.genetic_algorithm.ga import GA
-from nnga.utils.logger import setup_logger
 from nnga import ROOT
 from nnga.configs import cfg
+from nnga.genetic_algorithm.ga import GA
+from nnga import DATASETS
+from nnga.utils.logger import setup_logger
 
 test_directory = Path(ROOT, "tests", "testdata").as_posix()
 
-iris = Path(test_directory, "iris.csv").as_posix()
-iris2 = Path(test_directory, "iris2.csv").as_posix()
-img_directory = Path(test_directory, "img_dataset").as_posix()
-img_features = Path(test_directory, "img_dataset", "features.csv").as_posix()
-img_features2 = Path(test_directory, "img_dataset", "features2.csv").as_posix()
+img_mnist = Path(test_directory, "datasets", "mnist").as_posix()
+features_mnist = Path(
+    test_directory, "datasets", "mnist", "features.csv"
+).as_posix()
 
 pytest_output_directory = "./Pytest_output"
-
 logger = setup_logger("Pytest", pytest_output_directory)
 
 
 @pytest.mark.parametrize(
-    "data_directory, feature_selection, hypermutation, imigrants",
-    [(iris, True, False, False),
-     (iris, False, False, False),
-     (iris2, True, False, False),
-     (iris2, False, False, False),
-     (iris, True, True, False),
-     (iris, False, False, True),
-     ],
+    "architecture, backbone, feature_selection, hypermutation, imigrants",
+    [
+        ("MLP", "MLP", True, False, False),
+        ("MLP", "MLP", True, True, False),
+        ("MLP", "MLP", True, False, True),
+        ("MLP", "GASearch", False, False, False),
+        ("MLP", "GASearch", False, True, False),
+        ("MLP", "GASearch", False, False, True),
+        ("MLP", "GASearch", True, False, False),
+        ("MLP", "GASearch", True, True, False),
+        ("MLP", "GASearch", True, False, True),
+        ("CNN", "GASearch", False, False, False),
+        ("CNN", "GASearch", False, True, False),
+        ("CNN", "GASearch", False, False, True),
+        ("CNN/MLP", "VGG16", True, False, False),
+        ("CNN/MLP", "VGG16", True, True, False),
+        ("CNN/MLP", "VGG16", True, False, True),
+        ("CNN/MLP", "GASearch", True, False, False),
+        ("CNN/MLP", "GASearch", True, True, False),
+        ("CNN/MLP", "GASearch", True, False, True),
+        ("CNN/MLP", "GASearch", False, False, False),
+        ("CNN/MLP", "GASearch", False, True, False),
+        ("CNN/MLP", "GASearch", False, False, True),
+    ],
 )
-def test_exec_GA_MLP_sucess(data_directory, feature_selection, hypermutation, imigrants):
+def test_fit_model_GA(
+    architecture, backbone, feature_selection, hypermutation, imigrants
+):
     _cfg = cfg.clone()
-    _cfg.GA.NRO_MAX_GEN = 2
-    _cfg.GA.POPULATION_SIZE = 4
-    _cfg.GA.FEATURE_SELECTION = feature_selection
+    _cfg.OUTPUT_DIR = pytest_output_directory
+    _cfg.TASK = "Classification"
+    _cfg.DATASET.TRAIN_IMG_PATH = img_mnist
+    _cfg.DATASET.TRAIN_CSV_PATH = features_mnist
+    _cfg.DATASET.VAL_IMG_PATH = img_mnist
+    _cfg.DATASET.VAL_CSV_PATH = features_mnist
+    _cfg.MODEL.INPUT_SHAPE = (64, 64, 3)
+    _cfg.MODEL.ARCHITECTURE = architecture
+    _cfg.MODEL.BACKBONE = backbone
+    _cfg.MODEL.FEATURE_SELECTION = feature_selection
+    _cfg.GA.NRO_MAX_GEN = 4
+    _cfg.GA.POPULATION_SIZE = 3
     _cfg.GA.HYPERMUTATION = hypermutation
+    _cfg.GA.HYPERMUTATION_CYCLE_SIZE = 1
     _cfg.GA.RANDOM_IMIGRANTS = imigrants
-    _cfg.GA.SEARCH_SPACE.UNITS = [2, 5]
-    _cfg.GA.SEARCH_SPACE.EPOCHS = [3, 4]
-    _cfg.GA.SEARCH_SPACE.MAX_DENSE_LAYERS = 1
-
-    _cfg.DATASET.TRAIN_CSV_PATH = data_directory
-    _cfg.DATASET.VAL_CSV_PATH = data_directory
-
-    _cfg.MODEL.ARCHITECTURE = "MLP"
-
-    datasets = {"TRAIN": {'CSV': CSVDataset(_cfg, logger)},
-                "VAL": {'CSV': CSVDataset(_cfg, logger, True)}}
-
-    ga = GA(_cfg, logger, datasets)
-    ga.run()
-
-
-@pytest.mark.parametrize(
-    "data_directory",
-    [img_directory,
-     ],
-)
-def test_exec_GA_CNN_sucess(data_directory):
-    _cfg = cfg.clone()
-    _cfg.GA.NRO_MAX_GEN = 2
-    _cfg.GA.POPULATION_SIZE = 4
-    _cfg.GA.SEARCH_SPACE.UNITS = [2, 5]
-    _cfg.GA.SEARCH_SPACE.EPOCHS = [3, 4]
+    _cfg.GA.IMIGRATION_RATE = 0.5
     _cfg.GA.SEARCH_SPACE.MAX_DENSE_LAYERS = 1
     _cfg.GA.SEARCH_SPACE.MAX_CNN_LAYERS = 1
-    _cfg.GA.SEARCH_SPACE.FILTERS = [1, 2]
+    _cfg.GA.SEARCH_SPACE.UNITS = [3, 4]
+    _cfg.GA.SEARCH_SPACE.EPOCHS = [1, 2]
 
-    _cfg.DATASET.TRAIN_IMG_PATH = data_directory
-    _cfg.DATASET.VAL_IMG_PATH = data_directory
-
-    _cfg.MODEL.ARCHITECTURE = "CNN"
-
-    _cfg.SOLVER.CROSS_VALIDATION_FOLDS = 2
-    _cfg.SOLVER.TEST_SIZE = 0.5
-
-    datasets = {"TRAIN": {'IMG': ImageDataset(_cfg, logger)},
-                "VAL": {'IMG': ImageDataset(_cfg, logger, True)}}
-
-    ga = GA(_cfg, logger, datasets)
-    ga.run()
-
-
-@pytest.mark.parametrize(
-    "data_dir, img_dir, feature_selection",
-    [(img_features, img_directory, True),
-     (img_features, img_directory, False),
-     (img_features2, img_directory, True),
-     (img_features2, img_directory, False)
-     ],
-)
-def test_exec_GA_CNN_MLP_sucess(data_dir, img_dir, feature_selection):
-    _cfg = cfg.clone()
-    _cfg.GA.NRO_MAX_GEN = 2
-    _cfg.GA.POPULATION_SIZE = 4
-    _cfg.GA.FEATURE_SELECTION = feature_selection
-    _cfg.GA.SEARCH_SPACE.UNITS = [2, 5]
-    _cfg.GA.SEARCH_SPACE.EPOCHS = [3, 4]
-    _cfg.GA.SEARCH_SPACE.MAX_DENSE_LAYERS = 1
-    _cfg.GA.SEARCH_SPACE.MAX_CNN_LAYERS = 1
-    _cfg.GA.SEARCH_SPACE.FILTERS = [1, 2]
-
-    _cfg.DATASET.TRAIN_CSV_PATH = data_dir
-    _cfg.DATASET.TRAIN_IMG_PATH = img_dir
-    _cfg.DATASET.VAL_CSV_PATH = data_dir
-    _cfg.DATASET.VAL_IMG_PATH = img_dir
-
-    _cfg.MODEL.ARCHITECTURE = "CNN/MLP"
-
-    _cfg.SOLVER.CROSS_VALIDATION_FOLDS = 2
-    _cfg.SOLVER.TEST_SIZE = 0.5
-
+    MakeDataset = DATASETS.get(_cfg.MODEL.ARCHITECTURE)
     datasets = {
-        "TRAIN": {
-            'CSV': CSVDataset(_cfg, logger),
-            'IMG': ImageDataset(_cfg, logger)
-        },
-        "VAL": {
-            'CSV': CSVDataset(_cfg, logger, True),
-            'IMG': ImageDataset(_cfg, logger, True)}}
+        "TRAIN": MakeDataset(_cfg, logger),
+        "VAL": MakeDataset(_cfg, logger, is_validation=True),
+    }
+
+    if hasattr(datasets["TRAIN"], "scale_parameters"):
+        datasets["VAL"].scale_parameters = datasets["TRAIN"].scale_parameters
 
     ga = GA(_cfg, logger, datasets)
     ga.run()
 
 
 @pytest.mark.parametrize(
-    "nro_exec",
-    ['wrong', 0, -1
-     ],
-)
-def test_wrong_nro_exec(nro_exec):
-    _cfg = cfg.clone()
-    _cfg.GA.NRO_MAX_EXEC = nro_exec
-
-    with pytest.raises(ValueError):
-        GA(_cfg, None, None)
-
-
-@pytest.mark.parametrize(
-    "max_gen",
-    ['wrong', 0, -1
-     ],
+    "max_gen", ["wrong", 0, -1],
 )
 def test_wrong_max_gen(max_gen):
     _cfg = cfg.clone()
@@ -155,9 +94,7 @@ def test_wrong_max_gen(max_gen):
 
 
 @pytest.mark.parametrize(
-    "pop_size",
-    ['wrong', 0, -1
-     ],
+    "pop_size", ["wrong", 0, -1],
 )
 def test_wrong_pop_size(pop_size):
     _cfg = cfg.clone()
@@ -168,9 +105,7 @@ def test_wrong_pop_size(pop_size):
 
 
 @pytest.mark.parametrize(
-    "crossover_rate",
-    ['wrong', 2, 1, 0, -1
-     ],
+    "crossover_rate", ["wrong", 2, 1, 0, -1],
 )
 def test_wrong_crossover_rate(crossover_rate):
     _cfg = cfg.clone()
@@ -181,9 +116,7 @@ def test_wrong_crossover_rate(crossover_rate):
 
 
 @pytest.mark.parametrize(
-    "mutation_rate",
-    ['wrong', 2, 1, 0, -1
-     ],
+    "mutation_rate", ["wrong", 2, 1, 0, -1],
 )
 def test_wrong_mutation_rate(mutation_rate):
     _cfg = cfg.clone()
@@ -194,12 +127,7 @@ def test_wrong_mutation_rate(mutation_rate):
 
 
 @pytest.mark.parametrize(
-    "pop_size, elitism",
-    [(5, 'wrong'),
-     (5, 0.1),
-     (5, -1),
-     (5, 10),
-     ],
+    "pop_size, elitism", [(5, "wrong"), (5, 0.1), (5, -1), (5, 10),],
 )
 def test_wrong_elitism(pop_size, elitism):
     _cfg = cfg.clone()
@@ -211,12 +139,7 @@ def test_wrong_elitism(pop_size, elitism):
 
 
 @pytest.mark.parametrize(
-    "pop_size, tournament_size",
-    [(5, 'wrong'),
-     (5, 0.1),
-     (5, -1),
-     (5, 10),
-     ],
+    "pop_size, tournament_size", [(5, "wrong"), (5, 0.1), (5, -1), (5, 10),],
 )
 def test_wrong_tournament_size(pop_size, tournament_size):
     _cfg = cfg.clone()
@@ -228,9 +151,7 @@ def test_wrong_tournament_size(pop_size, tournament_size):
 
 
 @pytest.mark.parametrize(
-    "hypermutation",
-    ['wrong', 0.1, 1,
-     ],
+    "hypermutation", ["wrong", 0.1, 1,],
 )
 def test_wrong_hypermutation(hypermutation):
     _cfg = cfg.clone()
@@ -241,13 +162,7 @@ def test_wrong_hypermutation(hypermutation):
 
 
 @pytest.mark.parametrize(
-    "max_gen, cycle_size",
-    [(5, 'wrong'),
-     (5, 0.1),
-     (5, -1),
-     (5, 0),
-     (5, 10),
-     ],
+    "max_gen, cycle_size", [(5, "wrong"), (5, 0.1), (5, -1), (5, 0), (5, 10),],
 )
 def test_wrong_cycle_size(max_gen, cycle_size):
     _cfg = cfg.clone()
@@ -259,9 +174,7 @@ def test_wrong_cycle_size(max_gen, cycle_size):
 
 
 @pytest.mark.parametrize(
-    "hypermutation_rate",
-    ['wrong', 0, -1,
-     ],
+    "hypermutation_rate", ["wrong", 0, -1,],
 )
 def test_wrong_hypermutation_rate(hypermutation_rate):
     _cfg = cfg.clone()
@@ -272,9 +185,7 @@ def test_wrong_hypermutation_rate(hypermutation_rate):
 
 
 @pytest.mark.parametrize(
-    "rd_imigrantes",
-    ['wrong', 0.1, 1,
-     ],
+    "rd_imigrantes", ["wrong", 0.1, 1,],
 )
 def test_wrong_rd_imigrantes(rd_imigrantes):
     _cfg = cfg.clone()
@@ -285,9 +196,7 @@ def test_wrong_rd_imigrantes(rd_imigrantes):
 
 
 @pytest.mark.parametrize(
-    "imigration_rate",
-    ['wrong', 0, 1, 1.1,
-     ],
+    "imigration_rate", ["wrong", 0, 1, 1.1,],
 )
 def test_wrong_imigration_rate(imigration_rate):
     _cfg = cfg.clone()
@@ -298,39 +207,18 @@ def test_wrong_imigration_rate(imigration_rate):
 
 
 @pytest.mark.parametrize(
-    "seeds, nro_exec",
-    [('wrong', 5),
-     ([1, 1.1], 2),
-     ([1.1], 1),
-     ([1, 2], 5)
-     ],
+    "seed", [("wrong"), ([1, 1.1]), ([1.1]), ([1, 2])],
 )
-def test_wrong_seed(seeds, nro_exec):
+def test_wrong_seed(seed):
     _cfg = cfg.clone()
-    _cfg.GA.SEED = seeds
-    _cfg.GA.NRO_MAX_EXEC = nro_exec
+    _cfg.GA.SEED = seed
 
     with pytest.raises(ValueError):
         GA(_cfg, None, None)
 
 
 @pytest.mark.parametrize(
-    "feature_selection",
-    ['wrong', 0.1, 1,
-     ],
-)
-def test_wrong_feature_selection(feature_selection):
-    _cfg = cfg.clone()
-    _cfg.GA.FEATURE_SELECTION = feature_selection
-
-    with pytest.raises(ValueError):
-        GA(_cfg, None, None)
-
-
-@pytest.mark.parametrize(
-    "continue_exec",
-    ['wrong', 0.1, 1,
-     ],
+    "continue_exec", ["wrong", 0.1, 1,],
 )
 def test_wrong_continue_exec(continue_exec):
     _cfg = cfg.clone()
@@ -341,11 +229,7 @@ def test_wrong_continue_exec(continue_exec):
 
 
 @pytest.mark.parametrize(
-    "padding",
-    ['wrong', 'valid', "",
-     ['wrong', 'valid'],
-     ['valid', 'wrong'],
-     ],
+    "padding", ["wrong", "valid", "", ["wrong", "valid"], ["valid", "wrong"],],
 )
 def test_wrong_padding(padding):
     _cfg = cfg.clone()
@@ -356,9 +240,7 @@ def test_wrong_padding(padding):
 
 
 @pytest.mark.parametrize(
-    "dense_layers",
-    ['wrong', -1, 100
-     ],
+    "dense_layers", ["wrong", -1, 100],
 )
 def test_wrong_dense_layers(dense_layers):
     _cfg = cfg.clone()
@@ -369,11 +251,9 @@ def test_wrong_dense_layers(dense_layers):
 
 
 @pytest.mark.parametrize(
-    "cnn_layers",
-    ['wrong', -1, 100
-     ],
+    "cnn_layers", ["wrong", -1, 100],
 )
-def test_wrong_dense_layers(cnn_layers):
+def test_wrong_cnn_layers(cnn_layers):
     _cfg = cfg.clone()
     _cfg.GA.SEARCH_SPACE.MAX_CNN_LAYERS = cnn_layers
 
@@ -382,13 +262,7 @@ def test_wrong_dense_layers(cnn_layers):
 
 
 @pytest.mark.parametrize(
-    "units",
-    ['wrong', 1,
-     [0, 10],
-     [10, 'wrong'],
-     [10, 10000000],
-     []
-     ],
+    "units", ["wrong", 1, [0, 10], [10, "wrong"], [10, 10000000], []],
 )
 def test_wrong_units(units):
     _cfg = cfg.clone()
@@ -399,13 +273,7 @@ def test_wrong_units(units):
 
 
 @pytest.mark.parametrize(
-    "filters",
-    ['wrong', 1,
-     [0, 10],
-     [10, 'wrong'],
-     [10, 10000000],
-     []
-     ],
+    "filters", ["wrong", 1, [0, 10], [10, "wrong"], [10, 10000000], []],
 )
 def test_wrong_filters(filters):
     _cfg = cfg.clone()
@@ -416,13 +284,7 @@ def test_wrong_filters(filters):
 
 
 @pytest.mark.parametrize(
-    "kernel_size",
-    ['wrong', 1,
-     [0, 10],
-     [10, 'wrong'],
-     [10, 10000000],
-     []
-     ],
+    "kernel_size", ["wrong", 1, [0, 10], [10, "wrong"], [10, 10000000], []],
 )
 def test_wrong_kernel_size(kernel_size):
     _cfg = cfg.clone()
@@ -433,13 +295,7 @@ def test_wrong_kernel_size(kernel_size):
 
 
 @pytest.mark.parametrize(
-    "pool_size",
-    ['wrong', 1,
-     [0, 10],
-     [10, 'wrong'],
-     [10, 10000000],
-     []
-     ],
+    "pool_size", ["wrong", 1, [0, 10], [10, "wrong"], [10, 10000000], []],
 )
 def test_wrong_pool_size(pool_size):
     _cfg = cfg.clone()
@@ -450,13 +306,7 @@ def test_wrong_pool_size(pool_size):
 
 
 @pytest.mark.parametrize(
-    "batch_size",
-    ['wrong', 1,
-     [0, 10],
-     [10, 'wrong'],
-     [10, 10000000],
-     []
-     ],
+    "batch_size", ["wrong", 1, [0, 10], [10, "wrong"], [10, 10000000], []],
 )
 def test_wrong_batch_size(batch_size):
     _cfg = cfg.clone()
@@ -467,13 +317,7 @@ def test_wrong_batch_size(batch_size):
 
 
 @pytest.mark.parametrize(
-    "epochs",
-    ['wrong', 1,
-     [0, 10],
-     [10, 'wrong'],
-     [10, 10000000],
-     []
-     ],
+    "epochs", ["wrong", 1, [0, 10], [10, "wrong"], [10, 10000000], []],
 )
 def test_wrong_epochs(epochs):
     _cfg = cfg.clone()
@@ -484,13 +328,7 @@ def test_wrong_epochs(epochs):
 
 
 @pytest.mark.parametrize(
-    "dropout",
-    ['wrong', 1,
-     [0, 1.1],
-     [1, 'wrong'],
-     [-1, 1],
-     []
-     ],
+    "dropout", ["wrong", 1, [0, 1.1], [1, "wrong"], [-1, 1], []],
 )
 def test_wrong_dropout(dropout):
     _cfg = cfg.clone()
@@ -501,11 +339,7 @@ def test_wrong_dropout(dropout):
 
 
 @pytest.mark.parametrize(
-    "opt",
-    ['wrong', 'Adam',
-     ['wrong', 'Adam'],
-     ['Adam', 'wrong'],
-     ],
+    "opt", ["wrong", "Adam", ["wrong", "Adam"], ["Adam", "wrong"],],
 )
 def test_wrong_opt(opt):
     _cfg = cfg.clone()
@@ -516,14 +350,7 @@ def test_wrong_opt(opt):
 
 
 @pytest.mark.parametrize(
-    "lr",
-    ['wrong', 1,
-     [0, 1],
-     [1, 'wrong'],
-     [-1, 1],
-     [0.1, 1.1],
-     []
-     ],
+    "lr", ["wrong", 1, [0, 1], [1, "wrong"], [-1, 1], [0.1, 1.1], []],
 )
 def test_wrong_lr(lr):
     _cfg = cfg.clone()
@@ -535,10 +362,7 @@ def test_wrong_lr(lr):
 
 @pytest.mark.parametrize(
     "scaler",
-    ['wrong', 'Standard',
-     ['wrong', 'Standard'],
-     ['Standard', 'wrong'],
-     ],
+    ["wrong", "Standard", ["wrong", "Standard"], ["Standard", "wrong"],],
 )
 def test_wrong_scaler(scaler):
     _cfg = cfg.clone()
@@ -549,11 +373,7 @@ def test_wrong_scaler(scaler):
 
 
 @pytest.mark.parametrize(
-    "activate",
-    ['wrong', 'relu',
-     ['wrong', 'relu'],
-     ['relu', 'wrong'],
-     ],
+    "activate", ["wrong", "relu", ["wrong", "relu"], ["relu", "wrong"],],
 )
 def test_wrong_activate_dense(activate):
     _cfg = cfg.clone()
@@ -564,11 +384,7 @@ def test_wrong_activate_dense(activate):
 
 
 @pytest.mark.parametrize(
-    "activate",
-    ['wrong', 'relu',
-     ['wrong', 'relu'],
-     ['relu', 'wrong'],
-     ],
+    "activate", ["wrong", "relu", ["wrong", "relu"], ["relu", "wrong"],],
 )
 def test_wrong_activate_cnn(activate):
     _cfg = cfg.clone()
@@ -579,11 +395,7 @@ def test_wrong_activate_cnn(activate):
 
 
 @pytest.mark.parametrize(
-    "kernel_reg",
-    ['wrong', 'l1',
-     ['wrong', 'l1'],
-     ['l1', 'wrong'],
-     ],
+    "kernel_reg", ["wrong", "l1", ["wrong", "l1"], ["l1", "wrong"],],
 )
 def test_wrong_kernel_reg(kernel_reg):
     _cfg = cfg.clone()
@@ -595,10 +407,12 @@ def test_wrong_kernel_reg(kernel_reg):
 
 @pytest.mark.parametrize(
     "kernel_init",
-    ['wrong', 'glorot_uniform',
-     ['wrong', 'glorot_uniform'],
-     ['glorot_uniform', 'wrong'],
-     ],
+    [
+        "wrong",
+        "glorot_uniform",
+        ["wrong", "glorot_uniform"],
+        ["glorot_uniform", "wrong"],
+    ],
 )
 def test_wrong_kernel_init(kernel_init):
     _cfg = cfg.clone()
@@ -609,11 +423,7 @@ def test_wrong_kernel_init(kernel_init):
 
 
 @pytest.mark.parametrize(
-    "activity_reg",
-    ['wrong', 'l1',
-     ['wrong', 'l1'],
-     ['l1', 'wrong'],
-     ],
+    "activity_reg", ["wrong", "l1", ["wrong", "l1"], ["l1", "wrong"],],
 )
 def test_wrong_activity_reg(activity_reg):
     _cfg = cfg.clone()
@@ -624,11 +434,7 @@ def test_wrong_activity_reg(activity_reg):
 
 
 @pytest.mark.parametrize(
-    "bias_reg",
-    ['wrong', 'l1',
-     ['wrong', 'l1'],
-     ['l1', 'wrong'],
-     ],
+    "bias_reg", ["wrong", "l1", ["wrong", "l1"], ["l1", "wrong"],],
 )
 def test_wrong_bias_reg(bias_reg):
     _cfg = cfg.clone()

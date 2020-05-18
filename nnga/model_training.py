@@ -10,9 +10,8 @@ from nnga.utils.data_io import (
     save_roc_curve,
     save_metrics,
 )
-from nnga.architectures import (
-    OPTIMIZERS,
-)
+from nnga.architectures import OPTIMIZERS
+from tensorflow.keras.models import clone_model
 
 
 class ModelTraining:
@@ -37,21 +36,30 @@ class ModelTraining:
             keys: List
                 List of Indiv keys
 
-            attributes_selected: list
+            features_selected: list
                 list of feature selected index
         Returns
         -------
     """
 
-    def __init__(self, cfg, model, logger, datasets, indiv=None, keys=None,
-                 attributes_selected=None):
+    def __init__(
+        self,
+        cfg,
+        model,
+        logger,
+        datasets,
+        indiv=None,
+        keys=None,
+        features_selected=None,
+    ):
 
         self.indiv = indiv
         self.keys = keys
         self._cfg = cfg
         self._logger = logger
         self._datasets = datasets
-        self._model = model.get_model()
+        self._original_model = model.get_model()
+        self._model = clone_model(self._original_model)
 
         self.cv = self._cfg.SOLVER.CROSS_VALIDATION
         self.cv_folds = self._cfg.SOLVER.CROSS_VALIDATION_FOLDS
@@ -76,21 +84,21 @@ class ModelTraining:
         if not isinstance(self.cv, bool):
             raise ValueError("SOLVER.CROSS_VALIDATION must be a bool")
 
-        self._datasets['TRAIN'].attributes_selected = attributes_selected
-        self._datasets['VAL'].attributes_selected = attributes_selected
+        self._datasets["TRAIN"].features_selected = features_selected
+        self._datasets["VAL"].features_selected = features_selected
 
         self.compile_parameters = {
             "loss": self._cfg.SOLVER.LOSS,
             "metrics": self._cfg.SOLVER.METRICS,
         }
         self.fitting_parameters = {
-            "x": self._datasets['TRAIN'],
+            "x": self._datasets["TRAIN"],
             "epochs": self._cfg.SOLVER.EPOCHS,
-            "validation_data": self._datasets['VAL'],
-            "class_weight": self._datasets['TRAIN'].class_weights,
-            "steps_per_epoch": len(self._datasets['TRAIN']),
-            "validation_steps": len(self._datasets['VAL']),
-            "verbose": 0,
+            "validation_data": self._datasets["VAL"],
+            "class_weight": self._datasets["TRAIN"].class_weights,
+            "steps_per_epoch": len(self._datasets["TRAIN"]),
+            "validation_steps": len(self._datasets["VAL"]),
+            "verbose": 1,
             "callbacks": None,
             "shuffle": False,
             "validation_freq": 1,
@@ -100,12 +108,12 @@ class ModelTraining:
         }
 
         self._path = cfg.OUTPUT_DIR
-        self._labels = datasets['TRAIN'].labels
+        self._labels = datasets["TRAIN"].labels
         self._model_history = None
         self._idx_train = None
         self._idx_val = None
 
-        if self._cfg.MODEL.BACKBONE == 'GASearch':
+        if self._cfg.MODEL.BACKBONE == "GASearch":
             self.configure_compiler_ga()
             self.configure_fit_ga()
             self._logger.info(f"Model Trainner from GA created!")
@@ -123,8 +131,9 @@ class ModelTraining:
         """
         self.compile_parameters.update(
             {
-                "optimizer": OPTIMIZERS.get(self.indiv[self.keys.index("optimizer")])
-                (self.indiv[self.keys.index("learning_rate")]),
+                "optimizer": OPTIMIZERS.get(
+                    self.indiv[self.keys.index("optimizer")]
+                )(self.indiv[self.keys.index("learning_rate")]),
             }
         )
 
@@ -134,25 +143,22 @@ class ModelTraining:
         """
         self.compile_parameters.update(
             {
-                "optimizer": OPTIMIZERS.get(self._cfg.SOLVER.OPTIMIZER)
-                (self._cfg.SOLVER.BASE_LEARNING_RATE),
+                "optimizer": OPTIMIZERS.get(self._cfg.SOLVER.OPTIMIZER)(
+                    self._cfg.SOLVER.BASE_LEARNING_RATE
+                ),
             }
         )
 
     def configure_fit_ga(self):
         """ Set fit parameters from GA indiv """
         self.fitting_parameters.update(
-            {
-                "epochs": self.indiv[self.keys.index("epochs")],
-            }
+            {"epochs": self.indiv[self.keys.index("epochs")],}
         )
 
     def configure_fit(self):
         """ Set fit parameters from config """
         self.fitting_parameters.update(
-            {
-                "epochs": self._cfg.SOLVER.EPOCHS,
-            }
+            {"epochs": self._cfg.SOLVER.EPOCHS,}
         )
 
     def compile(self):
@@ -163,28 +169,30 @@ class ModelTraining:
         """Fit the model"""
         self._model_history = self._model.fit(**self.fitting_parameters)
 
-    def train_test_split(self, seed=0):
+    def train_test_split(self, random_state=0):
         """Execute train test split using the train dataset
         Parameters
             ----------
-                seed: int
-                    Seed to be used to separate train test folds
+                random_state: int
+                    random_state to be used to separate train test folds
 
             Returns
             -------
                 loss value & metrics values
         """
-        idx, idx_labels = self._datasets['TRAIN'].indexes
+        idx, idx_labels = self._datasets["TRAIN"].indexes
 
-        sss = StratifiedShuffleSplit(n_splits=1, test_size=self.test_size,
-                                     random_state=seed)
+        sss = StratifiedShuffleSplit(
+            n_splits=1, test_size=self.test_size, random_state=random_state
+        )
         sss.get_n_splits(idx, idx_labels)
         idx_train, idx_val = next(sss.split(idx, idx_labels))
 
-        train_dataset = copy.deepcopy(self._datasets['TRAIN'])
+        train_dataset = copy.deepcopy(self._datasets["TRAIN"])
         train_dataset.set_index(idx_train)
-        test_dataset = copy.deepcopy(self._datasets['TRAIN'])
+        test_dataset = copy.deepcopy(self._datasets["TRAIN"])
         test_dataset.set_index(idx_val)
+        self.reset()
 
         self.fitting_parameters.update(
             {
@@ -198,14 +206,12 @@ class ModelTraining:
         self.fit()
         return self.evaluate()
 
-    def cross_validation(self, shuffle=True, seed='', random_state=0, save=False):
+    def cross_validation(self, shuffle=True, random_state=0, save=False):
         """Execute cross validation using the train dataset
         Parameters
             ----------
                 shuffle: bool
                     if the data will be shuffle after each epoch
-                seed: int
-                    Seed used from GA
                 random_state: int
                     random_state for StratifiedKFold
                 save: bool
@@ -215,21 +221,24 @@ class ModelTraining:
             -------
                 Pandas DataFrame with cross validation results
         """
-        idx, idx_labels = self._datasets['TRAIN'].indexes
+        idx, idx_labels = self._datasets["TRAIN"].indexes
 
-        skf = StratifiedKFold(n_splits=self.cv_folds,
-                              shuffle=shuffle, random_state=random_state)
+        skf = StratifiedKFold(
+            n_splits=self.cv_folds, shuffle=shuffle, random_state=random_state
+        )
         skf.get_n_splits(idx, idx_labels)
 
         evaluate_results = []
         for fold, (idx_train, idx_val) in enumerate(
-                skf.split(idx, idx_labels)
+            skf.split(idx, idx_labels)
         ):
-            self._logger.info(f"Cross Validation - Fold {fold + 1}/{self.cv_folds}:")
+            self._logger.info(
+                f"Cross Validation - Fold {fold + 1}/{self.cv_folds}:"
+            )
 
-            train_dataset = copy.deepcopy(self._datasets['TRAIN'])
+            train_dataset = copy.deepcopy(self._datasets["TRAIN"])
             train_dataset.set_index(idx_train)
-            test_dataset = copy.deepcopy(self._datasets['TRAIN'])
+            test_dataset = copy.deepcopy(self._datasets["TRAIN"])
             test_dataset.set_index(idx_val)
 
             self.fitting_parameters.update(
@@ -258,9 +267,9 @@ class ModelTraining:
             self._logger.info(f"Cross validation statistics:\n{cv}")
 
         if save:
-            save_metrics(self._path, seed,
-                         {'cross_validation': cv.to_string(index=True)}
-                         )
+            save_metrics(
+                self._path, {"cross_validation": cv.to_string(index=True)}
+            )
         return cv
 
     def predict(self):
@@ -287,9 +296,7 @@ class ModelTraining:
         )
 
         lbl_encoded = self.fitting_parameters["validation_data"].classes
-        lbl_encoded = lbl_encoded[
-                      -len(predict_encoded):
-                      ]
+        lbl_encoded = lbl_encoded[-len(predict_encoded) :]
 
         lbl = [np.argmax(t) for t in lbl_encoded]
         predict = [np.argmax(t) for t in predict_encoded]
@@ -318,7 +325,7 @@ class ModelTraining:
             evaluate[0] = float("inf")
         return evaluate
 
-    def compute_metrics(self, seed='', save=False):
+    def compute_metrics(self, save=False):
         """Compute all metrics
 
         IF save is True, save the metrics, Roc Curve and
@@ -326,8 +333,6 @@ class ModelTraining:
 
         Parameters
             ----------
-            seed: int
-                    Seed used from GA
 
             save: bool
                 if true, save the metrics result
@@ -342,8 +347,15 @@ class ModelTraining:
             lbl, predict, predict_encoded, self._labels, self._idx_val
         )
         if save:
-            save_metrics(self._path, seed, metrics)
-            save_roc_curve(self._path, seed, lbl, predict_encoded, self._labels)
-            save_history(self._path, seed, self._model_history.history)
+            save_metrics(self._path, metrics)
+            save_roc_curve(self._path, lbl, predict_encoded, self._labels)
+            save_history(self._path, self._model_history.history)
 
         return metrics
+
+    def reset(self):
+        """
+        Reset the model weights to initial weights
+        """
+        self._model = clone_model(self._original_model)
+        self.compile()

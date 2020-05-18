@@ -1,5 +1,6 @@
 from nnga.utils.data_io import save_model, save_cfg
 
+
 class BaseNeuralNetwork:
     """ This class implements the Model defined by genetic algorithm indiv
         Parameters
@@ -26,8 +27,16 @@ class BaseNeuralNetwork:
         -------
     """
 
-    def __init__(self, cfg, logger, input_shape, output_dim, include_top=True,
-                 indiv=None, keys=None):
+    def __init__(
+        self,
+        cfg,
+        logger,
+        input_shape,
+        output_dim,
+        include_top=True,
+        indiv=None,
+        keys=None,
+    ):
         self._cfg = cfg
         self._logger = logger
         self.input_shape = input_shape
@@ -43,20 +52,34 @@ class BaseNeuralNetwork:
                 if self.indiv[self.keys.index(f"feature_selection_{i}")]:
                     input_dim += 1
 
-            if isinstance(self.input_shape, int):
+            if input_dim == 0:
+                raise ValueError(
+                    "The number of features selected should be > 0"
+                )
+
+            if isinstance(self.input_shape, int):  # MLP
                 self.input_shape = input_dim
-            else:
+            elif (
+                isinstance(self.input_shape, tuple)
+                and len(self.input_shape) == 2
+            ):  # CNN/MLP
                 self.input_shape = (input_dim, self.input_shape[1])
 
-        if self._cfg.MODEL.BACKBONE == 'GASearch':
+        if self._cfg.MODEL.BACKBONE == "GASearch":
             self.create_model_ga()
-            self._logger.info(f"Model {self._cfg.MODEL.ARCHITECTURE} from GA created!")
+            self._logger.info(
+                f"Model {self._cfg.MODEL.ARCHITECTURE} from GA created!"
+            )
         else:
             self.create_model()
             if self._cfg.MODEL.FEATURE_SELECTION:
-                self._logger.info(f"Model {self._cfg.MODEL.ARCHITECTURE} created with feature selection!")
+                self._logger.info(
+                    f"Model {self._cfg.MODEL.ARCHITECTURE} created with feature selection!"
+                )
             else:
-                self._logger.info(f"Model {self._cfg.MODEL.ARCHITECTURE} created!")
+                self._logger.info(
+                    f"Model {self._cfg.MODEL.ARCHITECTURE} created!"
+                )
 
         if self.include_top:
             self.summary()
@@ -87,18 +110,11 @@ class BaseNeuralNetwork:
         """Print the model summary"""
         self._model.summary(print_fn=self._logger.info)
 
-    def save_model(self, seed=''):
+    def save_model(self):
         """Save model
-        Parameters
-            ----------
-                seed: int
-                    Seed used from GA
-
-            Returns
-            -------
         """
-        save_model(self._cfg.OUTPUT_DIR, seed, self._model)
-        save_cfg(self._cfg.OUTPUT_DIR, seed, self._cfg)
+        save_model(self._cfg.OUTPUT_DIR, self._model)
+        save_cfg(self._cfg.OUTPUT_DIR)
 
     def get_model(self):
         """Get motel

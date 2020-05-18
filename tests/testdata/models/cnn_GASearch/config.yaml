@@ -1,0 +1,116 @@
+DATASET:
+  PRESERVE_IMG_RATIO: true
+  SCALER: Standard
+  TRAIN_AUGMENTATION: false
+  TRAIN_CSV_PATH: ./example/mnist/train/features.csv
+  TRAIN_IMG_PATH: ./example/mnist/train
+  TRAIN_SHUFFLE: true
+  VAL_AUGMENTATION: false
+  VAL_CSV_PATH: ./example/mnist/test/features.csv
+  VAL_IMG_PATH: ./example/mnist/test
+  VAL_SHUFFLE: false
+GA:
+  CONTINUE_EXEC: false
+  CROSSOVER_RATE: 0.6
+  ELITISM: 2
+  HYPERMUTATION: false
+  HYPERMUTATION_CYCLE_SIZE: 1
+  HYPERMUTATION_RATE: 3
+  IMIGRATION_RATE: 0.05
+  MUTATION_RATE: 0.02
+  NRO_MAX_GEN: 5
+  POPULATION_SIZE: 8
+  RANDOM_IMIGRANTS: false
+  SEARCH_SPACE:
+    ACTIVATION_CNN:
+    - relu
+    - tanh
+    ACTIVATION_DENSE:
+    - relu
+    - tanh
+    ACTIVITY_REGULARIZER:
+    - null
+    BATCH_SIZE:
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    BIAS_REGULARIZER:
+    - null
+    DROPOUT:
+    - 0.0
+    - 0.1
+    - 0.2
+    - 0.3
+    - 0.4
+    EPOCHS:
+    - 8
+    - 10
+    FILTERS:
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    KERNEL_INITIALIZER:
+    - glorot_uniform
+    KERNEL_REGULARIZER:
+    - null
+    KERNEL_SIZE:
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    LEARNING_RATE:
+    - 0.0001
+    - 0.001
+    - 0.01
+    - 0.05
+    - 0.1
+    MAX_CNN_LAYERS: 2
+    MAX_DENSE_LAYERS: 2
+    OPTIMIZER:
+    - Adam
+    - SGD
+    PADDING:
+    - valid
+    - same
+    POOL_SIZE:
+    - 2
+    - 3
+    - 4
+    - 5
+    SCALER:
+    - Standard
+    - MinMax
+    UNITS:
+    - 10
+    - 15
+  SEED: 0
+  TOURNAMENT_SIZE: 2
+MODEL:
+  ARCHITECTURE: CNN
+  BACKBONE: GASearch
+  DROPOUT: 0.2
+  FEATURE_SELECTION: false
+  INPUT_SHAPE:
+  - 64
+  - 64
+  - 3
+OUTPUT_DIR: ./tests/testdata/models\cnn_GASearch
+SOLVER:
+  BASE_LEARNING_RATE: 0.001
+  BATCH_SIZE: 1024
+  CROSS_VALIDATION: false
+  CROSS_VALIDATION_FOLDS: 5
+  EPOCHS: 10
+  LOSS: categorical_crossentropy
+  METRICS:
+  - categorical_accuracy
+  OPTIMIZER: Adam
+  TEST_SIZE: 0.2
+TASK: Classification

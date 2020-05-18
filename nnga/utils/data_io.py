@@ -8,6 +8,7 @@ import scikitplot as skplt
 import csv
 from nnga.configs import export_config
 import json
+from tensorflow.keras.models import model_from_json
 
 
 def create_dir(path):
@@ -26,7 +27,7 @@ def create_dir(path):
         os.makedirs(path)
 
 
-def load_statistic(path, seed):
+def load_statistic(path):
     """
         Load statistic from GA to continue the execution
 
@@ -35,21 +36,18 @@ def load_statistic(path, seed):
         path : str
             Directory path
 
-        seed: int
-            Seed from GA
-
         Returns
         -------
             Pandas DataFrame with the statistic data
     """
-    statistic_dir = Path(path, str(seed), f"results.csv").as_posix()
+    statistic_dir = Path(path, "ga", "results.csv").as_posix()
     if not os.path.exists(statistic_dir):
         raise FileNotFoundError(f"{statistic_dir} does not exist")
 
     return pd.read_csv(statistic_dir)
 
 
-def load_pop(path, seed):
+def load_pop(path):
     """
         Load pop from GA to continue the execution
 
@@ -58,20 +56,17 @@ def load_pop(path, seed):
         path : str
             Directory path
 
-        seed: int
-            Seed from GA
-
         Returns
         -------
             Pandas DataFrame with the pop data
     """
-    pop_dir = Path(path, str(seed), f"pop.csv").as_posix()
+    pop_dir = Path(path, "ga", "pop.csv").as_posix()
     if not os.path.exists(pop_dir):
         raise FileNotFoundError(f"{pop_dir} does not exist")
     return pd.read_csv(pop_dir)
 
 
-def save_statistic(path, seed, statistic):
+def save_statistic(path, statistic):
     """
         Save statistic from GA
 
@@ -80,20 +75,17 @@ def save_statistic(path, seed, statistic):
         path : str
             Directory path
 
-        seed: int
-            Seed from GA
-
         statistic: DataFrame
             List of dict
 
         Returns
         -------
     """
-    out_dir = Path(path, str(seed))
+    out_dir = Path(path, "ga")
     create_dir(out_dir)
 
-    statistic_dir = Path(out_dir, f"results.csv").as_posix()
-    plot_dir = Path(out_dir, f"Generations_GA.png").as_posix()
+    statistic_dir = Path(out_dir, "results.csv").as_posix()
+    plot_dir = Path(out_dir, "Generations.png").as_posix()
 
     df = pd.DataFrame(
         statistic, columns=["mean_fitness", "best_fitness", "best_indiv"]
@@ -113,7 +105,7 @@ def save_statistic(path, seed, statistic):
     plt.close()
 
 
-def save_pop(path, seed, pop):
+def save_pop(path, pop):
     """
         Save pop from GA
 
@@ -122,18 +114,15 @@ def save_pop(path, seed, pop):
         path : str
             Directory path
 
-        seed: int
-            Seed from GA
-
         pop: DataFrame
             Pandas DataFrame with the pop data
 
         Returns
         -------
     """
-    out_dir = Path(path, str(seed))
+    out_dir = Path(path, "ga")
     create_dir(out_dir)
-    pop_dir = Path(out_dir, f"pop.csv").as_posix()
+    pop_dir = Path(out_dir, "pop.csv").as_posix()
 
     pop_list = []
     fitness_list = []
@@ -146,7 +135,7 @@ def save_pop(path, seed, pop):
     last_pop.to_csv(pop_dir, index=False, header=True)
 
 
-def save_history(path, seed, model_history):
+def save_history(path, model_history):
     """
         Save model history from model
 
@@ -155,16 +144,13 @@ def save_history(path, seed, model_history):
         path : str
             Directory path
 
-        seed: int
-            Seed from GA
-
         model_history: model_history
             model history
 
         Returns
         -------
     """
-    out_dir = Path(path, str(seed), 'metrics')
+    out_dir = Path(path, "metrics")
     create_dir(out_dir)
 
     legend = []
@@ -197,14 +183,13 @@ def save_history(path, seed, model_history):
         legend.append("Validation loss")
 
     plt.xticks(
-        np.arange(
+        np.linspace(
             0,
-            len(model_history["loss"]) / 10
+            len(model_history["loss"]) - 1,
+            10
             if len(model_history["loss"]) > 10
-            else 5,
-            len(model_history["loss"]) / 10
-            if len(model_history["loss"]) > 10
-            else 1,
+            else len(model_history["loss"]),
+            dtype=int,
         )
     )
     plt.xlabel("Num of Epochs")
@@ -218,34 +203,7 @@ def save_history(path, seed, model_history):
     plt.close()
 
 
-def save_model(path, seed, model):
-    """
-        Save model
-
-        Parameters
-        ----------
-        path : str
-            Directory path
-
-        seed: int
-            Seed from GA
-
-        model: model
-            model to be saved
-
-        Returns
-        -------
-    """
-    out_dir = Path(path, str(seed))
-    create_dir(out_dir)
-
-    model_dir = Path(out_dir, "model").as_posix()
-    with open(model_dir + ".json", "w") as json_file:
-        json_file.write(model.to_json())
-    model.save_weights(model_dir + ".h5")
-
-
-def save_cfg(path, seed, cfg):
+def save_cfg(path):
     """
         Save config
 
@@ -254,21 +212,15 @@ def save_cfg(path, seed, cfg):
         path : str
             Directory path
 
-        seed: int
-            Seed from GA
-
-        cfg: {yacs.config.CfgNode}
-            Loaded experiment config
-
         Returns
         -------
     """
-    out_dir = Path(path, str(seed))
+    out_dir = Path(path)
     create_dir(out_dir)
-    export_config(Path(out_dir, f"config.yaml").as_posix())
+    export_config(Path(out_dir, "config.yaml").as_posix())
 
 
-def save_roc_curve(path, seed, lbl, predict_proba, labels):
+def save_roc_curve(path, lbl, predict_proba, labels):
     """
         Save Roc Curve
 
@@ -276,9 +228,6 @@ def save_roc_curve(path, seed, lbl, predict_proba, labels):
         ----------
         path : str
             Directory path
-
-        seed: int
-            Seed from GA
 
         lbl: numoy array
             numpy array with target class
@@ -292,10 +241,10 @@ def save_roc_curve(path, seed, lbl, predict_proba, labels):
         Returns
         -------
     """
-    out_dir = Path(path, str(seed), 'metrics')
+    out_dir = Path(path, "metrics")
     create_dir(out_dir)
 
-    plot_dir = Path(out_dir, f"roc_curve.png").as_posix()
+    plot_dir = Path(out_dir, "roc_curve.png").as_posix()
     skplt.metrics.plot_roc([labels[i] for i in lbl], predict_proba)
     plt.savefig(plot_dir)
     plt.clf()
@@ -303,7 +252,7 @@ def save_roc_curve(path, seed, lbl, predict_proba, labels):
     plt.close()
 
 
-def save_metrics(path, seed, metrics):
+def save_metrics(path, metrics):
     """
         Save all Metrics
 
@@ -312,16 +261,13 @@ def save_metrics(path, seed, metrics):
         path : str
             Directory path
 
-        seed: int
-            Seed from GA
-
         metrics: Dict
             Dict containing all metrics to be saved
 
         Returns
         -------
     """
-    out_dir = Path(path, str(seed), 'metrics')
+    out_dir = Path(path, "metrics")
     create_dir(out_dir)
 
     file_name = Path(out_dir, "metrics.txt").as_posix()
@@ -334,60 +280,6 @@ def save_metrics(path, seed, metrics):
         file.write(value)
         file.write("\n\n")
 
-    file.close()
-
-
-def save_scale_parameters(path, scale_parameters, seed=''):
-    """
-        Save all Metrics
-
-        Parameters
-        ----------
-        path : str
-            Directory path
-
-        scale_parameters: Dict
-            Dict containing the scale parameters
-
-        seed: int
-            Seed from GA
-
-        Returns
-        -------
-    """
-    out_dir = Path(path, str(seed))
-    create_dir(out_dir)
-    file_name = Path(out_dir, f"scale_parameters.json").as_posix()
-
-    file = open(file_name, "w")
-    json.dump(scale_parameters, file)
-    file.close()
-
-
-def save_feature_selected(path, feature_selected, seed=''):
-    """
-        Save all Metrics
-
-        Parameters
-        ----------
-        path : str
-            Directory path
-
-        feature_selected: List
-            List with features selected
-
-        seed: int
-            Seed from GA
-
-        Returns
-        -------
-    """
-    out_dir = Path(path, str(seed))
-    create_dir(out_dir)
-    file_name = Path(out_dir, f"feature_selected.json").as_posix()
-
-    file = open(file_name, "w")
-    json.dump(feature_selected, file)
     file.close()
 
 
@@ -473,7 +365,7 @@ def load_csv_line(path, sep, idx):
     return header, sample
 
 
-def load_image(path, input_shape, preserve_ratio=True):
+def load_image(path):
     """
         Load image
 
@@ -481,13 +373,6 @@ def load_image(path, input_shape, preserve_ratio=True):
         ----------
         path : str
             Directory path
-
-        input_shape: tuple
-            Tuple of image shape
-
-        preserve_ratio: Bool
-            if True, preserve image ratio,
-            else Does not preserve the image ratio
 
         Returns
         -------
@@ -500,39 +385,249 @@ def load_image(path, input_shape, preserve_ratio=True):
     if not os.path.exists(path):
         raise FileNotFoundError("File not found with provided path.")
 
-    flag = cv2.IMREAD_COLOR if input_shape[2] == 3 else cv2.IMREAD_GRAYSCALE
-    img = cv2.imread(path, flag)
+    return cv2.imread(path, cv2.IMREAD_COLOR)
 
-    if preserve_ratio:
-        scale_height = input_shape[0] / img.shape[0]
-        scale_width = input_shape[1] / img.shape[1]
-        scale_percent = (
-            scale_height if scale_height < scale_width else scale_width
-        )
-        width = int(img.shape[1] * scale_percent)
-        height = int(img.shape[0] * scale_percent)
-        dim = (width, height)
 
-        # resize image
-        resized = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
+def save_scale_parameters(path, scale_parameters):
+    """
+        Save scale parameters
 
-        border_height = input_shape[0] - resized.shape[0]
-        border_top = int((input_shape[0] - resized.shape[0]) / 2)
-        border_bottom = border_height - border_top
-        border_width = input_shape[1] - resized.shape[1]
-        border_left = int((input_shape[1] - resized.shape[1]) / 2)
-        border_right = border_width - border_left
+        Parameters
+        ----------
+        path : str
+            Directory path
 
-        final_img = cv2.copyMakeBorder(
-            resized,
-            border_top,
-            border_bottom,
-            border_left,
-            border_right,
-            cv2.BORDER_CONSTANT,
-        )
-    else:
-        dim = (input_shape[1], input_shape[0])
-        final_img = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
+        scale_parameters: Dict
+            Dict containing the scale parameters
 
-    return np.reshape(final_img, input_shape)
+        Returns
+        -------
+    """
+    out_dir = Path(path, "dataset")
+    create_dir(out_dir)
+    file_name = Path(out_dir, "scale_parameters.json").as_posix()
+
+    file = open(file_name, "w")
+    json.dump(scale_parameters, file)
+    file.close()
+
+
+def save_feature_selected(path, feature_selected):
+    """
+        Save features selected
+
+        Parameters
+        ----------
+        path : str
+            Directory path
+
+        feature_selected: List
+            List with features selected
+
+        Returns
+        -------
+    """
+    out_dir = Path(path, "dataset")
+    create_dir(out_dir)
+    file_name = Path(out_dir, "feature_selected.json").as_posix()
+
+    file = open(file_name, "w")
+    json.dump(feature_selected, file)
+    file.close()
+
+
+def save_encoder_parameters(path, encode):
+    """
+    Save Encode and Decode parameters
+
+    Parameters
+    ----------
+        path : str
+            Directory path
+
+        encode: Dict
+            Encode parameters
+
+
+    Returns
+    -------
+    """
+    out_dir = Path(path, "dataset")
+    create_dir(out_dir)
+
+    file_name = Path(out_dir, "encode.json").as_posix()
+    file = open(file_name, "w")
+    json.dump(encode, file)
+    file.close()
+
+
+def save_decoder_parameters(path, decode):
+    """
+    Save Encode and Decode parameters
+
+    Parameters
+    ----------
+        path : str
+            Directory path
+
+        decode: Dict
+            Decode parameters
+
+    Returns
+    -------
+    """
+    out_dir = Path(path, "dataset")
+    create_dir(out_dir)
+
+    file_name = Path(out_dir, "decode.json").as_posix()
+    file = open(file_name, "w")
+    json.dump(decode, file)
+    file.close()
+
+
+def save_model(path, model):
+    """
+        Save model
+
+        Parameters
+        ----------
+        path : str
+            Directory path
+
+        model: model
+            model to be saved
+
+        Returns
+        -------
+    """
+    out_dir = Path(path, "model")
+    create_dir(out_dir)
+
+    model_dir = Path(out_dir, "model").as_posix()
+    with open(model_dir + ".json", "w") as json_file:
+        json_file.write(model.to_json())
+    model.save_weights(model_dir + ".h5")
+
+
+def load_scale_parameters(path):
+    """
+        Load scale parameters
+
+        Parameters
+        ----------
+        path : str
+            Directory path
+
+        Returns
+        -------
+            scale_parameters: Dict
+                Dict containing the scale parameters
+        """
+    out_dir = Path(path, "dataset")
+    file_name = Path(out_dir, "scale_parameters.json").as_posix()
+
+    with open(file_name) as json_file:
+        scale_parameters = json.load(json_file)
+
+    return scale_parameters
+
+
+def load_feature_selected(path):
+    """
+        Load features selected
+
+        Parameters
+        ----------
+        path : str
+            Directory path
+
+        Returns
+        -------
+        feature_selected: List
+            List with features selected
+    """
+    out_dir = Path(path, "dataset")
+    file_name = Path(out_dir, "feature_selected.json").as_posix()
+
+    with open(file_name) as json_file:
+        feature_selected = json.load(json_file)
+
+    return feature_selected
+
+
+def load_encoder_parameters(path):
+    """
+    Load Encoder parameters
+
+    Parameters
+    ----------
+        path : str
+            Directory path
+
+    Returns
+    -------
+        encode: Dict
+            Encode parameters
+
+    """
+    out_dir = Path(path, "dataset")
+
+    file_name = Path(out_dir, "encode.json").as_posix()
+    with open(file_name) as json_file:
+        encode = json.load(json_file)
+
+    return encode
+
+
+def load_decoder_parameters(path):
+    """
+    Load Decoder parameters
+
+    Parameters
+    ----------
+        path : str
+            Directory path
+
+    Returns
+    -------
+
+        decode: Dict
+            Decode parameters
+    """
+    out_dir = Path(path, "dataset")
+
+    file_name = Path(out_dir, "decode.json").as_posix()
+    with open(file_name) as json_file:
+        decode = json.load(json_file)
+
+    return decode
+
+
+def load_model(path):
+    """
+        Load model
+
+        Parameters
+        ----------
+        path : str
+            Path to directory with the saved model.json
+            and model.h5
+
+        Returns
+        -------
+        model: model
+            model read
+    """
+
+    out_dir = Path(path, "model")
+
+    model_dir = Path(out_dir, "model").as_posix()
+
+    file = open(model_dir + ".json", "r")
+    model_json = file.read()
+    file.close()
+
+    model = model_from_json(model_json)
+    model.load_weights(model_dir + ".h5")
+
+    return model

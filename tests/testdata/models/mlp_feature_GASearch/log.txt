@@ -1,0 +1,2074 @@
+2020-05-17 17:00:36,911 NNGA INFO: Namespace(config_file='experiments/mlp_feature_GASearch.yaml', create_config='', opts=[])
+2020-05-17 17:00:36,911 NNGA INFO: Loaded configuration file experiments/mlp_feature_GASearch.yaml
+2020-05-17 17:00:36,911 NNGA INFO: 
+# nnga-cli --config-file experiments/mlp_feature_GASearch.yaml
+
+DATASET:
+  PRESERVE_IMG_RATIO: True
+  TRAIN_IMG_PATH: './example/mnist/train'
+  TRAIN_CSV_PATH: './example/mnist/train/features.csv'
+  TRAIN_AUGMENTATION: False
+  TRAIN_SHUFFLE: True
+
+  VAL_IMG_PATH: './example/mnist/test'
+  VAL_CSV_PATH: './example/mnist/test/features.csv'
+  VAL_AUGMENTATION: False
+  VAL_SHUFFLE: False
+
+GA:
+  NRO_MAX_GEN: 5
+  POPULATION_SIZE: 8
+  HYPERMUTATION_CYCLE_SIZE: 1
+  MUTATION_RATE: 0.02
+  CROSSOVER_RATE: 0.6
+  ELITISM: 2
+  CONTINUE_EXEC: False
+  HYPERMUTATION: False
+  RANDOM_IMIGRANTS: False
+  SEED: 0
+  TOURNAMENT_SIZE: 2
+  SEARCH_SPACE:
+    PADDING: ['valid', 'same']
+    MAX_DENSE_LAYERS: 2
+    MAX_CNN_LAYERS: 2
+    UNITS: [10, 15]
+    EPOCHS: [8, 10]
+
+MODEL:
+  INPUT_SHAPE: (50, 50, 3)
+  ARCHITECTURE: "MLP"
+  BACKBONE: 'GASearch'
+  FEATURE_SELECTION: True
+
+SOLVER:
+  CROSS_VALIDATION: False
+  CROSS_VALIDATION_FOLDS: 5
+  BATCH_SIZE: 1024
+  EPOCHS: 10
+  OPTIMIZER: "Adam"
+  BASE_LEARNING_RATE: 0.001
+
+OUTPUT_DIR: ./tests/testdata/models
+2020-05-17 17:00:36,912 NNGA INFO: CFG: 
+DATASET:
+  PRESERVE_IMG_RATIO: True
+  SCALER: Standard
+  TRAIN_AUGMENTATION: False
+  TRAIN_CSV_PATH: ./example/mnist/train/features.csv
+  TRAIN_IMG_PATH: ./example/mnist/train
+  TRAIN_SHUFFLE: True
+  VAL_AUGMENTATION: False
+  VAL_CSV_PATH: ./example/mnist/test/features.csv
+  VAL_IMG_PATH: ./example/mnist/test
+  VAL_SHUFFLE: False
+GA:
+  CONTINUE_EXEC: False
+  CROSSOVER_RATE: 0.6
+  ELITISM: 2
+  HYPERMUTATION: False
+  HYPERMUTATION_CYCLE_SIZE: 1
+  HYPERMUTATION_RATE: 3
+  IMIGRATION_RATE: 0.05
+  MUTATION_RATE: 0.02
+  NRO_MAX_GEN: 5
+  POPULATION_SIZE: 8
+  RANDOM_IMIGRANTS: False
+  SEARCH_SPACE:
+    ACTIVATION_CNN: ['relu', 'tanh']
+    ACTIVATION_DENSE: ['relu', 'tanh']
+    ACTIVITY_REGULARIZER: [None]
+    BATCH_SIZE: [3, 4, 5, 6, 7, 8]
+    BIAS_REGULARIZER: [None]
+    DROPOUT: [0.0, 0.1, 0.2, 0.3, 0.4]
+    EPOCHS: [8, 10]
+    FILTERS: [4, 5, 6, 7, 8, 9]
+    KERNEL_INITIALIZER: ['glorot_uniform']
+    KERNEL_REGULARIZER: [None]
+    KERNEL_SIZE: [2, 3, 4, 5, 6]
+    LEARNING_RATE: [0.0001, 0.001, 0.01, 0.05, 0.1]
+    MAX_CNN_LAYERS: 2
+    MAX_DENSE_LAYERS: 2
+    OPTIMIZER: ['Adam', 'SGD']
+    PADDING: ['valid', 'same']
+    POOL_SIZE: [2, 3, 4, 5]
+    SCALER: ['Standard', 'MinMax']
+    UNITS: [10, 15]
+  SEED: 0
+  TOURNAMENT_SIZE: 2
+MODEL:
+  ARCHITECTURE: MLP
+  BACKBONE: GASearch
+  DROPOUT: 0.2
+  FEATURE_SELECTION: True
+  INPUT_SHAPE: (50, 50, 3)
+OUTPUT_DIR: ./tests/testdata/models\mlp_feature_GASearch
+SOLVER:
+  BASE_LEARNING_RATE: 0.001
+  BATCH_SIZE: 1024
+  CROSS_VALIDATION: False
+  CROSS_VALIDATION_FOLDS: 5
+  EPOCHS: 10
+  LOSS: categorical_crossentropy
+  METRICS: ['categorical_accuracy']
+  OPTIMIZER: Adam
+  TEST_SIZE: 0.2
+TASK: Classification
+2020-05-17 17:00:37,213 NNGA INFO: Train MLP dataset loaded! 400 sample(s) on 1 batch(es) was found!
+2020-05-17 17:00:37,343 NNGA INFO: Validation MLP dataset loaded! 150 sample(s) on 1 batch(es) was found!
+2020-05-17 17:00:37,343 NNGA INFO: GA created!
+2020-05-17 17:00:37,343 NNGA INFO: Chromosome_lenght: 31
+2020-05-17 17:00:37,343 NNGA INFO: 
+
+*************************  Genetic Algorithm   *************************
+2020-05-17 17:00:37,343 NNGA INFO: ============================ Execution with seed: 0  ============================
+2020-05-17 17:00:37,343 NNGA INFO: Indiv 0: {'activation_dense': 'tanh', 'batch_size': 6, 'epochs': 8, 'optimizer': 'SGD', 'learning_rate': 0.1, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.4, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.2, 'scaler': 'Standard', 'feature_selection_0': True, 'feature_selection_1': False, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': True, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': False, 'feature_selection_11': False, 'feature_selection_12': True, 'feature_selection_13': False, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:00:37,343 NNGA INFO: Features selected 6: ['feature_0', 'feature_2', 'feature_4', 'feature_5', 'feature_8', 'feature_12']
+2020-05-17 17:00:38,265 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:00:38,265 NNGA INFO: Model: "model"
+2020-05-17 17:00:38,266 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:38,266 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:00:38,266 NNGA INFO: =================================================================
+2020-05-17 17:00:38,266 NNGA INFO: input_1 (InputLayer)         [(None, 6)]               0         
+2020-05-17 17:00:38,266 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:38,267 NNGA INFO: dense (Dense)                (None, 15)                105       
+2020-05-17 17:00:38,267 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:38,267 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:00:38,267 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:38,267 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:00:38,267 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:38,268 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:00:38,268 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:38,268 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:00:38,268 NNGA INFO: =================================================================
+2020-05-17 17:00:38,268 NNGA INFO: Total params: 375
+2020-05-17 17:00:38,269 NNGA INFO: Trainable params: 375
+2020-05-17 17:00:38,269 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:00:38,269 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:38,269 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:00:38,290 NNGA INFO: Model compiled!
+2020-05-17 17:00:40,756 NNGA INFO: balanced accuracy: 0.2125
+2020-05-17 17:00:40,756 NNGA INFO: confusion matrix: 
+[[0 1 0 0 0 3 1 3 0 0]
+ [0 6 0 0 2 0 0 0 0 0]
+ [1 1 1 3 0 0 1 1 0 0]
+ [1 1 0 5 0 0 0 1 0 0]
+ [0 5 0 0 0 2 0 0 1 0]
+ [2 0 0 0 0 2 2 2 0 0]
+ [1 2 0 3 0 0 1 1 0 0]
+ [0 6 0 0 0 0 0 0 2 0]
+ [0 0 0 0 0 0 3 3 2 0]
+ [0 1 0 0 0 0 1 1 5 0]]
+2020-05-17 17:00:40,757 NNGA INFO: evaluate (loss value & metrics values): [2.2255265712738037, 0.2125]
+2020-05-17 17:00:40,757 NNGA INFO: Fitness: 0.2125
+
+2020-05-17 17:00:40,801 NNGA INFO: Indiv 1: {'activation_dense': 'relu', 'batch_size': 7, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.05, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.0, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.1, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:00:40,801 NNGA INFO: Features selected 6: ['feature_1', 'feature_2', 'feature_5', 'feature_8', 'feature_10', 'feature_13']
+2020-05-17 17:00:40,836 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:00:40,836 NNGA INFO: Model: "model"
+2020-05-17 17:00:40,836 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:40,836 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:00:40,837 NNGA INFO: =================================================================
+2020-05-17 17:00:40,837 NNGA INFO: input_1 (InputLayer)         [(None, 6)]               0         
+2020-05-17 17:00:40,837 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:40,837 NNGA INFO: dense (Dense)                (None, 15)                105       
+2020-05-17 17:00:40,837 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:40,838 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:00:40,838 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:40,838 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:00:40,838 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:40,839 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:00:40,839 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:40,839 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:00:40,839 NNGA INFO: =================================================================
+2020-05-17 17:00:40,840 NNGA INFO: Total params: 375
+2020-05-17 17:00:40,840 NNGA INFO: Trainable params: 375
+2020-05-17 17:00:40,840 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:00:40,840 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:40,840 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:00:40,860 NNGA INFO: Model compiled!
+2020-05-17 17:00:43,088 NNGA INFO: balanced accuracy: 0.3375
+2020-05-17 17:00:43,088 NNGA INFO: confusion matrix: 
+[[4 0 0 0 0 3 0 0 1 0]
+ [0 8 0 0 0 0 0 0 0 0]
+ [3 4 1 0 0 0 0 0 0 0]
+ [1 3 0 0 0 0 0 4 0 0]
+ [0 2 0 1 1 0 0 0 0 4]
+ [3 0 0 0 0 3 0 0 0 2]
+ [0 1 0 0 0 3 0 0 1 3]
+ [0 1 1 0 0 0 0 6 0 0]
+ [0 0 0 0 0 3 0 0 1 4]
+ [0 0 0 1 0 0 0 2 2 3]]
+2020-05-17 17:00:43,089 NNGA INFO: evaluate (loss value & metrics values): [1.8570339679718018, 0.3375]
+2020-05-17 17:00:43,089 NNGA INFO: Fitness: 0.3375
+
+2020-05-17 17:00:43,143 NNGA INFO: Indiv 2: {'activation_dense': 'relu', 'batch_size': 5, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.001, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 10, 'dropout_dense_0': 0.1, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.0, 'scaler': 'MinMax', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': False, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': True, 'feature_selection_15': True}
+2020-05-17 17:00:43,143 NNGA INFO: Features selected 7: ['feature_1', 'feature_2', 'feature_8', 'feature_10', 'feature_13', 'feature_14', 'feature_15']
+2020-05-17 17:00:43,182 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:00:43,183 NNGA INFO: Model: "model"
+2020-05-17 17:00:43,183 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:43,183 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:00:43,183 NNGA INFO: =================================================================
+2020-05-17 17:00:43,184 NNGA INFO: input_1 (InputLayer)         [(None, 7)]               0         
+2020-05-17 17:00:43,184 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:43,184 NNGA INFO: dense (Dense)                (None, 10)                80        
+2020-05-17 17:00:43,184 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:43,184 NNGA INFO: dropout (Dropout)            (None, 10)                0         
+2020-05-17 17:00:43,185 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:43,185 NNGA INFO: dense_1 (Dense)              (None, 10)                110       
+2020-05-17 17:00:43,185 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:43,185 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:00:43,185 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:43,186 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:00:43,186 NNGA INFO: =================================================================
+2020-05-17 17:00:43,186 NNGA INFO: Total params: 300
+2020-05-17 17:00:43,186 NNGA INFO: Trainable params: 300
+2020-05-17 17:00:43,186 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:00:43,187 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:43,187 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:00:43,206 NNGA INFO: Model compiled!
+2020-05-17 17:00:45,391 NNGA INFO: balanced accuracy: 0.125
+2020-05-17 17:00:45,391 NNGA INFO: confusion matrix: 
+[[0 1 0 0 0 7 0 0 0 0]
+ [0 0 0 2 0 6 0 0 0 0]
+ [0 0 0 3 0 5 0 0 0 0]
+ [0 0 1 3 0 4 0 0 0 0]
+ [0 0 0 6 0 2 0 0 0 0]
+ [0 0 0 1 0 7 0 0 0 0]
+ [0 2 0 2 0 4 0 0 0 0]
+ [0 0 0 6 0 2 0 0 0 0]
+ [0 1 0 2 0 5 0 0 0 0]
+ [0 0 0 7 0 1 0 0 0 0]]
+2020-05-17 17:00:45,392 NNGA INFO: evaluate (loss value & metrics values): [2.4887404441833496, 0.125]
+2020-05-17 17:00:45,392 NNGA INFO: Fitness: 0.125
+
+2020-05-17 17:00:45,454 NNGA INFO: Indiv 3: {'activation_dense': 'tanh', 'batch_size': 3, 'epochs': 8, 'optimizer': 'SGD', 'learning_rate': 0.001, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 10, 'dropout_dense_0': 0.1, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.0, 'scaler': 'Standard', 'feature_selection_0': True, 'feature_selection_1': True, 'feature_selection_2': False, 'feature_selection_3': True, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': True, 'feature_selection_7': True, 'feature_selection_8': True, 'feature_selection_9': True, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': True, 'feature_selection_13': True, 'feature_selection_14': True, 'feature_selection_15': False}
+2020-05-17 17:00:45,454 NNGA INFO: Features selected 12: ['feature_0', 'feature_1', 'feature_3', 'feature_5', 'feature_6', 'feature_7', 'feature_8', 'feature_9', 'feature_10', 'feature_12', 'feature_13', 'feature_14']
+2020-05-17 17:00:45,488 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:00:45,488 NNGA INFO: Model: "model"
+2020-05-17 17:00:45,488 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:45,489 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:00:45,489 NNGA INFO: =================================================================
+2020-05-17 17:00:45,489 NNGA INFO: input_1 (InputLayer)         [(None, 12)]              0         
+2020-05-17 17:00:45,489 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:45,490 NNGA INFO: dense (Dense)                (None, 10)                130       
+2020-05-17 17:00:45,490 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:45,490 NNGA INFO: dropout (Dropout)            (None, 10)                0         
+2020-05-17 17:00:45,490 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:45,491 NNGA INFO: dense_1 (Dense)              (None, 10)                110       
+2020-05-17 17:00:45,491 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:45,491 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:00:45,491 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:45,491 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:00:45,492 NNGA INFO: =================================================================
+2020-05-17 17:00:45,492 NNGA INFO: Total params: 350
+2020-05-17 17:00:45,492 NNGA INFO: Trainable params: 350
+2020-05-17 17:00:45,492 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:00:45,492 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:45,493 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:00:45,512 NNGA INFO: Model compiled!
+2020-05-17 17:00:47,685 NNGA INFO: balanced accuracy: 0.15
+2020-05-17 17:00:47,686 NNGA INFO: confusion matrix: 
+[[0 0 0 0 4 0 3 0 1 0]
+ [0 0 7 0 1 0 0 0 0 0]
+ [0 0 4 1 1 0 2 0 0 0]
+ [1 0 3 2 0 0 0 0 0 2]
+ [0 0 6 0 1 1 0 0 0 0]
+ [0 0 0 1 1 0 5 0 0 1]
+ [0 0 1 0 4 1 2 0 0 0]
+ [0 0 2 0 2 1 0 3 0 0]
+ [0 0 0 0 3 3 2 0 0 0]
+ [0 0 3 1 3 0 1 0 0 0]]
+2020-05-17 17:00:47,686 NNGA INFO: evaluate (loss value & metrics values): [2.1961610317230225, 0.15]
+2020-05-17 17:00:47,686 NNGA INFO: Fitness: 0.15
+
+2020-05-17 17:00:47,747 NNGA INFO: Indiv 4: {'activation_dense': 'relu', 'batch_size': 5, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.0001, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 10, 'dropout_dense_0': 0.4, 'activate_dense_1': False, 'units_1': 10, 'dropout_dense_1': 0.4, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': False, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': True, 'feature_selection_7': True, 'feature_selection_8': True, 'feature_selection_9': True, 'feature_selection_10': False, 'feature_selection_11': False, 'feature_selection_12': True, 'feature_selection_13': False, 'feature_selection_14': True, 'feature_selection_15': True}
+2020-05-17 17:00:47,747 NNGA INFO: Features selected 9: ['feature_1', 'feature_5', 'feature_6', 'feature_7', 'feature_8', 'feature_9', 'feature_12', 'feature_14', 'feature_15']
+2020-05-17 17:00:47,769 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:00:47,770 NNGA INFO: Model: "model"
+2020-05-17 17:00:47,770 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:47,770 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:00:47,770 NNGA INFO: =================================================================
+2020-05-17 17:00:47,771 NNGA INFO: input_1 (InputLayer)         [(None, 9)]               0         
+2020-05-17 17:00:47,771 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:47,771 NNGA INFO: dense (Dense)                (None, 10)                100       
+2020-05-17 17:00:47,771 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:47,771 NNGA INFO: dropout (Dropout)            (None, 10)                0         
+2020-05-17 17:00:47,772 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:47,772 NNGA INFO: dense_1 (Dense)              (None, 10)                110       
+2020-05-17 17:00:47,772 NNGA INFO: =================================================================
+2020-05-17 17:00:47,772 NNGA INFO: Total params: 210
+2020-05-17 17:00:47,773 NNGA INFO: Trainable params: 210
+2020-05-17 17:00:47,773 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:00:47,773 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:47,773 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:00:47,792 NNGA INFO: Model compiled!
+2020-05-17 17:00:49,972 NNGA INFO: balanced accuracy: 0.0875
+2020-05-17 17:00:49,972 NNGA INFO: confusion matrix: 
+[[0 0 0 0 1 0 0 2 5 0]
+ [0 0 0 0 4 0 0 0 4 0]
+ [0 0 0 0 4 0 0 0 4 0]
+ [0 0 0 0 4 0 1 0 3 0]
+ [0 0 1 0 1 0 0 2 4 0]
+ [0 0 0 0 3 0 0 1 4 0]
+ [0 0 0 0 1 0 1 1 5 0]
+ [0 0 1 0 2 0 0 4 1 0]
+ [0 0 0 0 2 0 0 5 1 0]
+ [0 0 0 0 3 0 0 2 3 0]]
+2020-05-17 17:00:49,973 NNGA INFO: evaluate (loss value & metrics values): [2.540120840072632, 0.0875]
+2020-05-17 17:00:49,973 NNGA INFO: Fitness: 0.0875
+
+2020-05-17 17:00:50,028 NNGA INFO: Indiv 5: {'activation_dense': 'tanh', 'batch_size': 8, 'epochs': 10, 'optimizer': 'SGD', 'learning_rate': 0.01, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.0, 'activate_dense_1': False, 'units_1': 10, 'dropout_dense_1': 0.4, 'scaler': 'MinMax', 'feature_selection_0': True, 'feature_selection_1': True, 'feature_selection_2': False, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': False, 'feature_selection_6': True, 'feature_selection_7': False, 'feature_selection_8': False, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': True, 'feature_selection_12': True, 'feature_selection_13': False, 'feature_selection_14': True, 'feature_selection_15': True}
+2020-05-17 17:00:50,028 NNGA INFO: Features selected 8: ['feature_0', 'feature_1', 'feature_6', 'feature_10', 'feature_11', 'feature_12', 'feature_14', 'feature_15']
+2020-05-17 17:00:50,059 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:00:50,059 NNGA INFO: Model: "model"
+2020-05-17 17:00:50,059 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:50,059 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:00:50,059 NNGA INFO: =================================================================
+2020-05-17 17:00:50,059 NNGA INFO: input_1 (InputLayer)         [(None, 8)]               0         
+2020-05-17 17:00:50,059 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:50,059 NNGA INFO: dense (Dense)                (None, 15)                135       
+2020-05-17 17:00:50,059 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:50,059 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:00:50,059 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:50,059 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:00:50,059 NNGA INFO: =================================================================
+2020-05-17 17:00:50,059 NNGA INFO: Total params: 295
+2020-05-17 17:00:50,059 NNGA INFO: Trainable params: 295
+2020-05-17 17:00:50,059 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:00:50,059 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:50,059 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:00:50,091 NNGA INFO: Model compiled!
+2020-05-17 17:00:52,527 NNGA INFO: balanced accuracy: 0.0125
+2020-05-17 17:00:52,527 NNGA INFO: confusion matrix: 
+[[1 3 0 0 1 1 0 1 1 0]
+ [1 0 7 0 0 0 0 0 0 0]
+ [2 2 0 0 1 2 0 1 0 0]
+ [1 1 3 0 1 0 0 0 2 0]
+ [1 0 2 0 0 1 0 4 0 0]
+ [0 1 2 0 1 0 0 2 2 0]
+ [3 2 0 0 0 1 0 2 0 0]
+ [1 1 2 0 0 0 4 0 0 0]
+ [0 0 0 0 0 2 1 5 0 0]
+ [2 0 0 1 0 1 1 3 0 0]]
+2020-05-17 17:00:52,527 NNGA INFO: evaluate (loss value & metrics values): [2.665214776992798, 0.0125]
+2020-05-17 17:00:52,527 NNGA INFO: Fitness: 0.0125
+
+2020-05-17 17:00:52,588 NNGA INFO: Indiv 6: {'activation_dense': 'relu', 'batch_size': 8, 'epochs': 10, 'optimizer': 'SGD', 'learning_rate': 0.1, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 10, 'dropout_dense_0': 0.1, 'activate_dense_1': False, 'units_1': 10, 'dropout_dense_1': 0.2, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': False, 'feature_selection_2': True, 'feature_selection_3': True, 'feature_selection_4': False, 'feature_selection_5': False, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': True, 'feature_selection_12': True, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:00:52,588 NNGA INFO: Features selected 7: ['feature_2', 'feature_3', 'feature_8', 'feature_10', 'feature_11', 'feature_12', 'feature_13']
+2020-05-17 17:00:52,612 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:00:52,613 NNGA INFO: Model: "model"
+2020-05-17 17:00:52,614 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:52,614 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:00:52,615 NNGA INFO: =================================================================
+2020-05-17 17:00:52,616 NNGA INFO: input_1 (InputLayer)         [(None, 7)]               0         
+2020-05-17 17:00:52,617 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:52,617 NNGA INFO: dense (Dense)                (None, 10)                80        
+2020-05-17 17:00:52,619 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:52,620 NNGA INFO: dropout (Dropout)            (None, 10)                0         
+2020-05-17 17:00:52,621 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:52,622 NNGA INFO: dense_1 (Dense)              (None, 10)                110       
+2020-05-17 17:00:52,623 NNGA INFO: =================================================================
+2020-05-17 17:00:52,624 NNGA INFO: Total params: 190
+2020-05-17 17:00:52,624 NNGA INFO: Trainable params: 190
+2020-05-17 17:00:52,624 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:00:52,625 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:52,626 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:00:52,642 NNGA INFO: Model compiled!
+2020-05-17 17:00:55,111 NNGA INFO: balanced accuracy: 0.0625
+2020-05-17 17:00:55,111 NNGA INFO: confusion matrix: 
+[[0 1 3 0 0 0 0 3 1 0]
+ [0 0 0 2 0 0 0 6 0 0]
+ [0 0 0 0 0 1 0 6 1 0]
+ [0 0 1 3 0 0 0 3 1 0]
+ [0 2 0 5 0 0 0 1 0 0]
+ [0 0 4 2 0 0 0 2 0 0]
+ [0 1 1 0 0 1 0 2 2 1]
+ [0 1 0 4 0 0 0 2 1 0]
+ [0 2 2 2 0 0 0 2 0 0]
+ [0 0 1 5 0 0 0 1 1 0]]
+2020-05-17 17:00:55,111 NNGA INFO: evaluate (loss value & metrics values): [2.3382954597473145, 0.0625]
+2020-05-17 17:00:55,112 NNGA INFO: Fitness: 0.0625
+
+2020-05-17 17:00:55,171 NNGA INFO: Indiv 7: {'activation_dense': 'tanh', 'batch_size': 3, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.0001, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.2, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.3, 'scaler': 'MinMax', 'feature_selection_0': True, 'feature_selection_1': True, 'feature_selection_2': False, 'feature_selection_3': False, 'feature_selection_4': True, 'feature_selection_5': False, 'feature_selection_6': True, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': True, 'feature_selection_10': False, 'feature_selection_11': True, 'feature_selection_12': True, 'feature_selection_13': True, 'feature_selection_14': True, 'feature_selection_15': False}
+2020-05-17 17:00:55,171 NNGA INFO: Features selected 10: ['feature_0', 'feature_1', 'feature_4', 'feature_6', 'feature_8', 'feature_9', 'feature_11', 'feature_12', 'feature_13', 'feature_14']
+2020-05-17 17:00:55,210 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:00:55,210 NNGA INFO: Model: "model"
+2020-05-17 17:00:55,211 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:55,211 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:00:55,211 NNGA INFO: =================================================================
+2020-05-17 17:00:55,211 NNGA INFO: input_1 (InputLayer)         [(None, 10)]              0         
+2020-05-17 17:00:55,211 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:55,212 NNGA INFO: dense (Dense)                (None, 15)                165       
+2020-05-17 17:00:55,212 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:55,212 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:00:55,212 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:55,212 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:00:55,213 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:55,213 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:00:55,213 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:55,213 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:00:55,213 NNGA INFO: =================================================================
+2020-05-17 17:00:55,214 NNGA INFO: Total params: 435
+2020-05-17 17:00:55,214 NNGA INFO: Trainable params: 435
+2020-05-17 17:00:55,214 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:00:55,214 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:55,214 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:00:55,226 NNGA INFO: Model compiled!
+2020-05-17 17:00:57,500 NNGA INFO: balanced accuracy: 0.0625
+2020-05-17 17:00:57,501 NNGA INFO: confusion matrix: 
+[[2 0 0 1 0 1 3 1 0 0]
+ [5 0 0 0 0 0 0 0 3 0]
+ [1 2 0 0 2 0 1 2 0 0]
+ [0 1 1 0 0 0 3 1 2 0]
+ [2 0 0 1 1 0 0 3 1 0]
+ [4 0 0 1 0 0 3 0 0 0]
+ [1 0 0 0 2 0 0 4 1 0]
+ [0 0 0 0 1 4 1 0 2 0]
+ [0 0 0 3 0 1 1 1 2 0]
+ [0 0 0 2 1 0 1 1 3 0]]
+2020-05-17 17:00:57,501 NNGA INFO: evaluate (loss value & metrics values): [2.4730327129364014, 0.0625]
+2020-05-17 17:00:57,501 NNGA INFO: Fitness: 0.0625
+
+2020-05-17 17:00:57,562 NNGA INFO: Generation: 0
+Fitness best indiv: 0.3375
+Best indivs: [1, 0]
+Fitness mean: 0.13125
+Mutation rate: 0.02
+
+
+2020-05-17 17:00:57,562 NNGA INFO: Indiv 0: {'activation_dense': 'relu', 'batch_size': 7, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.05, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.0, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.1, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:00:57,562 NNGA INFO: Features selected 6: ['feature_1', 'feature_2', 'feature_5', 'feature_8', 'feature_10', 'feature_13']
+2020-05-17 17:00:57,593 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:00:57,593 NNGA INFO: Model: "model"
+2020-05-17 17:00:57,593 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:57,593 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:00:57,593 NNGA INFO: =================================================================
+2020-05-17 17:00:57,593 NNGA INFO: input_1 (InputLayer)         [(None, 6)]               0         
+2020-05-17 17:00:57,593 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:57,593 NNGA INFO: dense (Dense)                (None, 15)                105       
+2020-05-17 17:00:57,593 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:57,593 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:00:57,593 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:57,593 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:00:57,593 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:57,593 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:00:57,593 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:57,593 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:00:57,593 NNGA INFO: =================================================================
+2020-05-17 17:00:57,593 NNGA INFO: Total params: 375
+2020-05-17 17:00:57,593 NNGA INFO: Trainable params: 375
+2020-05-17 17:00:57,593 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:00:57,593 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:57,593 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:00:57,619 NNGA INFO: Model compiled!
+2020-05-17 17:00:59,859 NNGA INFO: balanced accuracy: 0.3125
+2020-05-17 17:00:59,859 NNGA INFO: confusion matrix: 
+[[4 0 0 0 0 0 0 1 3 0]
+ [0 5 0 0 1 0 0 2 0 0]
+ [0 1 1 0 2 0 1 1 0 2]
+ [1 1 0 0 0 0 0 4 0 2]
+ [0 0 0 0 1 0 1 3 0 3]
+ [2 1 0 0 1 0 1 0 1 2]
+ [0 1 0 0 1 0 6 0 0 0]
+ [0 0 0 0 4 0 0 3 1 0]
+ [1 1 0 0 1 0 0 0 4 1]
+ [0 1 0 0 4 0 1 1 0 1]]
+2020-05-17 17:00:59,859 NNGA INFO: evaluate (loss value & metrics values): [1.9525697231292725, 0.3125]
+2020-05-17 17:00:59,860 NNGA INFO: Fitness: 0.3125
+
+2020-05-17 17:00:59,922 NNGA INFO: Indiv 1: {'activation_dense': 'tanh', 'batch_size': 6, 'epochs': 8, 'optimizer': 'SGD', 'learning_rate': 0.1, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.4, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.2, 'scaler': 'Standard', 'feature_selection_0': True, 'feature_selection_1': False, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': True, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': False, 'feature_selection_11': False, 'feature_selection_12': True, 'feature_selection_13': False, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:00:59,922 NNGA INFO: Features selected 6: ['feature_0', 'feature_2', 'feature_4', 'feature_5', 'feature_8', 'feature_12']
+2020-05-17 17:00:59,960 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:00:59,961 NNGA INFO: Model: "model"
+2020-05-17 17:00:59,961 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:59,961 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:00:59,961 NNGA INFO: =================================================================
+2020-05-17 17:00:59,962 NNGA INFO: input_1 (InputLayer)         [(None, 6)]               0         
+2020-05-17 17:00:59,962 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:59,962 NNGA INFO: dense (Dense)                (None, 15)                105       
+2020-05-17 17:00:59,962 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:59,963 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:00:59,963 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:59,963 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:00:59,963 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:59,964 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:00:59,964 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:59,964 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:00:59,964 NNGA INFO: =================================================================
+2020-05-17 17:00:59,965 NNGA INFO: Total params: 375
+2020-05-17 17:00:59,965 NNGA INFO: Trainable params: 375
+2020-05-17 17:00:59,965 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:00:59,965 NNGA INFO: _________________________________________________________________
+2020-05-17 17:00:59,966 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:00:59,985 NNGA INFO: Model compiled!
+2020-05-17 17:01:02,193 NNGA INFO: balanced accuracy: 0.175
+2020-05-17 17:01:02,193 NNGA INFO: confusion matrix: 
+[[0 1 0 0 2 0 2 3 0 0]
+ [0 0 0 0 0 0 0 4 2 2]
+ [0 2 3 0 1 0 2 0 0 0]
+ [0 3 0 1 0 0 2 2 0 0]
+ [0 0 0 0 1 0 0 6 0 1]
+ [0 0 0 0 0 1 1 1 1 4]
+ [0 0 0 0 0 4 0 3 0 1]
+ [0 0 0 0 0 0 0 8 0 0]
+ [1 0 0 0 2 1 0 3 0 1]
+ [0 0 0 0 0 0 0 7 1 0]]
+2020-05-17 17:01:02,193 NNGA INFO: evaluate (loss value & metrics values): [2.2124695777893066, 0.175]
+2020-05-17 17:01:02,193 NNGA INFO: Fitness: 0.175
+
+2020-05-17 17:01:02,243 NNGA INFO: Indiv 2: {'activation_dense': 'relu', 'batch_size': 5, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.001, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.1, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.0, 'scaler': 'MinMax', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': False, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': False, 'feature_selection_11': False, 'feature_selection_12': True, 'feature_selection_13': False, 'feature_selection_14': False, 'feature_selection_15': True}
+2020-05-17 17:01:02,259 NNGA INFO: Features selected 5: ['feature_1', 'feature_2', 'feature_8', 'feature_12', 'feature_15']
+2020-05-17 17:01:02,292 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:01:02,293 NNGA INFO: Model: "model"
+2020-05-17 17:01:02,293 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:02,293 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:01:02,293 NNGA INFO: =================================================================
+2020-05-17 17:01:02,294 NNGA INFO: input_1 (InputLayer)         [(None, 5)]               0         
+2020-05-17 17:01:02,294 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:02,294 NNGA INFO: dense (Dense)                (None, 15)                90        
+2020-05-17 17:01:02,294 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:02,294 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:01:02,295 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:02,295 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:01:02,295 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:02,295 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:01:02,295 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:02,296 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:01:02,296 NNGA INFO: =================================================================
+2020-05-17 17:01:02,296 NNGA INFO: Total params: 360
+2020-05-17 17:01:02,296 NNGA INFO: Trainable params: 360
+2020-05-17 17:01:02,297 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:01:02,297 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:02,297 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:01:02,317 NNGA INFO: Model compiled!
+2020-05-17 17:01:04,560 NNGA INFO: balanced accuracy: 0.1
+2020-05-17 17:01:04,560 NNGA INFO: confusion matrix: 
+[[0 0 7 0 0 0 0 1 0 0]
+ [0 0 2 0 0 0 1 5 0 0]
+ [0 0 4 0 0 0 1 3 0 0]
+ [0 0 4 0 0 0 0 4 0 0]
+ [1 0 1 0 0 0 1 5 0 0]
+ [1 0 5 0 0 0 0 2 0 0]
+ [0 0 5 0 0 0 0 3 0 0]
+ [0 2 0 0 0 0 2 4 0 0]
+ [0 0 4 0 0 0 0 3 0 1]
+ [0 0 1 0 0 0 1 6 0 0]]
+2020-05-17 17:01:04,561 NNGA INFO: evaluate (loss value & metrics values): [2.3401427268981934, 0.1]
+2020-05-17 17:01:04,561 NNGA INFO: Fitness: 0.1
+
+2020-05-17 17:01:04,621 NNGA INFO: Indiv 3: {'activation_dense': 'tanh', 'batch_size': 6, 'epochs': 8, 'optimizer': 'SGD', 'learning_rate': 0.1, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.4, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.2, 'scaler': 'Standard', 'feature_selection_0': True, 'feature_selection_1': False, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': True, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': True, 'feature_selection_15': False}
+2020-05-17 17:01:04,621 NNGA INFO: Features selected 8: ['feature_0', 'feature_2', 'feature_4', 'feature_5', 'feature_8', 'feature_10', 'feature_13', 'feature_14']
+2020-05-17 17:01:04,660 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:01:04,660 NNGA INFO: Model: "model"
+2020-05-17 17:01:04,661 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:04,661 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:01:04,661 NNGA INFO: =================================================================
+2020-05-17 17:01:04,661 NNGA INFO: input_1 (InputLayer)         [(None, 8)]               0         
+2020-05-17 17:01:04,661 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:04,662 NNGA INFO: dense (Dense)                (None, 15)                135       
+2020-05-17 17:01:04,662 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:04,663 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:01:04,663 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:04,663 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:01:04,663 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:04,663 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:01:04,664 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:04,664 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:01:04,664 NNGA INFO: =================================================================
+2020-05-17 17:01:04,664 NNGA INFO: Total params: 405
+2020-05-17 17:01:04,664 NNGA INFO: Trainable params: 405
+2020-05-17 17:01:04,665 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:01:04,665 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:04,665 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:01:04,684 NNGA INFO: Model compiled!
+2020-05-17 17:01:06,902 NNGA INFO: balanced accuracy: 0.1875
+2020-05-17 17:01:06,902 NNGA INFO: confusion matrix: 
+[[0 1 0 0 1 3 0 2 1 0]
+ [0 3 0 2 0 0 2 0 0 1]
+ [0 1 0 0 0 0 6 1 0 0]
+ [0 0 1 0 0 0 6 0 1 0]
+ [1 0 0 0 2 0 1 0 2 2]
+ [0 0 1 0 1 1 2 0 1 2]
+ [0 2 0 0 0 0 5 0 0 1]
+ [3 0 0 0 2 0 1 0 1 1]
+ [0 2 0 0 1 1 0 0 3 1]
+ [2 0 0 0 3 0 1 0 1 1]]
+2020-05-17 17:01:06,902 NNGA INFO: evaluate (loss value & metrics values): [2.223278760910034, 0.1875]
+2020-05-17 17:01:06,902 NNGA INFO: Fitness: 0.1875
+
+2020-05-17 17:01:06,977 NNGA INFO: Indiv 4: {'activation_dense': 'relu', 'batch_size': 5, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.0001, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 10, 'dropout_dense_0': 0.1, 'activate_dense_1': False, 'units_1': 10, 'dropout_dense_1': 0.4, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': False, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': True, 'feature_selection_7': True, 'feature_selection_8': True, 'feature_selection_9': True, 'feature_selection_10': False, 'feature_selection_11': False, 'feature_selection_12': True, 'feature_selection_13': False, 'feature_selection_14': True, 'feature_selection_15': True}
+2020-05-17 17:01:06,978 NNGA INFO: Features selected 9: ['feature_1', 'feature_5', 'feature_6', 'feature_7', 'feature_8', 'feature_9', 'feature_12', 'feature_14', 'feature_15']
+2020-05-17 17:01:07,000 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:01:07,001 NNGA INFO: Model: "model"
+2020-05-17 17:01:07,001 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:07,001 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:01:07,001 NNGA INFO: =================================================================
+2020-05-17 17:01:07,002 NNGA INFO: input_1 (InputLayer)         [(None, 9)]               0         
+2020-05-17 17:01:07,002 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:07,002 NNGA INFO: dense (Dense)                (None, 10)                100       
+2020-05-17 17:01:07,002 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:07,003 NNGA INFO: dropout (Dropout)            (None, 10)                0         
+2020-05-17 17:01:07,003 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:07,003 NNGA INFO: dense_1 (Dense)              (None, 10)                110       
+2020-05-17 17:01:07,003 NNGA INFO: =================================================================
+2020-05-17 17:01:07,004 NNGA INFO: Total params: 210
+2020-05-17 17:01:07,004 NNGA INFO: Trainable params: 210
+2020-05-17 17:01:07,004 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:01:07,004 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:07,005 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:01:07,024 NNGA INFO: Model compiled!
+2020-05-17 17:01:09,193 NNGA INFO: balanced accuracy: 0.15
+2020-05-17 17:01:09,193 NNGA INFO: confusion matrix: 
+[[5 0 0 0 0 0 1 2 0 0]
+ [0 2 0 0 0 0 0 0 0 6]
+ [0 2 2 0 0 0 0 0 1 3]
+ [1 1 0 0 0 1 0 0 0 5]
+ [0 3 0 0 0 0 0 1 0 4]
+ [1 3 0 0 0 0 0 2 0 2]
+ [2 3 0 0 0 0 0 1 0 2]
+ [0 1 1 0 0 0 2 0 0 4]
+ [3 1 0 0 0 0 1 3 0 0]
+ [0 4 0 0 0 0 1 0 0 3]]
+2020-05-17 17:01:09,194 NNGA INFO: evaluate (loss value & metrics values): [2.468085765838623, 0.15]
+2020-05-17 17:01:09,194 NNGA INFO: Fitness: 0.15
+
+2020-05-17 17:01:09,244 NNGA INFO: Indiv 5: {'activation_dense': 'tanh', 'batch_size': 5, 'epochs': 8, 'optimizer': 'SGD', 'learning_rate': 0.001, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 10, 'dropout_dense_0': 0.4, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.0, 'scaler': 'Standard', 'feature_selection_0': True, 'feature_selection_1': True, 'feature_selection_2': True, 'feature_selection_3': True, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': True, 'feature_selection_7': True, 'feature_selection_8': True, 'feature_selection_9': True, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': True, 'feature_selection_13': True, 'feature_selection_14': True, 'feature_selection_15': False}
+2020-05-17 17:01:09,244 NNGA INFO: Features selected 13: ['feature_0', 'feature_1', 'feature_2', 'feature_3', 'feature_5', 'feature_6', 'feature_7', 'feature_8', 'feature_9', 'feature_10', 'feature_12', 'feature_13', 'feature_14']
+2020-05-17 17:01:09,290 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:01:09,290 NNGA INFO: Model: "model"
+2020-05-17 17:01:09,290 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:09,290 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:01:09,291 NNGA INFO: =================================================================
+2020-05-17 17:01:09,291 NNGA INFO: input_1 (InputLayer)         [(None, 13)]              0         
+2020-05-17 17:01:09,291 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:09,291 NNGA INFO: dense (Dense)                (None, 10)                140       
+2020-05-17 17:01:09,291 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:09,292 NNGA INFO: dropout (Dropout)            (None, 10)                0         
+2020-05-17 17:01:09,292 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:09,292 NNGA INFO: dense_1 (Dense)              (None, 10)                110       
+2020-05-17 17:01:09,292 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:09,292 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:01:09,292 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:09,293 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:01:09,293 NNGA INFO: =================================================================
+2020-05-17 17:01:09,293 NNGA INFO: Total params: 360
+2020-05-17 17:01:09,293 NNGA INFO: Trainable params: 360
+2020-05-17 17:01:09,294 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:01:09,294 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:09,294 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:01:09,313 NNGA INFO: Model compiled!
+2020-05-17 17:01:11,461 NNGA INFO: balanced accuracy: 0.1125
+2020-05-17 17:01:11,461 NNGA INFO: confusion matrix: 
+[[0 1 4 0 0 0 2 0 1 0]
+ [0 0 0 0 5 1 0 0 2 0]
+ [6 0 0 2 0 0 0 0 0 0]
+ [2 0 1 2 1 0 2 0 0 0]
+ [1 1 0 0 2 1 1 0 2 0]
+ [4 1 1 1 0 1 0 0 0 0]
+ [5 0 0 0 1 1 1 0 0 0]
+ [0 2 2 0 1 0 1 0 2 0]
+ [0 0 4 1 0 0 0 0 3 0]
+ [1 0 0 0 3 0 0 0 4 0]]
+2020-05-17 17:01:11,462 NNGA INFO: evaluate (loss value & metrics values): [2.359764575958252, 0.1125]
+2020-05-17 17:01:11,462 NNGA INFO: Fitness: 0.1125
+
+2020-05-17 17:01:11,518 NNGA INFO: Indiv 6: {'activation_dense': 'relu', 'batch_size': 8, 'epochs': 10, 'optimizer': 'SGD', 'learning_rate': 0.1, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.1, 'activate_dense_1': False, 'units_1': 10, 'dropout_dense_1': 0.2, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': False, 'feature_selection_2': False, 'feature_selection_3': True, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': True, 'feature_selection_7': True, 'feature_selection_8': True, 'feature_selection_9': True, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': True, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:01:11,518 NNGA INFO: Features selected 9: ['feature_3', 'feature_5', 'feature_6', 'feature_7', 'feature_8', 'feature_9', 'feature_10', 'feature_12', 'feature_13']
+2020-05-17 17:01:11,534 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:01:11,534 NNGA INFO: Model: "model"
+2020-05-17 17:01:11,534 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:11,534 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:01:11,534 NNGA INFO: =================================================================
+2020-05-17 17:01:11,534 NNGA INFO: input_1 (InputLayer)         [(None, 9)]               0         
+2020-05-17 17:01:11,534 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:11,534 NNGA INFO: dense (Dense)                (None, 15)                150       
+2020-05-17 17:01:11,534 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:11,534 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:01:11,534 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:11,534 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:01:11,534 NNGA INFO: =================================================================
+2020-05-17 17:01:11,549 NNGA INFO: Total params: 310
+2020-05-17 17:01:11,549 NNGA INFO: Trainable params: 310
+2020-05-17 17:01:11,549 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:01:11,549 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:11,549 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:01:11,569 NNGA INFO: Model compiled!
+2020-05-17 17:01:14,053 NNGA INFO: balanced accuracy: 0.1375
+2020-05-17 17:01:14,053 NNGA INFO: confusion matrix: 
+[[0 0 0 0 0 1 1 2 0 4]
+ [0 0 0 0 0 2 5 0 0 1]
+ [3 0 0 0 1 1 0 0 0 3]
+ [3 0 0 0 0 0 0 1 0 4]
+ [2 0 0 0 0 2 0 0 0 4]
+ [2 0 0 0 0 2 3 0 0 1]
+ [0 0 0 0 0 1 4 0 0 3]
+ [0 0 0 0 0 0 0 2 0 6]
+ [5 0 0 0 0 1 1 1 0 0]
+ [2 0 0 0 0 1 1 1 0 3]]
+2020-05-17 17:01:14,053 NNGA INFO: evaluate (loss value & metrics values): [2.252048969268799, 0.1375]
+2020-05-17 17:01:14,053 NNGA INFO: Fitness: 0.1375
+
+2020-05-17 17:01:14,122 NNGA INFO: Indiv 7: {'activation_dense': 'tanh', 'batch_size': 3, 'epochs': 8, 'optimizer': 'SGD', 'learning_rate': 0.001, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 10, 'dropout_dense_0': 0.1, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.0, 'scaler': 'Standard', 'feature_selection_0': True, 'feature_selection_1': True, 'feature_selection_2': True, 'feature_selection_3': True, 'feature_selection_4': False, 'feature_selection_5': False, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': True, 'feature_selection_12': True, 'feature_selection_13': True, 'feature_selection_14': True, 'feature_selection_15': False}
+2020-05-17 17:01:14,122 NNGA INFO: Features selected 10: ['feature_0', 'feature_1', 'feature_2', 'feature_3', 'feature_8', 'feature_10', 'feature_11', 'feature_12', 'feature_13', 'feature_14']
+2020-05-17 17:01:14,160 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:01:14,161 NNGA INFO: Model: "model"
+2020-05-17 17:01:14,161 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:14,162 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:01:14,162 NNGA INFO: =================================================================
+2020-05-17 17:01:14,163 NNGA INFO: input_1 (InputLayer)         [(None, 10)]              0         
+2020-05-17 17:01:14,163 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:14,164 NNGA INFO: dense (Dense)                (None, 10)                110       
+2020-05-17 17:01:14,164 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:14,165 NNGA INFO: dropout (Dropout)            (None, 10)                0         
+2020-05-17 17:01:14,165 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:14,166 NNGA INFO: dense_1 (Dense)              (None, 10)                110       
+2020-05-17 17:01:14,167 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:14,168 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:01:14,168 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:14,168 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:01:14,169 NNGA INFO: =================================================================
+2020-05-17 17:01:14,169 NNGA INFO: Total params: 330
+2020-05-17 17:01:14,169 NNGA INFO: Trainable params: 330
+2020-05-17 17:01:14,170 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:01:14,170 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:14,171 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:01:14,201 NNGA INFO: Model compiled!
+2020-05-17 17:01:16,487 NNGA INFO: balanced accuracy: 0.1
+2020-05-17 17:01:16,488 NNGA INFO: confusion matrix: 
+[[0 0 0 1 1 3 2 0 1 0]
+ [0 0 1 2 0 2 3 0 0 0]
+ [0 0 7 0 0 1 0 0 0 0]
+ [0 1 4 0 0 0 1 0 2 0]
+ [0 0 1 0 1 2 2 0 1 1]
+ [0 2 1 1 0 0 3 0 1 0]
+ [0 0 4 1 0 1 0 1 1 0]
+ [0 1 1 0 1 3 2 0 0 0]
+ [0 0 2 0 2 1 1 2 0 0]
+ [0 0 3 0 0 2 1 0 2 0]]
+2020-05-17 17:01:16,488 NNGA INFO: evaluate (loss value & metrics values): [2.4977664947509766, 0.1]
+2020-05-17 17:01:16,488 NNGA INFO: Fitness: 0.1
+
+2020-05-17 17:01:16,551 NNGA INFO: Generation: 1
+Fitness best indiv: 0.3125
+Best indivs: [0, 3]
+Fitness mean: 0.15937500000000002
+Mutation rate: 0.02
+
+
+2020-05-17 17:01:16,751 NNGA INFO: Indiv 0: {'activation_dense': 'relu', 'batch_size': 7, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.05, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.0, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.1, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:01:16,751 NNGA INFO: Features selected 6: ['feature_1', 'feature_2', 'feature_5', 'feature_8', 'feature_10', 'feature_13']
+2020-05-17 17:01:16,785 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:01:16,786 NNGA INFO: Model: "model"
+2020-05-17 17:01:16,786 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:16,786 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:01:16,786 NNGA INFO: =================================================================
+2020-05-17 17:01:16,787 NNGA INFO: input_1 (InputLayer)         [(None, 6)]               0         
+2020-05-17 17:01:16,787 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:16,787 NNGA INFO: dense (Dense)                (None, 15)                105       
+2020-05-17 17:01:16,787 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:16,787 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:01:16,788 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:16,788 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:01:16,788 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:16,788 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:01:16,788 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:16,789 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:01:16,789 NNGA INFO: =================================================================
+2020-05-17 17:01:16,789 NNGA INFO: Total params: 375
+2020-05-17 17:01:16,789 NNGA INFO: Trainable params: 375
+2020-05-17 17:01:16,789 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:01:16,790 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:16,790 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:01:16,809 NNGA INFO: Model compiled!
+2020-05-17 17:01:19,108 NNGA INFO: balanced accuracy: 0.375
+2020-05-17 17:01:19,109 NNGA INFO: confusion matrix: 
+[[7 0 0 0 0 0 0 0 1 0]
+ [0 6 0 0 1 0 0 0 0 1]
+ [0 1 7 0 0 0 0 0 0 0]
+ [1 2 3 0 0 0 1 1 0 0]
+ [1 1 0 0 4 0 0 0 0 2]
+ [5 1 0 0 1 1 0 0 0 0]
+ [1 1 2 0 3 1 0 0 0 0]
+ [0 1 0 0 1 0 2 2 0 2]
+ [8 0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 3 0 1 0 1 3]]
+2020-05-17 17:01:19,109 NNGA INFO: evaluate (loss value & metrics values): [1.691727876663208, 0.375]
+2020-05-17 17:01:19,109 NNGA INFO: Fitness: 0.375
+
+2020-05-17 17:01:19,176 NNGA INFO: Indiv 1: {'activation_dense': 'tanh', 'batch_size': 6, 'epochs': 8, 'optimizer': 'SGD', 'learning_rate': 0.1, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.4, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.2, 'scaler': 'Standard', 'feature_selection_0': True, 'feature_selection_1': False, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': True, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': True, 'feature_selection_15': False}
+2020-05-17 17:01:19,176 NNGA INFO: Features selected 8: ['feature_0', 'feature_2', 'feature_4', 'feature_5', 'feature_8', 'feature_10', 'feature_13', 'feature_14']
+2020-05-17 17:01:19,216 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:01:19,216 NNGA INFO: Model: "model"
+2020-05-17 17:01:19,216 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:19,217 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:01:19,217 NNGA INFO: =================================================================
+2020-05-17 17:01:19,217 NNGA INFO: input_1 (InputLayer)         [(None, 8)]               0         
+2020-05-17 17:01:19,217 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:19,217 NNGA INFO: dense (Dense)                (None, 15)                135       
+2020-05-17 17:01:19,218 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:19,218 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:01:19,218 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:19,218 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:01:19,218 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:19,219 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:01:19,219 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:19,219 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:01:19,219 NNGA INFO: =================================================================
+2020-05-17 17:01:19,220 NNGA INFO: Total params: 405
+2020-05-17 17:01:19,220 NNGA INFO: Trainable params: 405
+2020-05-17 17:01:19,220 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:01:19,220 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:19,220 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:01:19,240 NNGA INFO: Model compiled!
+2020-05-17 17:01:21,483 NNGA INFO: balanced accuracy: 0.1125
+2020-05-17 17:01:21,484 NNGA INFO: confusion matrix: 
+[[1 0 3 1 1 0 0 0 0 2]
+ [1 0 0 0 2 0 4 0 1 0]
+ [0 4 0 0 0 2 0 0 2 0]
+ [1 4 0 0 1 1 0 0 1 0]
+ [0 0 1 0 3 4 0 0 0 0]
+ [0 2 1 0 0 3 0 0 0 2]
+ [0 4 0 0 0 0 0 0 2 2]
+ [0 0 0 0 4 1 0 0 0 3]
+ [0 2 0 2 2 1 0 0 0 1]
+ [1 0 0 0 3 1 0 0 1 2]]
+2020-05-17 17:01:21,484 NNGA INFO: evaluate (loss value & metrics values): [2.390322208404541, 0.1125]
+2020-05-17 17:01:21,484 NNGA INFO: Fitness: 0.1125
+
+2020-05-17 17:01:21,547 NNGA INFO: Indiv 2: {'activation_dense': 'tanh', 'batch_size': 6, 'epochs': 8, 'optimizer': 'SGD', 'learning_rate': 0.1, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.4, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.1, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': False, 'feature_selection_11': False, 'feature_selection_12': True, 'feature_selection_13': False, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:01:21,547 NNGA INFO: Features selected 5: ['feature_1', 'feature_2', 'feature_5', 'feature_8', 'feature_12']
+2020-05-17 17:01:21,587 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:01:21,587 NNGA INFO: Model: "model"
+2020-05-17 17:01:21,587 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:21,587 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:01:21,588 NNGA INFO: =================================================================
+2020-05-17 17:01:21,588 NNGA INFO: input_1 (InputLayer)         [(None, 5)]               0         
+2020-05-17 17:01:21,588 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:21,588 NNGA INFO: dense (Dense)                (None, 15)                90        
+2020-05-17 17:01:21,589 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:21,589 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:01:21,589 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:21,589 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:01:21,589 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:21,590 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:01:21,590 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:21,590 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:01:21,590 NNGA INFO: =================================================================
+2020-05-17 17:01:21,591 NNGA INFO: Total params: 360
+2020-05-17 17:01:21,591 NNGA INFO: Trainable params: 360
+2020-05-17 17:01:21,591 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:01:21,591 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:21,592 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:01:21,611 NNGA INFO: Model compiled!
+2020-05-17 17:01:23,830 NNGA INFO: balanced accuracy: 0.1125
+2020-05-17 17:01:23,830 NNGA INFO: confusion matrix: 
+[[0 0 2 1 0 1 0 1 3 0]
+ [0 0 0 0 0 0 0 8 0 0]
+ [0 0 3 1 0 0 0 4 0 0]
+ [0 0 0 1 0 1 0 6 0 0]
+ [0 0 0 3 0 1 0 4 0 0]
+ [0 0 1 1 0 1 0 3 0 2]
+ [0 0 4 0 0 1 0 2 0 1]
+ [0 0 0 0 0 3 0 1 0 4]
+ [0 0 3 1 0 0 0 3 0 1]
+ [0 0 0 0 0 1 0 4 0 3]]
+2020-05-17 17:01:23,831 NNGA INFO: evaluate (loss value & metrics values): [2.2397541999816895, 0.1125]
+2020-05-17 17:01:23,831 NNGA INFO: Fitness: 0.1125
+
+2020-05-17 17:01:23,893 NNGA INFO: Indiv 3: {'activation_dense': 'relu', 'batch_size': 7, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.05, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.1, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.2, 'scaler': 'Standard', 'feature_selection_0': True, 'feature_selection_1': False, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:01:23,894 NNGA INFO: Features selected 6: ['feature_0', 'feature_2', 'feature_5', 'feature_8', 'feature_10', 'feature_13']
+2020-05-17 17:01:23,932 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:01:23,932 NNGA INFO: Model: "model"
+2020-05-17 17:01:23,933 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:23,933 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:01:23,933 NNGA INFO: =================================================================
+2020-05-17 17:01:23,933 NNGA INFO: input_1 (InputLayer)         [(None, 6)]               0         
+2020-05-17 17:01:23,933 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:23,934 NNGA INFO: dense (Dense)                (None, 15)                105       
+2020-05-17 17:01:23,934 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:23,934 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:01:23,934 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:23,935 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:01:23,935 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:23,935 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:01:23,935 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:23,935 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:01:23,935 NNGA INFO: =================================================================
+2020-05-17 17:01:23,936 NNGA INFO: Total params: 375
+2020-05-17 17:01:23,936 NNGA INFO: Trainable params: 375
+2020-05-17 17:01:23,936 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:01:23,936 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:23,937 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:01:23,956 NNGA INFO: Model compiled!
+2020-05-17 17:01:26,217 NNGA INFO: balanced accuracy: 0.35
+2020-05-17 17:01:26,218 NNGA INFO: confusion matrix: 
+[[4 0 0 0 0 0 0 0 4 0]
+ [0 6 0 0 0 0 0 2 0 0]
+ [0 1 6 0 0 0 0 0 1 0]
+ [1 1 4 0 0 0 0 1 1 0]
+ [3 1 0 0 0 0 0 4 0 0]
+ [0 0 0 0 0 0 0 2 6 0]
+ [1 0 1 0 0 1 0 0 5 0]
+ [0 0 0 0 0 0 0 4 4 0]
+ [0 0 0 0 0 0 0 0 8 0]
+ [0 0 0 0 0 0 0 4 4 0]]
+2020-05-17 17:01:26,218 NNGA INFO: evaluate (loss value & metrics values): [1.8410308361053467, 0.35]
+2020-05-17 17:01:26,218 NNGA INFO: Fitness: 0.35
+
+2020-05-17 17:01:26,281 NNGA INFO: Indiv 4: {'activation_dense': 'relu', 'batch_size': 5, 'epochs': 8, 'optimizer': 'SGD', 'learning_rate': 0.1, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.4, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.2, 'scaler': 'Standard', 'feature_selection_0': True, 'feature_selection_1': False, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': True, 'feature_selection_7': True, 'feature_selection_8': True, 'feature_selection_9': True, 'feature_selection_10': False, 'feature_selection_11': False, 'feature_selection_12': True, 'feature_selection_13': False, 'feature_selection_14': True, 'feature_selection_15': True}
+2020-05-17 17:01:26,282 NNGA INFO: Features selected 10: ['feature_0', 'feature_2', 'feature_5', 'feature_6', 'feature_7', 'feature_8', 'feature_9', 'feature_12', 'feature_14', 'feature_15']
+2020-05-17 17:01:26,320 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:01:26,320 NNGA INFO: Model: "model"
+2020-05-17 17:01:26,321 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:26,321 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:01:26,321 NNGA INFO: =================================================================
+2020-05-17 17:01:26,321 NNGA INFO: input_1 (InputLayer)         [(None, 10)]              0         
+2020-05-17 17:01:26,321 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:26,322 NNGA INFO: dense (Dense)                (None, 15)                165       
+2020-05-17 17:01:26,322 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:26,322 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:01:26,322 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:26,323 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:01:26,323 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:26,323 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:01:26,323 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:26,323 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:01:26,324 NNGA INFO: =================================================================
+2020-05-17 17:01:26,324 NNGA INFO: Total params: 435
+2020-05-17 17:01:26,324 NNGA INFO: Trainable params: 435
+2020-05-17 17:01:26,324 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:01:26,325 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:26,325 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:01:26,345 NNGA INFO: Model compiled!
+2020-05-17 17:01:28,562 NNGA INFO: balanced accuracy: 0.1
+2020-05-17 17:01:28,563 NNGA INFO: confusion matrix: 
+[[2 0 0 0 0 5 0 0 0 1]
+ [2 0 1 1 0 3 0 0 1 0]
+ [4 2 0 0 1 1 0 0 0 0]
+ [0 3 0 1 0 4 0 0 0 0]
+ [3 1 0 2 0 2 0 0 0 0]
+ [0 0 1 0 0 5 0 0 1 1]
+ [3 0 1 0 1 0 0 0 0 3]
+ [1 0 0 0 0 7 0 0 0 0]
+ [1 1 0 0 5 1 0 0 0 0]
+ [5 1 0 0 1 1 0 0 0 0]]
+2020-05-17 17:01:28,563 NNGA INFO: evaluate (loss value & metrics values): [2.3302273750305176, 0.1]
+2020-05-17 17:01:28,563 NNGA INFO: Fitness: 0.1
+
+2020-05-17 17:01:28,627 NNGA INFO: Indiv 5: {'activation_dense': 'tanh', 'batch_size': 6, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.0001, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 10, 'dropout_dense_0': 0.1, 'activate_dense_1': False, 'units_1': 10, 'dropout_dense_1': 0.4, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': False, 'feature_selection_3': False, 'feature_selection_4': True, 'feature_selection_5': True, 'feature_selection_6': True, 'feature_selection_7': False, 'feature_selection_8': False, 'feature_selection_9': False, 'feature_selection_10': False, 'feature_selection_11': False, 'feature_selection_12': True, 'feature_selection_13': False, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:01:28,627 NNGA INFO: Features selected 5: ['feature_1', 'feature_4', 'feature_5', 'feature_6', 'feature_12']
+2020-05-17 17:01:28,650 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:01:28,650 NNGA INFO: Model: "model"
+2020-05-17 17:01:28,651 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:28,651 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:01:28,651 NNGA INFO: =================================================================
+2020-05-17 17:01:28,652 NNGA INFO: input_1 (InputLayer)         [(None, 5)]               0         
+2020-05-17 17:01:28,652 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:28,652 NNGA INFO: dense (Dense)                (None, 10)                60        
+2020-05-17 17:01:28,652 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:28,652 NNGA INFO: dropout (Dropout)            (None, 10)                0         
+2020-05-17 17:01:28,653 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:28,653 NNGA INFO: dense_1 (Dense)              (None, 10)                110       
+2020-05-17 17:01:28,653 NNGA INFO: =================================================================
+2020-05-17 17:01:28,654 NNGA INFO: Total params: 170
+2020-05-17 17:01:28,654 NNGA INFO: Trainable params: 170
+2020-05-17 17:01:28,654 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:01:28,654 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:28,654 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:01:28,674 NNGA INFO: Model compiled!
+2020-05-17 17:01:30,877 NNGA INFO: balanced accuracy: 0.15
+2020-05-17 17:01:30,877 NNGA INFO: confusion matrix: 
+[[1 0 0 2 3 1 0 0 1 0]
+ [0 0 0 0 0 4 2 1 0 1]
+ [0 0 0 0 0 0 8 0 0 0]
+ [0 0 0 1 1 1 1 3 0 1]
+ [0 1 1 0 0 3 1 0 0 2]
+ [0 0 0 0 0 3 1 0 0 4]
+ [0 0 0 0 3 1 3 0 0 1]
+ [2 0 0 1 1 3 0 0 0 1]
+ [0 1 1 0 4 0 0 0 1 1]
+ [0 0 0 0 3 0 0 1 1 3]]
+2020-05-17 17:01:30,878 NNGA INFO: evaluate (loss value & metrics values): [2.252126693725586, 0.15]
+2020-05-17 17:01:30,878 NNGA INFO: Fitness: 0.15
+
+2020-05-17 17:01:30,942 NNGA INFO: Indiv 6: {'activation_dense': 'relu', 'batch_size': 8, 'epochs': 10, 'optimizer': 'SGD', 'learning_rate': 0.1, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.1, 'activate_dense_1': False, 'units_1': 10, 'dropout_dense_1': 0.4, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': False, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': True, 'feature_selection_7': True, 'feature_selection_8': True, 'feature_selection_9': True, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': True, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:01:30,943 NNGA INFO: Features selected 9: ['feature_1', 'feature_5', 'feature_6', 'feature_7', 'feature_8', 'feature_9', 'feature_10', 'feature_12', 'feature_13']
+2020-05-17 17:01:30,966 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:01:30,967 NNGA INFO: Model: "model"
+2020-05-17 17:01:30,967 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:30,967 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:01:30,967 NNGA INFO: =================================================================
+2020-05-17 17:01:30,968 NNGA INFO: input_1 (InputLayer)         [(None, 9)]               0         
+2020-05-17 17:01:30,968 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:30,968 NNGA INFO: dense (Dense)                (None, 15)                150       
+2020-05-17 17:01:30,968 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:30,969 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:01:30,969 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:30,969 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:01:30,969 NNGA INFO: =================================================================
+2020-05-17 17:01:30,970 NNGA INFO: Total params: 310
+2020-05-17 17:01:30,970 NNGA INFO: Trainable params: 310
+2020-05-17 17:01:30,970 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:01:30,970 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:30,971 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:01:30,991 NNGA INFO: Model compiled!
+2020-05-17 17:01:33,476 NNGA INFO: balanced accuracy: 0.1125
+2020-05-17 17:01:33,476 NNGA INFO: confusion matrix: 
+[[2 0 1 1 0 0 0 1 0 3]
+ [0 1 0 0 0 0 5 0 1 1]
+ [0 0 3 1 0 0 4 0 0 0]
+ [2 0 0 1 0 0 3 0 1 1]
+ [0 1 0 3 1 0 1 0 2 0]
+ [3 0 1 0 0 0 0 0 3 1]
+ [0 0 3 0 0 3 1 1 0 0]
+ [1 0 0 2 0 0 0 0 0 5]
+ [1 1 6 0 0 0 0 0 0 0]
+ [1 0 0 6 0 0 0 0 1 0]]
+2020-05-17 17:01:33,477 NNGA INFO: evaluate (loss value & metrics values): [2.2813403606414795, 0.1125]
+2020-05-17 17:01:33,477 NNGA INFO: Fitness: 0.1125
+
+2020-05-17 17:01:33,539 NNGA INFO: Indiv 7: {'activation_dense': 'relu', 'batch_size': 5, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.0001, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 10, 'dropout_dense_0': 0.1, 'activate_dense_1': False, 'units_1': 10, 'dropout_dense_1': 0.2, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': False, 'feature_selection_2': False, 'feature_selection_3': True, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': True, 'feature_selection_7': True, 'feature_selection_8': True, 'feature_selection_9': True, 'feature_selection_10': False, 'feature_selection_11': False, 'feature_selection_12': False, 'feature_selection_13': False, 'feature_selection_14': True, 'feature_selection_15': True}
+2020-05-17 17:01:33,539 NNGA INFO: Features selected 8: ['feature_3', 'feature_5', 'feature_6', 'feature_7', 'feature_8', 'feature_9', 'feature_14', 'feature_15']
+2020-05-17 17:01:33,562 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:01:33,562 NNGA INFO: Model: "model"
+2020-05-17 17:01:33,562 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:33,563 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:01:33,563 NNGA INFO: =================================================================
+2020-05-17 17:01:33,564 NNGA INFO: input_1 (InputLayer)         [(None, 8)]               0         
+2020-05-17 17:01:33,564 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:33,565 NNGA INFO: dense (Dense)                (None, 10)                90        
+2020-05-17 17:01:33,565 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:33,565 NNGA INFO: dropout (Dropout)            (None, 10)                0         
+2020-05-17 17:01:33,565 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:33,565 NNGA INFO: dense_1 (Dense)              (None, 10)                110       
+2020-05-17 17:01:33,565 NNGA INFO: =================================================================
+2020-05-17 17:01:33,566 NNGA INFO: Total params: 200
+2020-05-17 17:01:33,566 NNGA INFO: Trainable params: 200
+2020-05-17 17:01:33,566 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:01:33,566 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:33,566 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:01:33,586 NNGA INFO: Model compiled!
+2020-05-17 17:01:35,793 NNGA INFO: balanced accuracy: 0.1125
+2020-05-17 17:01:35,794 NNGA INFO: confusion matrix: 
+[[0 0 0 2 1 1 0 0 4 0]
+ [0 0 0 6 1 0 0 0 0 1]
+ [0 0 0 1 0 7 0 0 0 0]
+ [0 0 0 1 0 1 2 0 4 0]
+ [0 0 0 5 0 0 0 2 0 1]
+ [0 0 0 2 0 0 0 0 6 0]
+ [0 0 0 6 0 2 0 0 0 0]
+ [0 0 0 1 0 0 4 0 1 2]
+ [0 0 0 0 0 5 0 0 3 0]
+ [0 0 0 0 0 0 0 1 2 5]]
+2020-05-17 17:01:35,794 NNGA INFO: evaluate (loss value & metrics values): [2.7220191955566406, 0.1125]
+2020-05-17 17:01:35,794 NNGA INFO: Fitness: 0.1125
+
+2020-05-17 17:01:35,855 NNGA INFO: Generation: 2
+Fitness best indiv: 0.375
+Best indivs: [0, 3]
+Fitness mean: 0.178125
+Mutation rate: 0.02
+
+
+2020-05-17 17:01:36,033 NNGA INFO: Indiv 0: {'activation_dense': 'relu', 'batch_size': 7, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.05, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.0, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.1, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:01:36,033 NNGA INFO: Features selected 6: ['feature_1', 'feature_2', 'feature_5', 'feature_8', 'feature_10', 'feature_13']
+2020-05-17 17:01:36,068 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:01:36,068 NNGA INFO: Model: "model"
+2020-05-17 17:01:36,068 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:36,069 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:01:36,069 NNGA INFO: =================================================================
+2020-05-17 17:01:36,069 NNGA INFO: input_1 (InputLayer)         [(None, 6)]               0         
+2020-05-17 17:01:36,069 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:36,070 NNGA INFO: dense (Dense)                (None, 15)                105       
+2020-05-17 17:01:36,070 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:36,070 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:01:36,070 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:36,071 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:01:36,071 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:36,071 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:01:36,071 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:36,071 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:01:36,072 NNGA INFO: =================================================================
+2020-05-17 17:01:36,072 NNGA INFO: Total params: 375
+2020-05-17 17:01:36,072 NNGA INFO: Trainable params: 375
+2020-05-17 17:01:36,072 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:01:36,073 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:36,073 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:01:36,092 NNGA INFO: Model compiled!
+2020-05-17 17:01:38,332 NNGA INFO: balanced accuracy: 0.4
+2020-05-17 17:01:38,332 NNGA INFO: confusion matrix: 
+[[4 0 0 0 0 3 0 0 0 1]
+ [0 7 0 0 0 0 0 0 0 1]
+ [0 1 4 0 1 2 0 0 0 0]
+ [0 2 3 0 0 0 0 3 0 0]
+ [0 0 0 0 3 1 0 2 0 2]
+ [0 0 1 0 0 5 0 0 0 2]
+ [0 0 2 0 0 2 3 1 0 0]
+ [0 2 0 0 0 0 0 4 0 2]
+ [0 0 0 0 0 4 0 0 0 4]
+ [0 0 0 0 0 1 2 3 0 2]]
+2020-05-17 17:01:38,332 NNGA INFO: evaluate (loss value & metrics values): [1.6431738138198853, 0.4]
+2020-05-17 17:01:38,332 NNGA INFO: Fitness: 0.4
+
+2020-05-17 17:01:38,399 NNGA INFO: Indiv 1: {'activation_dense': 'relu', 'batch_size': 7, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.05, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.1, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.2, 'scaler': 'Standard', 'feature_selection_0': True, 'feature_selection_1': False, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:01:38,399 NNGA INFO: Features selected 6: ['feature_0', 'feature_2', 'feature_5', 'feature_8', 'feature_10', 'feature_13']
+2020-05-17 17:01:38,438 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:01:38,438 NNGA INFO: Model: "model"
+2020-05-17 17:01:38,438 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:38,438 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:01:38,439 NNGA INFO: =================================================================
+2020-05-17 17:01:38,439 NNGA INFO: input_1 (InputLayer)         [(None, 6)]               0         
+2020-05-17 17:01:38,439 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:38,439 NNGA INFO: dense (Dense)                (None, 15)                105       
+2020-05-17 17:01:38,439 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:38,440 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:01:38,440 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:38,440 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:01:38,440 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:38,440 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:01:38,441 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:38,441 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:01:38,441 NNGA INFO: =================================================================
+2020-05-17 17:01:38,441 NNGA INFO: Total params: 375
+2020-05-17 17:01:38,441 NNGA INFO: Trainable params: 375
+2020-05-17 17:01:38,442 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:01:38,442 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:38,442 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:01:38,462 NNGA INFO: Model compiled!
+2020-05-17 17:01:40,720 NNGA INFO: balanced accuracy: 0.425
+2020-05-17 17:01:40,720 NNGA INFO: confusion matrix: 
+[[5 0 0 0 0 0 0 1 2 0]
+ [0 6 0 0 0 0 0 2 0 0]
+ [0 2 4 0 1 1 0 0 0 0]
+ [0 4 1 1 0 0 0 1 0 1]
+ [0 0 0 0 2 0 0 3 0 3]
+ [4 0 1 0 0 0 0 0 3 0]
+ [0 0 3 0 1 0 1 0 1 2]
+ [0 0 0 0 0 0 0 4 0 4]
+ [2 0 0 0 0 0 0 0 4 2]
+ [0 0 0 0 0 0 0 0 1 7]]
+2020-05-17 17:01:40,720 NNGA INFO: evaluate (loss value & metrics values): [1.6127889156341553, 0.425]
+2020-05-17 17:01:40,721 NNGA INFO: Fitness: 0.425
+
+2020-05-17 17:01:40,783 NNGA INFO: Indiv 2: {'activation_dense': 'tanh', 'batch_size': 7, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.05, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.0, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.1, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:01:40,783 NNGA INFO: Features selected 6: ['feature_1', 'feature_2', 'feature_5', 'feature_8', 'feature_10', 'feature_13']
+2020-05-17 17:01:40,817 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:01:40,818 NNGA INFO: Model: "model"
+2020-05-17 17:01:40,818 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:40,818 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:01:40,818 NNGA INFO: =================================================================
+2020-05-17 17:01:40,819 NNGA INFO: input_1 (InputLayer)         [(None, 6)]               0         
+2020-05-17 17:01:40,819 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:40,819 NNGA INFO: dense (Dense)                (None, 15)                105       
+2020-05-17 17:01:40,819 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:40,820 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:01:40,821 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:40,821 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:01:40,822 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:40,822 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:01:40,822 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:40,822 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:01:40,822 NNGA INFO: =================================================================
+2020-05-17 17:01:40,823 NNGA INFO: Total params: 375
+2020-05-17 17:01:40,823 NNGA INFO: Trainable params: 375
+2020-05-17 17:01:40,823 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:01:40,823 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:40,824 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:01:40,843 NNGA INFO: Model compiled!
+2020-05-17 17:01:43,079 NNGA INFO: balanced accuracy: 0.3875
+2020-05-17 17:01:43,079 NNGA INFO: confusion matrix: 
+[[4 0 0 0 0 1 0 1 2 0]
+ [0 7 0 0 0 0 0 1 0 0]
+ [0 1 5 0 0 1 1 0 0 0]
+ [0 2 3 0 1 0 0 2 0 0]
+ [0 0 0 1 3 0 1 1 1 1]
+ [1 0 1 0 0 3 0 0 3 0]
+ [1 0 4 0 1 0 1 0 0 1]
+ [0 2 0 0 1 0 0 5 0 0]
+ [2 0 0 0 0 4 0 1 1 0]
+ [0 0 0 0 1 1 3 0 1 2]]
+2020-05-17 17:01:43,079 NNGA INFO: evaluate (loss value & metrics values): [1.576947569847107, 0.3875]
+2020-05-17 17:01:43,080 NNGA INFO: Fitness: 0.3875
+
+2020-05-17 17:01:43,145 NNGA INFO: Indiv 3: {'activation_dense': 'relu', 'batch_size': 7, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.05, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.0, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.1, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': True, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:01:43,145 NNGA INFO: Features selected 7: ['feature_1', 'feature_2', 'feature_5', 'feature_8', 'feature_10', 'feature_11', 'feature_13']
+2020-05-17 17:01:43,179 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:01:43,179 NNGA INFO: Model: "model"
+2020-05-17 17:01:43,179 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:43,179 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:01:43,179 NNGA INFO: =================================================================
+2020-05-17 17:01:43,180 NNGA INFO: input_1 (InputLayer)         [(None, 7)]               0         
+2020-05-17 17:01:43,180 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:43,180 NNGA INFO: dense (Dense)                (None, 15)                120       
+2020-05-17 17:01:43,180 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:43,180 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:01:43,181 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:43,181 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:01:43,181 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:43,181 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:01:43,181 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:43,181 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:01:43,182 NNGA INFO: =================================================================
+2020-05-17 17:01:43,182 NNGA INFO: Total params: 390
+2020-05-17 17:01:43,182 NNGA INFO: Trainable params: 390
+2020-05-17 17:01:43,182 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:01:43,183 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:43,183 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:01:43,201 NNGA INFO: Model compiled!
+2020-05-17 17:01:45,437 NNGA INFO: balanced accuracy: 0.2875
+2020-05-17 17:01:45,437 NNGA INFO: confusion matrix: 
+[[5 2 0 0 0 0 1 0 0 0]
+ [0 8 0 0 0 0 0 0 0 0]
+ [1 5 1 0 1 0 0 0 0 0]
+ [0 5 0 0 0 0 0 2 0 1]
+ [0 1 0 1 1 0 2 1 1 1]
+ [5 0 0 0 0 1 0 1 1 0]
+ [0 1 1 1 0 0 3 1 1 0]
+ [0 2 0 1 0 0 0 3 0 2]
+ [3 1 0 0 0 1 2 0 0 1]
+ [1 0 0 0 0 1 4 1 0 1]]
+2020-05-17 17:01:45,437 NNGA INFO: evaluate (loss value & metrics values): [1.9025850296020508, 0.2875]
+2020-05-17 17:01:45,437 NNGA INFO: Fitness: 0.2875
+
+2020-05-17 17:01:45,501 NNGA INFO: Indiv 4: {'activation_dense': 'relu', 'batch_size': 8, 'epochs': 10, 'optimizer': 'SGD', 'learning_rate': 0.1, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.1, 'activate_dense_1': False, 'units_1': 10, 'dropout_dense_1': 0.4, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': False, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': True, 'feature_selection_7': True, 'feature_selection_8': False, 'feature_selection_9': True, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': True, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:01:45,501 NNGA INFO: Features selected 8: ['feature_1', 'feature_5', 'feature_6', 'feature_7', 'feature_9', 'feature_10', 'feature_12', 'feature_13']
+2020-05-17 17:01:45,525 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:01:45,525 NNGA INFO: Model: "model"
+2020-05-17 17:01:45,525 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:45,525 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:01:45,526 NNGA INFO: =================================================================
+2020-05-17 17:01:45,526 NNGA INFO: input_1 (InputLayer)         [(None, 8)]               0         
+2020-05-17 17:01:45,526 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:45,526 NNGA INFO: dense (Dense)                (None, 15)                135       
+2020-05-17 17:01:45,527 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:45,527 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:01:45,527 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:45,527 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:01:45,527 NNGA INFO: =================================================================
+2020-05-17 17:01:45,528 NNGA INFO: Total params: 295
+2020-05-17 17:01:45,528 NNGA INFO: Trainable params: 295
+2020-05-17 17:01:45,528 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:01:45,528 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:45,528 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:01:45,548 NNGA INFO: Model compiled!
+2020-05-17 17:01:48,026 NNGA INFO: balanced accuracy: 0.175
+2020-05-17 17:01:48,026 NNGA INFO: confusion matrix: 
+[[2 0 0 0 1 0 0 2 1 2]
+ [0 0 0 8 0 0 0 0 0 0]
+ [1 0 0 4 0 1 0 0 2 0]
+ [0 0 0 4 2 0 0 2 0 0]
+ [1 0 0 0 5 1 1 0 0 0]
+ [0 0 0 3 2 0 0 2 0 1]
+ [0 0 0 1 0 5 0 0 0 2]
+ [1 0 0 1 4 0 0 2 0 0]
+ [0 0 0 2 2 0 0 3 1 0]
+ [3 0 0 0 2 0 0 3 0 0]]
+2020-05-17 17:01:48,026 NNGA INFO: evaluate (loss value & metrics values): [2.248328447341919, 0.175]
+2020-05-17 17:01:48,027 NNGA INFO: Fitness: 0.175
+
+2020-05-17 17:01:48,091 NNGA INFO: Indiv 5: {'activation_dense': 'relu', 'batch_size': 7, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.05, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.1, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.2, 'scaler': 'Standard', 'feature_selection_0': True, 'feature_selection_1': False, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:01:48,092 NNGA INFO: Features selected 6: ['feature_0', 'feature_2', 'feature_5', 'feature_8', 'feature_10', 'feature_13']
+2020-05-17 17:01:48,130 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:01:48,131 NNGA INFO: Model: "model"
+2020-05-17 17:01:48,131 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:48,131 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:01:48,131 NNGA INFO: =================================================================
+2020-05-17 17:01:48,132 NNGA INFO: input_1 (InputLayer)         [(None, 6)]               0         
+2020-05-17 17:01:48,132 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:48,132 NNGA INFO: dense (Dense)                (None, 15)                105       
+2020-05-17 17:01:48,132 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:48,132 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:01:48,132 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:48,133 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:01:48,133 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:48,133 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:01:48,133 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:48,133 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:01:48,133 NNGA INFO: =================================================================
+2020-05-17 17:01:48,134 NNGA INFO: Total params: 375
+2020-05-17 17:01:48,134 NNGA INFO: Trainable params: 375
+2020-05-17 17:01:48,134 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:01:48,134 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:48,135 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:01:48,154 NNGA INFO: Model compiled!
+2020-05-17 17:01:50,407 NNGA INFO: balanced accuracy: 0.3625
+2020-05-17 17:01:50,408 NNGA INFO: confusion matrix: 
+[[2 0 0 0 0 1 0 0 5 0]
+ [0 8 0 0 0 0 0 0 0 0]
+ [0 1 4 0 1 0 0 0 2 0]
+ [0 3 2 1 0 1 0 1 0 0]
+ [0 1 0 0 4 0 0 2 1 0]
+ [0 0 1 0 0 3 0 0 4 0]
+ [0 1 2 0 2 0 0 0 3 0]
+ [0 2 0 0 0 2 0 4 0 0]
+ [0 0 0 0 2 3 0 0 3 0]
+ [0 0 0 0 5 1 0 1 1 0]]
+2020-05-17 17:01:50,408 NNGA INFO: evaluate (loss value & metrics values): [1.6721160411834717, 0.3625]
+2020-05-17 17:01:50,408 NNGA INFO: Fitness: 0.3625
+
+2020-05-17 17:01:50,469 NNGA INFO: Indiv 6: {'activation_dense': 'tanh', 'batch_size': 6, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.0001, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 10, 'dropout_dense_0': 0.1, 'activate_dense_1': False, 'units_1': 10, 'dropout_dense_1': 0.4, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': False, 'feature_selection_3': False, 'feature_selection_4': True, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:01:50,469 NNGA INFO: Features selected 6: ['feature_1', 'feature_4', 'feature_5', 'feature_8', 'feature_10', 'feature_13']
+2020-05-17 17:01:50,492 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:01:50,493 NNGA INFO: Model: "model"
+2020-05-17 17:01:50,493 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:50,493 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:01:50,493 NNGA INFO: =================================================================
+2020-05-17 17:01:50,494 NNGA INFO: input_1 (InputLayer)         [(None, 6)]               0         
+2020-05-17 17:01:50,494 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:50,494 NNGA INFO: dense (Dense)                (None, 10)                70        
+2020-05-17 17:01:50,494 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:50,495 NNGA INFO: dropout (Dropout)            (None, 10)                0         
+2020-05-17 17:01:50,495 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:50,495 NNGA INFO: dense_1 (Dense)              (None, 10)                110       
+2020-05-17 17:01:50,495 NNGA INFO: =================================================================
+2020-05-17 17:01:50,496 NNGA INFO: Total params: 180
+2020-05-17 17:01:50,496 NNGA INFO: Trainable params: 180
+2020-05-17 17:01:50,496 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:01:50,496 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:50,497 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:01:50,515 NNGA INFO: Model compiled!
+2020-05-17 17:01:52,711 NNGA INFO: balanced accuracy: 0.05
+2020-05-17 17:01:52,711 NNGA INFO: confusion matrix: 
+[[1 0 0 0 0 2 0 2 1 2]
+ [0 0 0 0 0 8 0 0 0 0]
+ [6 1 0 0 0 1 0 0 0 0]
+ [4 0 0 0 0 0 0 2 2 0]
+ [0 5 0 0 1 0 1 0 1 0]
+ [1 0 1 0 0 0 2 0 1 3]
+ [0 2 0 0 3 0 0 2 0 1]
+ [0 2 0 0 0 2 2 0 2 0]
+ [1 0 0 0 0 0 1 0 2 4]
+ [0 5 0 0 0 0 1 1 1 0]]
+2020-05-17 17:01:52,712 NNGA INFO: evaluate (loss value & metrics values): [2.3523035049438477, 0.05]
+2020-05-17 17:01:52,712 NNGA INFO: Fitness: 0.05
+
+2020-05-17 17:01:52,774 NNGA INFO: Indiv 7: {'activation_dense': 'relu', 'batch_size': 7, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.05, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.1, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.2, 'scaler': 'Standard', 'feature_selection_0': True, 'feature_selection_1': False, 'feature_selection_2': False, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': True, 'feature_selection_7': False, 'feature_selection_8': False, 'feature_selection_9': False, 'feature_selection_10': False, 'feature_selection_11': False, 'feature_selection_12': True, 'feature_selection_13': False, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:01:52,775 NNGA INFO: Features selected 4: ['feature_0', 'feature_5', 'feature_6', 'feature_12']
+2020-05-17 17:01:52,813 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:01:52,813 NNGA INFO: Model: "model"
+2020-05-17 17:01:52,814 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:52,814 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:01:52,814 NNGA INFO: =================================================================
+2020-05-17 17:01:52,814 NNGA INFO: input_1 (InputLayer)         [(None, 4)]               0         
+2020-05-17 17:01:52,815 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:52,816 NNGA INFO: dense (Dense)                (None, 15)                75        
+2020-05-17 17:01:52,816 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:52,817 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:01:52,817 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:52,817 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:01:52,817 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:52,817 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:01:52,818 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:52,818 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:01:52,818 NNGA INFO: =================================================================
+2020-05-17 17:01:52,818 NNGA INFO: Total params: 345
+2020-05-17 17:01:52,818 NNGA INFO: Trainable params: 345
+2020-05-17 17:01:52,819 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:01:52,819 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:52,819 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:01:52,838 NNGA INFO: Model compiled!
+2020-05-17 17:01:55,101 NNGA INFO: balanced accuracy: 0.3375
+2020-05-17 17:01:55,102 NNGA INFO: confusion matrix: 
+[[5 0 0 0 1 0 0 0 0 2]
+ [0 0 1 2 0 0 0 5 0 0]
+ [0 2 5 0 0 0 1 0 0 0]
+ [0 0 0 1 0 0 0 6 0 1]
+ [3 0 1 0 1 0 1 1 0 1]
+ [0 0 0 0 0 3 0 2 0 3]
+ [1 0 2 0 0 1 4 0 0 0]
+ [0 1 1 0 0 0 0 6 0 0]
+ [4 0 1 0 1 0 2 0 0 0]
+ [6 0 0 0 0 0 0 0 0 2]]
+2020-05-17 17:01:55,102 NNGA INFO: evaluate (loss value & metrics values): [1.6566390991210938, 0.3375]
+2020-05-17 17:01:55,102 NNGA INFO: Fitness: 0.3375
+
+2020-05-17 17:01:55,165 NNGA INFO: Generation: 3
+Fitness best indiv: 0.425
+Best indivs: [1, 0]
+Fitness mean: 0.303125
+Mutation rate: 0.02
+
+
+2020-05-17 17:01:55,343 NNGA INFO: Indiv 0: {'activation_dense': 'relu', 'batch_size': 7, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.05, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.1, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.2, 'scaler': 'Standard', 'feature_selection_0': True, 'feature_selection_1': False, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:01:55,344 NNGA INFO: Features selected 6: ['feature_0', 'feature_2', 'feature_5', 'feature_8', 'feature_10', 'feature_13']
+2020-05-17 17:01:55,384 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:01:55,384 NNGA INFO: Model: "model"
+2020-05-17 17:01:55,385 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:55,385 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:01:55,385 NNGA INFO: =================================================================
+2020-05-17 17:01:55,386 NNGA INFO: input_1 (InputLayer)         [(None, 6)]               0         
+2020-05-17 17:01:55,386 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:55,386 NNGA INFO: dense (Dense)                (None, 15)                105       
+2020-05-17 17:01:55,386 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:55,387 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:01:55,387 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:55,387 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:01:55,387 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:55,388 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:01:55,388 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:55,388 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:01:55,388 NNGA INFO: =================================================================
+2020-05-17 17:01:55,389 NNGA INFO: Total params: 375
+2020-05-17 17:01:55,389 NNGA INFO: Trainable params: 375
+2020-05-17 17:01:55,389 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:01:55,389 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:55,390 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:01:55,410 NNGA INFO: Model compiled!
+2020-05-17 17:01:57,668 NNGA INFO: balanced accuracy: 0.3125
+2020-05-17 17:01:57,668 NNGA INFO: confusion matrix: 
+[[3 1 0 0 0 0 0 0 4 0]
+ [0 8 0 0 0 0 0 0 0 0]
+ [2 1 4 0 1 0 0 0 0 0]
+ [0 3 1 1 0 0 1 2 0 0]
+ [1 3 0 0 2 0 0 0 2 0]
+ [1 0 0 0 0 1 0 0 6 0]
+ [2 1 0 0 3 0 1 0 1 0]
+ [0 4 0 0 2 0 0 1 1 0]
+ [3 0 0 0 0 0 1 0 4 0]
+ [0 3 0 0 1 0 1 1 2 0]]
+2020-05-17 17:01:57,668 NNGA INFO: evaluate (loss value & metrics values): [1.829695463180542, 0.3125]
+2020-05-17 17:01:57,668 NNGA INFO: Fitness: 0.3125
+
+2020-05-17 17:01:57,735 NNGA INFO: Indiv 1: {'activation_dense': 'relu', 'batch_size': 7, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.05, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.0, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.1, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:01:57,735 NNGA INFO: Features selected 6: ['feature_1', 'feature_2', 'feature_5', 'feature_8', 'feature_10', 'feature_13']
+2020-05-17 17:01:57,770 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:01:57,770 NNGA INFO: Model: "model"
+2020-05-17 17:01:57,771 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:57,772 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:01:57,772 NNGA INFO: =================================================================
+2020-05-17 17:01:57,772 NNGA INFO: input_1 (InputLayer)         [(None, 6)]               0         
+2020-05-17 17:01:57,772 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:57,773 NNGA INFO: dense (Dense)                (None, 15)                105       
+2020-05-17 17:01:57,773 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:57,773 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:01:57,773 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:57,773 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:01:57,774 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:57,774 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:01:57,774 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:57,774 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:01:57,775 NNGA INFO: =================================================================
+2020-05-17 17:01:57,775 NNGA INFO: Total params: 375
+2020-05-17 17:01:57,775 NNGA INFO: Trainable params: 375
+2020-05-17 17:01:57,775 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:01:57,776 NNGA INFO: _________________________________________________________________
+2020-05-17 17:01:57,776 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:01:57,796 NNGA INFO: Model compiled!
+2020-05-17 17:02:00,032 NNGA INFO: balanced accuracy: 0.3125
+2020-05-17 17:02:00,033 NNGA INFO: confusion matrix: 
+[[2 0 0 0 1 5 0 0 0 0]
+ [0 4 2 0 1 0 0 1 0 0]
+ [0 1 5 0 1 1 0 0 0 0]
+ [0 0 3 0 1 0 1 3 0 0]
+ [1 2 0 0 2 0 2 1 0 0]
+ [2 0 0 0 0 6 0 0 0 0]
+ [2 0 1 0 2 1 2 0 0 0]
+ [0 0 0 0 3 0 1 4 0 0]
+ [2 0 1 0 0 5 0 0 0 0]
+ [1 3 0 0 1 2 1 0 0 0]]
+2020-05-17 17:02:00,033 NNGA INFO: evaluate (loss value & metrics values): [1.9723808765411377, 0.3125]
+2020-05-17 17:02:00,033 NNGA INFO: Fitness: 0.3125
+
+2020-05-17 17:02:00,095 NNGA INFO: Indiv 2: {'activation_dense': 'relu', 'batch_size': 7, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.05, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.0, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.1, 'scaler': 'Standard', 'feature_selection_0': True, 'feature_selection_1': True, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:02:00,096 NNGA INFO: Features selected 7: ['feature_0', 'feature_1', 'feature_2', 'feature_5', 'feature_8', 'feature_10', 'feature_13']
+2020-05-17 17:02:00,130 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:02:00,130 NNGA INFO: Model: "model"
+2020-05-17 17:02:00,130 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:00,131 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:02:00,131 NNGA INFO: =================================================================
+2020-05-17 17:02:00,131 NNGA INFO: input_1 (InputLayer)         [(None, 7)]               0         
+2020-05-17 17:02:00,131 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:00,131 NNGA INFO: dense (Dense)                (None, 15)                120       
+2020-05-17 17:02:00,132 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:00,132 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:02:00,132 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:00,132 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:02:00,133 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:00,133 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:02:00,133 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:00,133 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:02:00,133 NNGA INFO: =================================================================
+2020-05-17 17:02:00,134 NNGA INFO: Total params: 390
+2020-05-17 17:02:00,134 NNGA INFO: Trainable params: 390
+2020-05-17 17:02:00,134 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:02:00,134 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:00,135 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:02:00,156 NNGA INFO: Model compiled!
+2020-05-17 17:02:02,405 NNGA INFO: balanced accuracy: 0.25
+2020-05-17 17:02:02,405 NNGA INFO: confusion matrix: 
+[[4 1 0 0 0 0 3 0 0 0]
+ [0 6 0 0 0 0 0 1 0 1]
+ [0 2 0 0 0 2 3 0 1 0]
+ [0 2 0 1 0 1 0 4 0 0]
+ [2 2 0 0 0 0 1 1 0 2]
+ [3 0 2 0 0 0 2 0 0 1]
+ [2 1 0 0 0 0 2 0 0 3]
+ [0 0 0 0 0 0 0 5 0 3]
+ [4 0 0 0 0 0 4 0 0 0]
+ [0 3 1 0 0 0 2 0 0 2]]
+2020-05-17 17:02:02,405 NNGA INFO: evaluate (loss value & metrics values): [2.0225300788879395, 0.25]
+2020-05-17 17:02:02,406 NNGA INFO: Fitness: 0.25
+
+2020-05-17 17:02:02,469 NNGA INFO: Indiv 3: {'activation_dense': 'tanh', 'batch_size': 7, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.05, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.0, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.1, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:02:02,469 NNGA INFO: Features selected 6: ['feature_1', 'feature_2', 'feature_5', 'feature_8', 'feature_10', 'feature_13']
+2020-05-17 17:02:02,503 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:02:02,504 NNGA INFO: Model: "model"
+2020-05-17 17:02:02,504 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:02,504 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:02:02,504 NNGA INFO: =================================================================
+2020-05-17 17:02:02,504 NNGA INFO: input_1 (InputLayer)         [(None, 6)]               0         
+2020-05-17 17:02:02,505 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:02,505 NNGA INFO: dense (Dense)                (None, 15)                105       
+2020-05-17 17:02:02,505 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:02,505 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:02:02,505 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:02,506 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:02:02,506 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:02,506 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:02:02,507 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:02,507 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:02:02,507 NNGA INFO: =================================================================
+2020-05-17 17:02:02,507 NNGA INFO: Total params: 375
+2020-05-17 17:02:02,507 NNGA INFO: Trainable params: 375
+2020-05-17 17:02:02,508 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:02:02,508 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:02,508 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:02:02,527 NNGA INFO: Model compiled!
+2020-05-17 17:02:04,785 NNGA INFO: balanced accuracy: 0.2875
+2020-05-17 17:02:04,785 NNGA INFO: confusion matrix: 
+[[4 0 0 1 0 0 0 0 2 1]
+ [0 5 1 0 0 0 0 1 0 1]
+ [1 1 5 0 0 0 1 0 0 0]
+ [0 2 1 0 1 0 0 3 0 1]
+ [1 1 0 0 0 0 1 1 0 4]
+ [2 0 0 0 0 0 1 0 4 1]
+ [3 0 1 0 1 0 1 0 1 1]
+ [0 0 0 0 2 0 0 3 0 3]
+ [4 0 1 0 0 1 0 0 2 0]
+ [0 0 0 1 0 0 1 2 1 3]]
+2020-05-17 17:02:04,786 NNGA INFO: evaluate (loss value & metrics values): [1.7647364139556885, 0.2875]
+2020-05-17 17:02:04,786 NNGA INFO: Fitness: 0.2875
+
+2020-05-17 17:02:04,849 NNGA INFO: Indiv 4: {'activation_dense': 'tanh', 'batch_size': 7, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.05, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.0, 'activate_dense_1': False, 'units_1': 10, 'dropout_dense_1': 0.1, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:02:04,849 NNGA INFO: Features selected 6: ['feature_1', 'feature_2', 'feature_5', 'feature_8', 'feature_10', 'feature_13']
+2020-05-17 17:02:04,868 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:02:04,868 NNGA INFO: Model: "model"
+2020-05-17 17:02:04,868 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:04,868 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:02:04,869 NNGA INFO: =================================================================
+2020-05-17 17:02:04,869 NNGA INFO: input_1 (InputLayer)         [(None, 6)]               0         
+2020-05-17 17:02:04,869 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:04,869 NNGA INFO: dense (Dense)                (None, 15)                105       
+2020-05-17 17:02:04,869 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:04,870 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:02:04,870 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:04,870 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:02:04,870 NNGA INFO: =================================================================
+2020-05-17 17:02:04,871 NNGA INFO: Total params: 265
+2020-05-17 17:02:04,871 NNGA INFO: Trainable params: 265
+2020-05-17 17:02:04,871 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:02:04,871 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:04,871 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:02:04,890 NNGA INFO: Model compiled!
+2020-05-17 17:02:07,092 NNGA INFO: balanced accuracy: 0.3125
+2020-05-17 17:02:07,092 NNGA INFO: confusion matrix: 
+[[3 0 0 0 0 4 0 0 1 0]
+ [0 6 0 0 0 0 0 1 0 1]
+ [0 1 5 0 0 0 2 0 0 0]
+ [0 2 1 1 1 0 0 2 0 1]
+ [1 1 0 0 0 0 1 1 0 4]
+ [2 0 0 0 0 3 1 0 2 0]
+ [1 0 0 1 3 0 1 0 2 0]
+ [0 0 0 0 2 0 0 3 0 3]
+ [4 0 1 0 0 1 0 0 2 0]
+ [0 1 0 1 0 0 1 1 3 1]]
+2020-05-17 17:02:07,092 NNGA INFO: evaluate (loss value & metrics values): [1.728462815284729, 0.3125]
+2020-05-17 17:02:07,093 NNGA INFO: Fitness: 0.3125
+
+2020-05-17 17:02:07,157 NNGA INFO: Indiv 5: {'activation_dense': 'relu', 'batch_size': 7, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.05, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.0, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.1, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': False, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': True, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': True}
+2020-05-17 17:02:07,158 NNGA INFO: Features selected 7: ['feature_1', 'feature_5', 'feature_8', 'feature_10', 'feature_11', 'feature_13', 'feature_15']
+2020-05-17 17:02:07,191 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:02:07,191 NNGA INFO: Model: "model"
+2020-05-17 17:02:07,191 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:07,191 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:02:07,192 NNGA INFO: =================================================================
+2020-05-17 17:02:07,192 NNGA INFO: input_1 (InputLayer)         [(None, 7)]               0         
+2020-05-17 17:02:07,192 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:07,192 NNGA INFO: dense (Dense)                (None, 15)                120       
+2020-05-17 17:02:07,193 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:07,193 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:02:07,193 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:07,193 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:02:07,193 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:07,194 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:02:07,194 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:07,194 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:02:07,194 NNGA INFO: =================================================================
+2020-05-17 17:02:07,195 NNGA INFO: Total params: 390
+2020-05-17 17:02:07,195 NNGA INFO: Trainable params: 390
+2020-05-17 17:02:07,195 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:02:07,195 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:07,196 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:02:07,215 NNGA INFO: Model compiled!
+2020-05-17 17:02:09,469 NNGA INFO: balanced accuracy: 0.3375
+2020-05-17 17:02:09,470 NNGA INFO: confusion matrix: 
+[[2 1 0 0 0 1 0 1 3 0]
+ [0 4 2 0 0 0 0 1 0 1]
+ [1 0 5 0 0 0 1 1 0 0]
+ [0 1 1 0 0 1 0 4 0 1]
+ [1 2 0 0 0 0 0 1 0 4]
+ [2 0 0 0 0 2 1 0 2 1]
+ [2 1 0 0 0 0 2 2 1 0]
+ [0 1 0 0 0 0 0 6 0 1]
+ [2 0 1 0 0 2 1 0 2 0]
+ [1 1 1 0 0 0 0 0 1 4]]
+2020-05-17 17:02:09,470 NNGA INFO: evaluate (loss value & metrics values): [1.9784047603607178, 0.3375]
+2020-05-17 17:02:09,470 NNGA INFO: Fitness: 0.3375
+
+2020-05-17 17:02:09,531 NNGA INFO: Indiv 6: {'activation_dense': 'relu', 'batch_size': 7, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.05, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.1, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.2, 'scaler': 'Standard', 'feature_selection_0': True, 'feature_selection_1': False, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:02:09,531 NNGA INFO: Features selected 6: ['feature_0', 'feature_2', 'feature_5', 'feature_8', 'feature_10', 'feature_13']
+2020-05-17 17:02:09,569 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:02:09,569 NNGA INFO: Model: "model"
+2020-05-17 17:02:09,569 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:09,569 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:02:09,569 NNGA INFO: =================================================================
+2020-05-17 17:02:09,569 NNGA INFO: input_1 (InputLayer)         [(None, 6)]               0         
+2020-05-17 17:02:09,570 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:09,570 NNGA INFO: dense (Dense)                (None, 15)                105       
+2020-05-17 17:02:09,570 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:09,570 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:02:09,570 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:09,570 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:02:09,571 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:09,571 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:02:09,571 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:09,571 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:02:09,571 NNGA INFO: =================================================================
+2020-05-17 17:02:09,572 NNGA INFO: Total params: 375
+2020-05-17 17:02:09,572 NNGA INFO: Trainable params: 375
+2020-05-17 17:02:09,572 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:02:09,572 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:09,572 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:02:09,592 NNGA INFO: Model compiled!
+2020-05-17 17:02:11,857 NNGA INFO: balanced accuracy: 0.25
+2020-05-17 17:02:11,857 NNGA INFO: confusion matrix: 
+[[3 0 0 0 0 1 0 0 4 0]
+ [0 0 5 0 0 0 0 2 0 1]
+ [1 0 6 0 0 0 0 0 0 1]
+ [0 0 4 1 0 0 0 2 1 0]
+ [1 0 0 0 0 0 0 4 0 3]
+ [1 0 0 0 0 0 0 1 6 0]
+ [2 0 1 0 0 0 1 3 1 0]
+ [0 0 0 0 0 0 0 6 0 2]
+ [3 0 1 0 0 0 1 0 2 1]
+ [0 0 0 0 0 0 1 4 2 1]]
+2020-05-17 17:02:11,858 NNGA INFO: evaluate (loss value & metrics values): [1.9829120635986328, 0.25]
+2020-05-17 17:02:11,858 NNGA INFO: Fitness: 0.25
+
+2020-05-17 17:02:11,920 NNGA INFO: Indiv 7: {'activation_dense': 'relu', 'batch_size': 7, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.05, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.0, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.1, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:02:11,920 NNGA INFO: Features selected 6: ['feature_1', 'feature_2', 'feature_5', 'feature_8', 'feature_10', 'feature_13']
+2020-05-17 17:02:11,956 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:02:11,956 NNGA INFO: Model: "model"
+2020-05-17 17:02:11,956 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:11,956 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:02:11,956 NNGA INFO: =================================================================
+2020-05-17 17:02:11,957 NNGA INFO: input_1 (InputLayer)         [(None, 6)]               0         
+2020-05-17 17:02:11,957 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:11,957 NNGA INFO: dense (Dense)                (None, 15)                105       
+2020-05-17 17:02:11,957 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:11,958 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:02:11,958 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:11,958 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:02:11,958 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:11,958 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:02:11,959 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:11,959 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:02:11,959 NNGA INFO: =================================================================
+2020-05-17 17:02:11,959 NNGA INFO: Total params: 375
+2020-05-17 17:02:11,960 NNGA INFO: Trainable params: 375
+2020-05-17 17:02:11,960 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:02:11,960 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:11,960 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:02:11,980 NNGA INFO: Model compiled!
+2020-05-17 17:02:14,230 NNGA INFO: balanced accuracy: 0.3
+2020-05-17 17:02:14,230 NNGA INFO: confusion matrix: 
+[[3 1 0 0 0 1 0 0 3 0]
+ [0 5 1 0 1 0 0 0 0 1]
+ [0 1 6 0 0 0 1 0 0 0]
+ [0 0 2 0 2 1 0 3 0 0]
+ [1 2 0 0 1 0 1 0 0 3]
+ [1 0 0 0 1 2 1 1 2 0]
+ [2 0 1 0 0 1 1 0 0 3]
+ [0 0 0 0 1 0 0 3 0 4]
+ [3 0 1 0 0 2 2 0 0 0]
+ [0 1 0 0 2 0 2 0 0 3]]
+2020-05-17 17:02:14,231 NNGA INFO: evaluate (loss value & metrics values): [2.0123543739318848, 0.3]
+2020-05-17 17:02:14,231 NNGA INFO: Fitness: 0.3
+
+2020-05-17 17:02:14,296 NNGA INFO: Generation: 4
+Fitness best indiv: 0.3375
+Best indivs: [5, 0]
+Fitness mean: 0.2953125
+Mutation rate: 0.02
+
+
+2020-05-17 17:02:14,474 NNGA INFO: Indiv 0: {'activation_dense': 'relu', 'batch_size': 7, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.05, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.0, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.1, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': False, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': True, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': True}
+2020-05-17 17:02:14,474 NNGA INFO: Features selected 7: ['feature_1', 'feature_5', 'feature_8', 'feature_10', 'feature_11', 'feature_13', 'feature_15']
+2020-05-17 17:02:14,508 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:02:14,508 NNGA INFO: Model: "model"
+2020-05-17 17:02:14,509 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:14,509 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:02:14,509 NNGA INFO: =================================================================
+2020-05-17 17:02:14,509 NNGA INFO: input_1 (InputLayer)         [(None, 7)]               0         
+2020-05-17 17:02:14,509 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:14,510 NNGA INFO: dense (Dense)                (None, 15)                120       
+2020-05-17 17:02:14,510 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:14,510 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:02:14,510 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:14,511 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:02:14,511 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:14,511 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:02:14,511 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:14,511 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:02:14,512 NNGA INFO: =================================================================
+2020-05-17 17:02:14,512 NNGA INFO: Total params: 390
+2020-05-17 17:02:14,512 NNGA INFO: Trainable params: 390
+2020-05-17 17:02:14,512 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:02:14,512 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:14,513 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:02:14,532 NNGA INFO: Model compiled!
+2020-05-17 17:02:16,781 NNGA INFO: balanced accuracy: 0.3375
+2020-05-17 17:02:16,781 NNGA INFO: confusion matrix: 
+[[2 0 0 0 0 2 0 0 3 1]
+ [0 7 0 0 0 0 0 1 0 0]
+ [1 1 3 1 0 0 1 1 0 0]
+ [0 1 3 0 0 1 0 2 0 1]
+ [1 0 0 4 2 0 0 1 0 0]
+ [1 0 1 0 0 1 0 0 5 0]
+ [1 0 0 0 0 1 4 2 0 0]
+ [0 2 0 0 1 0 1 4 0 0]
+ [1 0 0 0 0 1 0 0 3 3]
+ [0 2 0 3 0 0 1 0 1 1]]
+2020-05-17 17:02:16,782 NNGA INFO: evaluate (loss value & metrics values): [1.7779228687286377, 0.3375]
+2020-05-17 17:02:16,782 NNGA INFO: Fitness: 0.3375
+
+2020-05-17 17:02:16,847 NNGA INFO: Indiv 1: {'activation_dense': 'relu', 'batch_size': 7, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.05, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.1, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.2, 'scaler': 'Standard', 'feature_selection_0': True, 'feature_selection_1': False, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:02:16,847 NNGA INFO: Features selected 6: ['feature_0', 'feature_2', 'feature_5', 'feature_8', 'feature_10', 'feature_13']
+2020-05-17 17:02:16,886 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:02:16,886 NNGA INFO: Model: "model"
+2020-05-17 17:02:16,886 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:16,886 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:02:16,887 NNGA INFO: =================================================================
+2020-05-17 17:02:16,887 NNGA INFO: input_1 (InputLayer)         [(None, 6)]               0         
+2020-05-17 17:02:16,887 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:16,887 NNGA INFO: dense (Dense)                (None, 15)                105       
+2020-05-17 17:02:16,887 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:16,887 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:02:16,888 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:16,888 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:02:16,888 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:16,888 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:02:16,888 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:16,888 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:02:16,889 NNGA INFO: =================================================================
+2020-05-17 17:02:16,889 NNGA INFO: Total params: 375
+2020-05-17 17:02:16,889 NNGA INFO: Trainable params: 375
+2020-05-17 17:02:16,889 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:02:16,889 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:16,890 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:02:16,909 NNGA INFO: Model compiled!
+2020-05-17 17:02:19,190 NNGA INFO: balanced accuracy: 0.225
+2020-05-17 17:02:19,190 NNGA INFO: confusion matrix: 
+[[2 0 0 0 0 1 3 1 1 0]
+ [0 0 3 2 0 0 0 3 0 0]
+ [1 0 5 2 0 0 0 0 0 0]
+ [0 0 2 2 0 0 1 1 0 2]
+ [0 0 0 0 0 0 1 7 0 0]
+ [0 0 1 0 0 0 2 1 4 0]
+ [0 0 2 0 0 3 0 3 0 0]
+ [0 1 0 0 0 0 0 7 0 0]
+ [1 0 0 0 0 2 2 0 2 1]
+ [0 0 0 0 0 1 0 7 0 0]]
+2020-05-17 17:02:19,191 NNGA INFO: evaluate (loss value & metrics values): [1.8917163610458374, 0.225]
+2020-05-17 17:02:19,191 NNGA INFO: Fitness: 0.225
+
+2020-05-17 17:02:19,253 NNGA INFO: Indiv 2: {'activation_dense': 'tanh', 'batch_size': 7, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.05, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.0, 'activate_dense_1': False, 'units_1': 10, 'dropout_dense_1': 0.1, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:02:19,253 NNGA INFO: Features selected 6: ['feature_1', 'feature_2', 'feature_5', 'feature_8', 'feature_10', 'feature_13']
+2020-05-17 17:02:19,271 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:02:19,271 NNGA INFO: Model: "model"
+2020-05-17 17:02:19,272 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:19,272 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:02:19,272 NNGA INFO: =================================================================
+2020-05-17 17:02:19,272 NNGA INFO: input_1 (InputLayer)         [(None, 6)]               0         
+2020-05-17 17:02:19,272 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:19,272 NNGA INFO: dense (Dense)                (None, 15)                105       
+2020-05-17 17:02:19,273 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:19,273 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:02:19,273 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:19,273 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:02:19,274 NNGA INFO: =================================================================
+2020-05-17 17:02:19,274 NNGA INFO: Total params: 265
+2020-05-17 17:02:19,274 NNGA INFO: Trainable params: 265
+2020-05-17 17:02:19,274 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:02:19,274 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:19,275 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:02:19,294 NNGA INFO: Model compiled!
+2020-05-17 17:02:21,489 NNGA INFO: balanced accuracy: 0.35
+2020-05-17 17:02:21,489 NNGA INFO: confusion matrix: 
+[[3 1 0 0 0 0 0 0 4 0]
+ [0 7 0 0 1 0 0 0 0 0]
+ [0 1 5 0 1 0 0 1 0 0]
+ [0 2 3 0 0 0 0 2 1 0]
+ [1 0 1 0 2 0 2 0 0 2]
+ [2 1 1 0 0 0 0 1 3 0]
+ [0 2 2 0 2 0 0 0 1 1]
+ [0 2 0 0 1 0 1 3 0 1]
+ [0 0 0 0 0 2 1 0 3 2]
+ [0 2 0 0 1 0 0 0 0 5]]
+2020-05-17 17:02:21,490 NNGA INFO: evaluate (loss value & metrics values): [1.6502348184585571, 0.35]
+2020-05-17 17:02:21,490 NNGA INFO: Fitness: 0.35
+
+2020-05-17 17:02:21,553 NNGA INFO: Indiv 3: {'activation_dense': 'relu', 'batch_size': 7, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.05, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.0, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.1, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': False, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': True, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': True}
+2020-05-17 17:02:21,553 NNGA INFO: Features selected 7: ['feature_1', 'feature_5', 'feature_8', 'feature_10', 'feature_11', 'feature_13', 'feature_15']
+2020-05-17 17:02:21,587 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:02:21,587 NNGA INFO: Model: "model"
+2020-05-17 17:02:21,588 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:21,588 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:02:21,588 NNGA INFO: =================================================================
+2020-05-17 17:02:21,588 NNGA INFO: input_1 (InputLayer)         [(None, 7)]               0         
+2020-05-17 17:02:21,588 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:21,589 NNGA INFO: dense (Dense)                (None, 15)                120       
+2020-05-17 17:02:21,589 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:21,589 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:02:21,589 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:21,590 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:02:21,590 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:21,590 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:02:21,590 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:21,591 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:02:21,591 NNGA INFO: =================================================================
+2020-05-17 17:02:21,591 NNGA INFO: Total params: 390
+2020-05-17 17:02:21,591 NNGA INFO: Trainable params: 390
+2020-05-17 17:02:21,591 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:02:21,592 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:21,592 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:02:21,612 NNGA INFO: Model compiled!
+2020-05-17 17:02:23,869 NNGA INFO: balanced accuracy: 0.4
+2020-05-17 17:02:23,870 NNGA INFO: confusion matrix: 
+[[3 0 0 0 0 1 1 0 3 0]
+ [0 6 0 1 1 0 0 0 0 0]
+ [1 4 1 0 0 0 2 0 0 0]
+ [0 3 2 0 0 0 0 1 1 1]
+ [0 0 1 0 3 0 3 0 0 1]
+ [2 0 0 0 0 3 0 1 1 1]
+ [0 3 1 0 2 0 2 0 0 0]
+ [0 2 0 0 0 0 1 4 0 1]
+ [1 0 0 0 0 0 0 0 5 2]
+ [0 1 1 1 0 0 0 0 0 5]]
+2020-05-17 17:02:23,870 NNGA INFO: evaluate (loss value & metrics values): [1.8565012216567993, 0.4]
+2020-05-17 17:02:23,870 NNGA INFO: Fitness: 0.4
+
+2020-05-17 17:02:23,935 NNGA INFO: Indiv 4: {'activation_dense': 'relu', 'batch_size': 7, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.05, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.0, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.1, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': True, 'feature_selection_3': True, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:02:23,935 NNGA INFO: Features selected 7: ['feature_1', 'feature_2', 'feature_3', 'feature_5', 'feature_8', 'feature_10', 'feature_13']
+2020-05-17 17:02:23,968 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:02:23,968 NNGA INFO: Model: "model"
+2020-05-17 17:02:23,968 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:23,968 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:02:23,968 NNGA INFO: =================================================================
+2020-05-17 17:02:23,969 NNGA INFO: input_1 (InputLayer)         [(None, 7)]               0         
+2020-05-17 17:02:23,969 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:23,969 NNGA INFO: dense (Dense)                (None, 15)                120       
+2020-05-17 17:02:23,969 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:23,969 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:02:23,969 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:23,970 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:02:23,970 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:23,970 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:02:23,970 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:23,970 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:02:23,970 NNGA INFO: =================================================================
+2020-05-17 17:02:23,971 NNGA INFO: Total params: 390
+2020-05-17 17:02:23,971 NNGA INFO: Trainable params: 390
+2020-05-17 17:02:23,971 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:02:23,971 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:23,971 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:02:23,991 NNGA INFO: Model compiled!
+2020-05-17 17:02:26,250 NNGA INFO: balanced accuracy: 0.3
+2020-05-17 17:02:26,250 NNGA INFO: confusion matrix: 
+[[2 1 0 0 0 0 0 0 5 0]
+ [0 6 0 2 0 0 0 0 0 0]
+ [0 2 4 1 0 0 0 1 0 0]
+ [0 3 2 0 0 0 0 2 1 0]
+ [2 0 0 1 0 0 4 1 0 0]
+ [4 1 0 0 0 0 1 0 2 0]
+ [0 2 1 0 0 0 4 0 1 0]
+ [0 2 1 0 0 0 0 5 0 0]
+ [1 1 0 1 0 1 1 0 3 0]
+ [0 2 0 0 0 0 0 5 1 0]]
+2020-05-17 17:02:26,250 NNGA INFO: evaluate (loss value & metrics values): [1.8609015941619873, 0.3]
+2020-05-17 17:02:26,251 NNGA INFO: Fitness: 0.3
+
+2020-05-17 17:02:26,315 NNGA INFO: Indiv 5: {'activation_dense': 'tanh', 'batch_size': 7, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.05, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.0, 'activate_dense_1': False, 'units_1': 10, 'dropout_dense_1': 0.1, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:02:26,315 NNGA INFO: Features selected 6: ['feature_1', 'feature_2', 'feature_5', 'feature_8', 'feature_10', 'feature_13']
+2020-05-17 17:02:26,334 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:02:26,334 NNGA INFO: Model: "model"
+2020-05-17 17:02:26,334 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:26,335 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:02:26,335 NNGA INFO: =================================================================
+2020-05-17 17:02:26,335 NNGA INFO: input_1 (InputLayer)         [(None, 6)]               0         
+2020-05-17 17:02:26,335 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:26,336 NNGA INFO: dense (Dense)                (None, 15)                105       
+2020-05-17 17:02:26,336 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:26,336 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:02:26,336 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:26,336 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:02:26,337 NNGA INFO: =================================================================
+2020-05-17 17:02:26,337 NNGA INFO: Total params: 265
+2020-05-17 17:02:26,337 NNGA INFO: Trainable params: 265
+2020-05-17 17:02:26,337 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:02:26,338 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:26,338 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:02:26,358 NNGA INFO: Model compiled!
+2020-05-17 17:02:28,602 NNGA INFO: balanced accuracy: 0.325
+2020-05-17 17:02:28,602 NNGA INFO: confusion matrix: 
+[[3 1 0 0 0 2 1 0 1 0]
+ [0 7 0 0 0 0 0 1 0 0]
+ [1 1 3 1 0 0 1 1 0 0]
+ [0 2 3 0 0 1 0 2 0 0]
+ [1 0 0 0 3 1 1 1 0 1]
+ [2 0 1 0 0 2 0 0 3 0]
+ [0 0 4 0 2 0 0 0 1 1]
+ [0 2 0 0 1 1 0 3 0 1]
+ [0 0 1 0 0 3 0 0 3 1]
+ [0 2 0 0 2 1 0 1 0 2]]
+2020-05-17 17:02:28,603 NNGA INFO: evaluate (loss value & metrics values): [1.6933237314224243, 0.325]
+2020-05-17 17:02:28,603 NNGA INFO: Fitness: 0.325
+
+2020-05-17 17:02:28,664 NNGA INFO: Indiv 6: {'activation_dense': 'relu', 'batch_size': 7, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.05, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.0, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.1, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': False, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': True}
+2020-05-17 17:02:28,664 NNGA INFO: Features selected 7: ['feature_1', 'feature_2', 'feature_5', 'feature_8', 'feature_10', 'feature_13', 'feature_15']
+2020-05-17 17:02:28,702 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:02:28,702 NNGA INFO: Model: "model"
+2020-05-17 17:02:28,703 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:28,703 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:02:28,703 NNGA INFO: =================================================================
+2020-05-17 17:02:28,703 NNGA INFO: input_1 (InputLayer)         [(None, 7)]               0         
+2020-05-17 17:02:28,703 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:28,703 NNGA INFO: dense (Dense)                (None, 15)                120       
+2020-05-17 17:02:28,704 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:28,704 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:02:28,704 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:28,704 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:02:28,704 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:28,704 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:02:28,704 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:28,705 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:02:28,705 NNGA INFO: =================================================================
+2020-05-17 17:02:28,705 NNGA INFO: Total params: 390
+2020-05-17 17:02:28,705 NNGA INFO: Trainable params: 390
+2020-05-17 17:02:28,705 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:02:28,705 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:28,706 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:02:28,730 NNGA INFO: Model compiled!
+2020-05-17 17:02:31,003 NNGA INFO: balanced accuracy: 0.3125
+2020-05-17 17:02:31,004 NNGA INFO: confusion matrix: 
+[[3 0 0 0 0 2 0 0 3 0]
+ [0 6 0 0 0 0 0 2 0 0]
+ [1 1 5 1 0 0 0 0 0 0]
+ [0 1 3 1 0 1 0 1 1 0]
+ [0 0 3 0 0 0 2 3 0 0]
+ [2 0 1 0 0 2 0 0 3 0]
+ [0 0 4 0 0 0 0 3 1 0]
+ [0 3 0 0 0 0 0 5 0 0]
+ [1 0 0 0 0 2 1 1 3 0]
+ [0 0 1 2 0 1 0 4 0 0]]
+2020-05-17 17:02:31,004 NNGA INFO: evaluate (loss value & metrics values): [1.7325544357299805, 0.3125]
+2020-05-17 17:02:31,004 NNGA INFO: Fitness: 0.3125
+
+2020-05-17 17:02:31,064 NNGA INFO: Indiv 7: {'activation_dense': 'relu', 'batch_size': 7, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.05, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.1, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.1, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': True, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': True, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': False}
+2020-05-17 17:02:31,064 NNGA INFO: Features selected 7: ['feature_1', 'feature_2', 'feature_5', 'feature_8', 'feature_10', 'feature_11', 'feature_13']
+2020-05-17 17:02:31,104 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:02:31,105 NNGA INFO: Model: "model"
+2020-05-17 17:02:31,105 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:31,105 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:02:31,105 NNGA INFO: =================================================================
+2020-05-17 17:02:31,105 NNGA INFO: input_1 (InputLayer)         [(None, 7)]               0         
+2020-05-17 17:02:31,105 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:31,106 NNGA INFO: dense (Dense)                (None, 15)                120       
+2020-05-17 17:02:31,106 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:31,106 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:02:31,106 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:31,106 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:02:31,107 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:31,107 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:02:31,107 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:31,107 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:02:31,107 NNGA INFO: =================================================================
+2020-05-17 17:02:31,108 NNGA INFO: Total params: 390
+2020-05-17 17:02:31,108 NNGA INFO: Trainable params: 390
+2020-05-17 17:02:31,108 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:02:31,108 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:31,108 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:02:31,127 NNGA INFO: Model compiled!
+2020-05-17 17:02:33,382 NNGA INFO: balanced accuracy: 0.3
+2020-05-17 17:02:33,382 NNGA INFO: confusion matrix: 
+[[3 1 0 0 0 0 4 0 0 0]
+ [0 6 0 2 0 0 0 0 0 0]
+ [0 2 5 0 0 0 0 1 0 0]
+ [0 2 3 0 0 0 0 1 0 2]
+ [0 0 1 0 1 0 1 2 0 3]
+ [2 0 1 0 0 1 3 1 0 0]
+ [0 0 5 0 1 0 0 2 0 0]
+ [0 2 0 0 1 0 1 3 0 1]
+ [1 0 1 1 0 1 3 0 0 1]
+ [0 0 0 1 2 0 0 0 0 5]]
+2020-05-17 17:02:33,383 NNGA INFO: evaluate (loss value & metrics values): [1.9010082483291626, 0.3]
+2020-05-17 17:02:33,385 NNGA INFO: Fitness: 0.3
+
+2020-05-17 17:02:33,449 NNGA INFO: Generation: 5
+Fitness best indiv: 0.4
+Best indivs: [3, 2]
+Fitness mean: 0.31875
+Mutation rate: 0.02
+
+
+2020-05-17 17:02:33,626 NNGA INFO: Indiv: {'activation_dense': 'relu', 'batch_size': 7, 'epochs': 8, 'optimizer': 'Adam', 'learning_rate': 0.05, 'kernel_regularizer': None, 'kernel_initializer': 'glorot_uniform', 'activity_regularizer': None, 'bias_regularizer': None, 'units_0': 15, 'dropout_dense_0': 0.0, 'activate_dense_1': True, 'units_1': 10, 'dropout_dense_1': 0.1, 'scaler': 'Standard', 'feature_selection_0': False, 'feature_selection_1': True, 'feature_selection_2': False, 'feature_selection_3': False, 'feature_selection_4': False, 'feature_selection_5': True, 'feature_selection_6': False, 'feature_selection_7': False, 'feature_selection_8': True, 'feature_selection_9': False, 'feature_selection_10': True, 'feature_selection_11': True, 'feature_selection_12': False, 'feature_selection_13': True, 'feature_selection_14': False, 'feature_selection_15': True}
+2020-05-17 17:02:33,627 NNGA INFO: Features selected 7: ['feature_1', 'feature_5', 'feature_8', 'feature_10', 'feature_11', 'feature_13', 'feature_15']
+2020-05-17 17:02:33,661 NNGA INFO: Model MLP from GA created!
+2020-05-17 17:02:33,661 NNGA INFO: Model: "model"
+2020-05-17 17:02:33,661 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:33,661 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 17:02:33,661 NNGA INFO: =================================================================
+2020-05-17 17:02:33,661 NNGA INFO: input_1 (InputLayer)         [(None, 7)]               0         
+2020-05-17 17:02:33,661 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:33,661 NNGA INFO: dense (Dense)                (None, 15)                120       
+2020-05-17 17:02:33,661 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:33,661 NNGA INFO: dropout (Dropout)            (None, 15)                0         
+2020-05-17 17:02:33,661 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:33,661 NNGA INFO: dense_1 (Dense)              (None, 10)                160       
+2020-05-17 17:02:33,661 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:33,661 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 17:02:33,661 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:33,661 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 17:02:33,661 NNGA INFO: =================================================================
+2020-05-17 17:02:33,661 NNGA INFO: Total params: 390
+2020-05-17 17:02:33,661 NNGA INFO: Trainable params: 390
+2020-05-17 17:02:33,661 NNGA INFO: Non-trainable params: 0
+2020-05-17 17:02:33,666 NNGA INFO: _________________________________________________________________
+2020-05-17 17:02:33,666 NNGA INFO: Model Trainner from GA created!
+2020-05-17 17:02:33,685 NNGA INFO: Model compiled!
+2020-05-17 17:02:36,683 NNGA INFO: balanced accuracy: 0.3533333333333334
+2020-05-17 17:02:36,683 NNGA INFO: confusion matrix: 
+[[ 7  1  0  0  0  5  1  1  0  0]
+ [ 0 12  2  0  0  0  0  1  0  0]
+ [ 4  0  7  2  0  0  2  0  0  0]
+ [ 1  1  2  2  0  3  3  2  0  1]
+ [ 0  0  4  2  0  0  4  5  0  0]
+ [ 0  0  1  0  0 12  1  0  1  0]
+ [ 2  1  2  0  0  1  9  0  0  0]
+ [ 1  3  1  2  0  3  2  3  0  0]
+ [ 2  3  1  1  0  4  2  0  0  2]
+ [ 0  5  0  0  0  2  5  2  0  1]]
+2020-05-17 17:02:36,699 NNGA INFO: evaluate (loss value & metrics values): [1.9490448236465454, 0.35333332]
+2020-05-17 17:02:36,699 NNGA INFO: Fitness solution: 0.3533333333333334
+2020-05-17 17:02:36,768 NNGA INFO: Model trained!
+Check the results on ./tests/testdata/models\mlp_feature_GASearch

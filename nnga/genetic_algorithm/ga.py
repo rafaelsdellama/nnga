@@ -17,6 +17,7 @@ from nnga.utils.data_io import (
 )
 from nnga.model_training import ModelTraining
 from nnga.utils.helper import dump_tensors
+from nnga.utils.data_io import save_feature_selected
 
 
 class GA:
@@ -38,7 +39,6 @@ class GA:
         self.datasets = datasets
         self._cfg = cfg
 
-        self.nrMaxExec = cfg.GA.NRO_MAX_EXEC
         self.nrMaxGen = cfg.GA.NRO_MAX_GEN
         self.population_size = cfg.GA.POPULATION_SIZE
         self.crossoverRate = cfg.GA.CROSSOVER_RATE
@@ -61,14 +61,12 @@ class GA:
         self.continue_exec = cfg.GA.CONTINUE_EXEC
         self.feature_selection = cfg.MODEL.FEATURE_SELECTION
 
+        self._seed = cfg.GA.SEED
+
         self._path = cfg.OUTPUT_DIR
         self._logger = logger
 
         # Check variables
-        if not isinstance(self.nrMaxExec, int) or self.nrMaxExec <= 0:
-            raise ValueError(
-                "GA.NRO_MAX_EXEC must be a int number " "(0 < GA.NRO_MAX_EXEC)"
-            )
 
         if not isinstance(self.nrMaxGen, int) or self.nrMaxGen <= 0:
             raise ValueError(
@@ -165,16 +163,8 @@ class GA:
                 "(0 < GA.IMIGRATION_RATE < 1)"
             )
 
-        if len(cfg.GA.SEED) != 0:
-            if (
-                not isinstance(cfg.GA.SEED, list)
-                or not all(isinstance(x, int) for x in cfg.GA.SEED)
-                or len(cfg.GA.SEED) != self.nrMaxExec
-            ):
-                raise ValueError(
-                    "GA.SEED must be a list of numbers"
-                    "(len(GA.IMIGRATION_RATE) = GA.NRO_MAX_EXEC)"
-                )
+        if not isinstance(self._seed, int):
+            raise ValueError("GA.SEED must be a int number")
 
         if not isinstance(self.continue_exec, bool):
             raise ValueError("GA.CONTINUE_EXEC must be a bool")
@@ -188,11 +178,6 @@ class GA:
         self.old_pop = Population(self.population_size)
         self.new_pop = Population(self.population_size)
 
-        if len(cfg.GA.SEED) == 0:
-            self._seeds = list(range(self.nrMaxExec))
-        else:
-            self._seeds = cfg.GA.SEED
-
         if self.feature_selection and "MLP" in cfg.MODEL.ARCHITECTURE:
             self._features = self.datasets["TRAIN"].features
         else:
@@ -204,8 +189,10 @@ class GA:
             self._name_features,
             self._parameters_interval,
         ) = set_parameters(
-            cfg.GA.SEARCH_SPACE, cfg.MODEL.ARCHITECTURE,
-            cfg.MODEL.BACKBONE, self._features
+            cfg.GA.SEARCH_SPACE,
+            cfg.MODEL.ARCHITECTURE,
+            cfg.MODEL.BACKBONE,
+            self._features,
         )
 
         self._encoding_keys = list(self._encoding.keys())
@@ -227,21 +214,15 @@ class GA:
                 self.new_pop.indivs[i].chromosome, i, 0
             )
 
-    def _starting_population(self, seed):
+    def _starting_population(self):
         """ Start the population
             Generate a new pop or read from file
-            Parameters
-            ----------
-                seed: int
-                    Seed to be used
-            Returns
-            -------
         """
         # Read pop to continue the exec
         if self.continue_exec:
 
-            statistic = load_statistic(self._path, seed)
-            last_pop = load_pop(self._path, seed)
+            statistic = load_statistic(self._path)
+            last_pop = load_pop(self._path)
             gen_init = statistic.shape[0]
 
             for i in range(gen_init):
@@ -346,8 +327,9 @@ class GA:
 
         if self.elitism > 0:
             for i in range(self.elitism):
-                self.new_pop.indivs[i] = \
-                    self.old_pop.indivs[self.old_pop.bestIndiv[i]]
+                self.new_pop.indivs[i] = self.old_pop.indivs[
+                    self.old_pop.bestIndiv[i]
+                ]
                 self.new_pop.indivs[i].fitness = self._calculate_fitness(
                     self.new_pop.indivs[i].chromosome, i, gen
                 )
@@ -459,52 +441,34 @@ class GA:
         return child_1, child_2
 
     def run(self):
-        """Run the Genetic Algorithm len(SEEDs) times"""
+        """Run the Genetic Algorithm"""
         self._logger.info(
             f"\n\n*************************  "
             f"Genetic Algorithm   "
             f"*************************"
         )
-        # TODO: PARALELISM
-        for i, seed in enumerate(self._seeds):
-            self._logger.info(
-                f"============================ Execution: "
-                f"{i + 1}/{self.nrMaxExec} - seed: {seed}  "
-                f"============================"
-            )
 
-            random.seed(seed)
-            np.random.seed(seed)
-            tf.random.set_seed(seed)
-            self._fit(seed)
+        self._logger.info(
+            f"============================ Execution with seed: "
+            f"{self._seed}  ============================"
+        )
 
-            # Reset global variables
-            self._statistic = []
+        random.seed(self._seed)
+        np.random.seed(self._seed)
+        tf.random.set_seed(self._seed)
 
-    def _fit(self, seed):
-        """Fit the Genetic Algorithm using the seed
-        Parameters
-            ----------
-                seed: int
-                    Seed to be used
-            Returns
-            -------
-        """
-
-        gen_init = self._starting_population(seed)
+        gen_init = self._starting_population()
 
         for gen in range(gen_init, self.nrMaxGen + 1):
             self._generating_new_population(gen)
             self._population_statistic()
             self._print_population_info(self.new_pop, gen)
 
-            save_pop(self._path, seed, self.new_pop)
-            save_statistic(self._path, seed, self._statistic)
+            save_pop(self._path, self.new_pop)
+            save_statistic(self._path, self._statistic)
 
         self._evaluate_ga_results(
             indiv=self.new_pop.indivs[self.new_pop.bestIndiv[0]].chromosome,
-            gen=self.nrMaxGen,
-            seed=seed,
         )
 
     def _print_population_info(self, pop, gen):
@@ -612,7 +576,7 @@ class GA:
 
     def _randomly_mutate(self, chromosome):
         """Randomly mutate indiv custom
-        Parameters
+            Parameters
             ----------
                 chromosome: list
                     Indiv chromosome
@@ -653,7 +617,7 @@ class GA:
                     id of the individual in the population
                 gen: int
                     Gen number to determinate the
-                    train_test_split seed
+                    train_test_split random_state
             Returns
             -------
         """
@@ -663,32 +627,39 @@ class GA:
         )
 
         if self.feature_selection:
-            self._print_features_selected(indiv)
-            indexes = [
-                i
-                for i, value in enumerate(self._encoding_keys)
-                if "feature_selection_" in value
-            ]
-            attributes_selected = [
-                i for i, value in enumerate(indexes) if indiv[value]
-            ]
+            features_idx, features_name = self.idx_features_selected(indiv)
+            self._logger.info(
+                f"Features selected {len(features_name)}: {features_name}"
+            )
         else:
-            attributes_selected = None
+            features_idx = None
 
         MakeModel = ARCHITECTURES.get(self._cfg.MODEL.ARCHITECTURE)
-        model = MakeModel(self._cfg, self._logger, self.datasets['TRAIN'].input_shape,
-                          self.datasets['TRAIN'].n_classes, indiv=indiv,
-                          keys=self._encoding_keys)
 
-        model_trainner = ModelTraining(self._cfg, model, self._logger, self.datasets,
-                                       indiv, self._encoding_keys, attributes_selected)
+        try:
+            model = MakeModel(
+                self._cfg,
+                self._logger,
+                self.datasets["TRAIN"].input_shape,
+                self.datasets["TRAIN"].n_classes,
+                indiv=indiv,
+                keys=self._encoding_keys,
+            )
 
-        evaluate = model_trainner.train_test_split(seed=gen)
-        #fitness = 1 / (1 + evaluate[0])
-        metrics = model_trainner.compute_metrics()
+            model_trainner = ModelTraining(
+                self._cfg,
+                model,
+                self._logger,
+                self.datasets,
+                indiv,
+                self._encoding_keys,
+                features_idx,
+            )
 
-        if metrics is not None:
-            fitness = float(metrics['balanced_accuracy_score'])
+            evaluate = model_trainner.train_test_split(random_state=gen)
+            metrics = model_trainner.compute_metrics()
+            fitness = float(metrics["balanced_accuracy_score"])
+            # fitness = 1 / (1 + evaluate[0])
 
             self._logger.info(
                 f"balanced accuracy: {metrics['balanced_accuracy_score']}"
@@ -696,7 +667,8 @@ class GA:
             self._logger.info(
                 f"confusion matrix: \n{metrics['confusion_matrix']}"
             )
-        else:
+        except:
+            evaluate = [float("inf"), 1e-5]
             fitness = 0.0
 
         self._logger.info(
@@ -704,58 +676,85 @@ class GA:
         )
         self._logger.info(f"Fitness: {fitness}\n")
 
-        del model_trainner
         dump_tensors()
 
         return fitness
 
-    def _evaluate_ga_results(self, indiv, gen, seed):
+    def _evaluate_ga_results(self, indiv):
         """Calculate fitness from indiv
         Parameters
             ----------
                 indiv: Indiv
                     Indiv to calculate the fitness
-                gen: int
-                    Gen number to determinate the
-                    train_test_split seed
-                seed: int
-                    Seeed used from GA
             Returns
             -------
         """
         self._logger.info(f"Indiv: {dict(zip(self._encoding_keys, indiv))}")
 
         if self.feature_selection:
-            self._print_features_selected(indiv)
-            indexes = [
-                i
-                for i, value in enumerate(self._encoding_keys)
-                if "feature_selection_" in value
-            ]
-            attributes_selected = [
-                i for i, value in enumerate(indexes) if indiv[value]
-            ]
+            features_idx, features_name = self.idx_features_selected(indiv)
+            self._logger.info(
+                f"Features selected {len(features_name)}: {features_name}"
+            )
+            save_feature_selected(self._path, features_name)
         else:
-            attributes_selected = None
+            features_idx = None
 
         MakeModel = ARCHITECTURES.get(self._cfg.MODEL.ARCHITECTURE)
-        model = MakeModel(self._cfg, self._logger, self.datasets['TRAIN'].input_shape,
-                          self.datasets['TRAIN'].n_classes, indiv=indiv,
-                          keys=self._encoding_keys)
 
-        model_trainner = ModelTraining(self._cfg, model, self._logger, self.datasets,
-                                       indiv, self._encoding_keys, attributes_selected)
+        try:
 
-        if self._cfg.SOLVER.CROSS_VALIDATION:
-            cv = model_trainner.cross_validation(seed=seed, save=True)
-            self._logger.info(f"Cross validation statistics:\n{cv}")
+            if self._cfg.SOLVER.CROSS_VALIDATION:
+                model = MakeModel(
+                    self._cfg,
+                    self._logger,
+                    self.datasets["TRAIN"].input_shape,
+                    self.datasets["TRAIN"].n_classes,
+                    indiv=indiv,
+                    keys=self._encoding_keys,
+                )
 
-        evaluate = model_trainner.fit()
-        #fitness = 1 / (1 + evaluate[0])
-        metrics = model_trainner.compute_metrics(seed=seed, save=True)
+                model_trainner = ModelTraining(
+                    self._cfg,
+                    model,
+                    self._logger,
+                    self.datasets,
+                    indiv,
+                    self._encoding_keys,
+                    features_idx,
+                )
+                cv = model_trainner.cross_validation(
+                    random_state=self._seed, save=True
+                )
+                self._logger.info(f"Cross validation statistics:\n{cv}")
 
-        if metrics is not None:
-            fitness = float(metrics['balanced_accuracy_score'])
+                del model
+                del model_trainner
+
+            model = MakeModel(
+                self._cfg,
+                self._logger,
+                self.datasets["TRAIN"].input_shape,
+                self.datasets["TRAIN"].n_classes,
+                indiv=indiv,
+                keys=self._encoding_keys,
+            )
+
+            model_trainner = ModelTraining(
+                self._cfg,
+                model,
+                self._logger,
+                self.datasets,
+                indiv,
+                self._encoding_keys,
+                features_idx,
+            )
+
+            model_trainner.fit()
+            evaluate = model_trainner.evaluate()
+            # fitness = 1 / (1 + evaluate[0])
+            metrics = model_trainner.compute_metrics(save=True)
+            fitness = float(metrics["balanced_accuracy_score"])
 
             self._logger.info(
                 f"balanced accuracy: {metrics['balanced_accuracy_score']}"
@@ -763,7 +762,10 @@ class GA:
             self._logger.info(
                 f"confusion matrix: \n{metrics['confusion_matrix']}"
             )
-        else:
+
+            model.save_model()
+        except:
+            evaluate = [float("inf"), 1e-5]
             fitness = 0.0
 
         self._logger.info(
@@ -771,18 +773,35 @@ class GA:
         )
         self._logger.info(f"Fitness solution: {fitness}")
 
-        model.save_model(seed)
-        self.datasets['TRAIN'].save_parameters(self._path, seed)
-
-        del model
         dump_tensors()
 
-    def _print_features_selected(self, indiv):
-        features_name = []
-        for i, key in enumerate(self._encoding_keys):
-            if "feature_selection_" in key and indiv[i]:
-                features_name.append(self._name_features[key])
+    def idx_features_selected(self, indiv):
+        """Get idxs and names of feature selected
+        from indiv
+        Parameters
+        ----------
+            indiv: Indiv
+                Indiv to calculate the fitness
+        Returns
+        -------
+            (idx_features_selected, name_features_selected): (list, list)
+                idx_features_selected: idx from features selected by GA
+                name_features_selected: name from features selected by GA
+        """
+        indexes = [
+            i
+            for i, value in enumerate(self._encoding_keys)
+            if "feature_selection_" in value
+        ]
 
-        self._logger.info(
-            f"Features selected " f"{len(features_name)}: {features_name}"
-        )
+        idx_features_selected = [
+            i for i, value in enumerate(indexes) if indiv[value]
+        ]
+
+        name_features_selected = [
+            self._name_features[self._encoding_keys[i]]
+            for i in indexes
+            if indiv[i]
+        ]
+
+        return idx_features_selected, name_features_selected

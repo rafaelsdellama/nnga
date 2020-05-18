@@ -1,0 +1,19 @@
+mean_fitness,best_fitness,best_indiv
+0.13125,0.3375,"['relu' 7 8 'Adam' 0.05 None 'glorot_uniform' None None 15 0.0 True 10 0.1
+ 'Standard' False True True False False True False False True False True
+ False False True False False]"
+0.15937500000000002,0.3125,"['relu' 7 8 'Adam' 0.05 None 'glorot_uniform' None None 15 0.0 True 10 0.1
+ 'Standard' False True True False False True False False True False True
+ False False True False False]"
+0.178125,0.375,"['relu' 7 8 'Adam' 0.05 None 'glorot_uniform' None None 15 0.0 True 10 0.1
+ 'Standard' False True True False False True False False True False True
+ False False True False False]"
+0.303125,0.425,"['relu' 7 8 'Adam' 0.05 None 'glorot_uniform' None None 15 0.1 True 10 0.2
+ 'Standard' True False True False False True False False True False True
+ False False True False False]"
+0.2953125,0.3375,"['relu' 7 8 'Adam' 0.05 None 'glorot_uniform' None None 15 0.0 True 10 0.1
+ 'Standard' False True False False False True False False True False True
+ True False True False True]"
+0.31875,0.4,"['relu' 7 8 'Adam' 0.05 None 'glorot_uniform' None None 15 0.0 True 10 0.1
+ 'Standard' False True False False False True False False True False True
+ True False True False True]"

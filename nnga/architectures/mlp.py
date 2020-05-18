@@ -4,7 +4,6 @@ from tensorflow.keras.layers import Dense, Dropout, Input
 from nnga.architectures.base_neural_network import BaseNeuralNetwork
 from nnga.architectures import (
     INICIALIZERS,
-    OPTIMIZERS,
     REGULARIZERS,
 )
 
@@ -36,10 +35,19 @@ class MLP(BaseNeuralNetwork):
         -------
     """
 
-    def __init__(self, cfg, logger, input_shape, output_dim, include_top=True,
-                 indiv=None, keys=None):
-        super().__init__(cfg, logger, input_shape, output_dim, include_top,
-                         indiv, keys)
+    def __init__(
+        self,
+        cfg,
+        logger,
+        input_shape,
+        output_dim,
+        include_top=True,
+        indiv=None,
+        keys=None,
+    ):
+        super().__init__(
+            cfg, logger, input_shape, output_dim, include_top, indiv, keys
+        )
 
     def create_model_ga(self):
         """ This method create the MLP defined by genetic algorithm indiv
@@ -50,13 +58,6 @@ class MLP(BaseNeuralNetwork):
             -------
 
         """
-        if self._cfg.MODEL.FEATURE_SELECTION:
-            input_dim = 0
-            for i in range(sum("feature_selection_" in s for s in self.keys)):
-                if self.indiv[self.keys.index(f"feature_selection_{i}")]:
-                    input_dim += 1
-
-            self.input_shape = input_dim
 
         kernel_regularizer = REGULARIZERS.get(
             self.indiv[self.keys.index("kernel_regularizer")]
@@ -76,7 +77,10 @@ class MLP(BaseNeuralNetwork):
         if self.include_top:
 
             for i in range(sum("units_" in s for s in self.keys)):
-                if i == 0 or self.indiv[self.keys.index(f"activate_dense_{i}")]:
+                if (
+                    i == 0
+                    or self.indiv[self.keys.index(f"activate_dense_{i}")]
+                ):
                     mlp = Dense(
                         units=self.indiv[self.keys.index(f"units_{i}")],
                         activation=self.indiv[
@@ -117,24 +121,20 @@ class MLP(BaseNeuralNetwork):
         input_layer = Input(shape=(self.input_shape,))
 
         if self.include_top:
-            mlp = Dense(
-                units=self.input_shape,
-                activation='relu',
-            )(input_layer)
+            mlp = Dense(units=self.input_shape, activation="relu",)(
+                input_layer
+            )
             mlp = Dense(
                 units=max(self.input_shape / 2, self.output_dim),
-                activation='relu',
+                activation="relu",
             )(mlp)
             mlp = Dropout(self._cfg.MODEL.DROPOUT)(mlp)
             mlp = Dense(
                 units=max(self.input_shape / 4, self.output_dim),
-                activation='relu',
+                activation="relu",
             )(mlp)
             mlp = Dropout(self._cfg.MODEL.DROPOUT)(mlp)
-            mlp = Dense(
-                units=self.output_dim,
-                activation='softmax',
-            )(mlp)
+            mlp = Dense(units=self.output_dim, activation="softmax",)(mlp)
 
             self._model = Model(inputs=input_layer, outputs=mlp)
         else:

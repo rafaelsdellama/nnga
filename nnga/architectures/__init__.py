@@ -25,10 +25,23 @@ from tensorflow.keras.initializers import (
 )
 
 from tensorflow.keras.applications import (
-    VGG16, VGG19, ResNet50, ResNet101, ResNet152, ResNet50V2, ResNet101V2,
-    ResNet152V2, InceptionV3, InceptionResNetV2, MobileNet, MobileNetV2, DenseNet121,
-    DenseNet169, DenseNet201, NASNetMobile, NASNetLarge
-
+    VGG16,
+    VGG19,
+    ResNet50,
+    ResNet101,
+    ResNet152,
+    ResNet50V2,
+    ResNet101V2,
+    ResNet152V2,
+    InceptionV3,
+    InceptionResNetV2,
+    MobileNet,
+    MobileNetV2,
+    DenseNet121,
+    DenseNet169,
+    DenseNet201,
+    NASNetMobile,
+    NASNetLarge,
 )
 
 REGULARIZERS = {

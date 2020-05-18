@@ -11,7 +11,11 @@ from nnga.architectures import BACKBONES
 from nnga.model_training import ModelTraining
 from nnga.genetic_algorithm.ga import GA
 
-TASKS = ['Classification', 'Segmentation']
+# import tensorflow as tf
+# Set CPU as available physical device
+# tf.config.set_visible_devices([], 'GPU')
+
+TASKS = ["Classification", "Segmentation"]
 
 
 def train(cfg, logger):
@@ -24,12 +28,10 @@ def train(cfg, logger):
         RuntimeError: For wrong config options
     """
 
-    # TODO: predcit with saved model
-    # TODO: update tests
-
+    # TODO: Custom callbacks (learn rate, tensorboard, save model, continue the train stopped)
     # TODO: Segmentation
-    # TODO: tensorboard
-    # TODO: pyRadiomics and dataset creator
+    # TODO: re-train (for GA models)
+    # TODO: pyRadiomics, dataset creator, cyclical feature encoding..
 
     if cfg.TASK not in TASKS:
         raise RuntimeError(
@@ -37,8 +39,8 @@ def train(cfg, logger):
                             Check your experiment config"
         )
 
-    if cfg.TASK == 'Segmentation':
-        raise NotImplementedError('Segmentation')
+    if cfg.TASK == "Segmentation":
+        raise NotImplementedError("Segmentation")
 
     if cfg.MODEL.ARCHITECTURE not in ARCHITECTURES.keys():
         raise RuntimeError(
@@ -46,39 +48,45 @@ def train(cfg, logger):
                             Check your experiment config"
         )
 
-    if cfg.MODEL.BACKBONE not in BACKBONES.keys() and \
-            cfg.MODEL.BACKBONE not in ['MLP', 'GASearch']:
+    if cfg.MODEL.BACKBONE not in BACKBONES.keys() and cfg.MODEL.BACKBONE not in [
+        "MLP",
+        "GASearch",
+    ]:
         raise RuntimeError(
             "There isn't a valid backbone configured!\n \
                             Check your experiment config"
         )
 
     # Read datasets
-    datasets = {"TRAIN": {}, "VAL": {}}
+    datasets = {}
 
     MakeDataset = DATASETS.get(cfg.MODEL.ARCHITECTURE)
-    datasets['TRAIN'] = MakeDataset(cfg, logger)
+    datasets["TRAIN"] = MakeDataset(cfg, logger)
     logger.info(
         f"Train {cfg.MODEL.ARCHITECTURE} dataset loaded! "
-        f"{datasets['TRAIN'].n_samples}  was found!"
+        f"{datasets['TRAIN'].n_samples} sample(s) on { len(datasets['TRAIN']) } batch(es) was found!"
     )
 
-    datasets['VAL'] = MakeDataset(cfg, logger, is_validation=True)
+    datasets["VAL"] = MakeDataset(cfg, logger, is_validation=True)
     logger.info(
         f"Validation {cfg.MODEL.ARCHITECTURE} dataset loaded! "
-        f"{datasets['VAL'].n_samples}  was found!"
+        f"{datasets['VAL'].n_samples} sample(s) on { len(datasets['VAL']) } batch(es) was found!"
     )
 
-    if hasattr(datasets['TRAIN'], 'scale_parameters'):
-        datasets['VAL'].scale_parameters = datasets['TRAIN'].scale_parameters
+    if hasattr(datasets["TRAIN"], "scale_parameters"):
+        datasets["VAL"].scale_parameters = datasets["TRAIN"].scale_parameters
 
-    if cfg.MODEL.BACKBONE == 'GASearch' or cfg.MODEL.FEATURE_SELECTION:
+    if cfg.MODEL.BACKBONE == "GASearch" or cfg.MODEL.FEATURE_SELECTION:
         ga = GA(cfg, logger, datasets)
         ga.run()
     else:
         MakeModel = ARCHITECTURES.get(cfg.MODEL.ARCHITECTURE)
-        model = MakeModel(cfg, logger, datasets['TRAIN'].input_shape,
-                          datasets['TRAIN'].n_classes)
+        model = MakeModel(
+            cfg,
+            logger,
+            datasets["TRAIN"].input_shape,
+            datasets["TRAIN"].n_classes,
+        )
 
         # Training
         model_trainner = ModelTraining(cfg, model, logger, datasets)
@@ -88,10 +96,10 @@ def train(cfg, logger):
             logger.info(f"Cross validation statistics:\n{cv}")
 
         model_trainner.fit()
-
-        datasets['TRAIN'].save_parameters(cfg.OUTPUT_DIR)
         model.save_model()
         model_trainner.compute_metrics(save=True)
+
+    logger.info(f"Model trained!\nCheck the results on {cfg.OUTPUT_DIR}")
 
 
 def main():
@@ -160,7 +168,7 @@ def main():
 
     try:
         train(cfg, logger)
-    except Exception:
+    except:
         msg = f"Failed:\n{traceback.format_exc()}"
         logger.error(msg)
 

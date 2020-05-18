@@ -49,8 +49,7 @@ DATASET:
 # Genetic Algorithm configuration
 GA:
   CONTINUE_EXEC: false
-  NRO_MAX_EXEC: 1
-  SEED: []
+  SEED: 0
   NRO_MAX_GEN: 100  
   POPULATION_SIZE: 100
   CROSSOVER_RATE: 0.6
@@ -167,14 +166,10 @@ GA:
   #If true, read the last pop from csv file and continue
   #If false, restart the GA
   CONTINUE_EXEC: false
-
-  # Number of GA executions changing the random seed 
-  NRO_MAX_EXEC: 1
   
-  # Seeds to be used in executions
-  # The number of seeds should be equal to NRO_MAX_EXEC
-  # If empty, the seeds that will be used are range(0, NRO_MAX_EXEC)
-  SEED: []
+  # Seed to be used in GA execution
+  # If empty, the seeds that will be used is 0
+  SEED: 0
   
   # Maximum number of generations
   NRO_MAX_GEN: 100  

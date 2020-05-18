@@ -1,0 +1,25 @@
+indiv,fitness
+"['tanh' 5 10 'SGD' 0.1 None 'glorot_uniform' None None 'tanh' 8 3 'valid'
+ False True 2 0.4 False 8 6 'valid' False True 2 0.2 15 0.4 False 10 0.1
+ 'MinMax']",0.725
+"['tanh' 5 10 'SGD' 0.1 None 'glorot_uniform' None None 'tanh' 8 3 'valid'
+ False True 2 0.4 False 8 6 'valid' False True 2 0.2 15 0.4 True 15 0.3
+ 'MinMax']",0.775
+"['tanh' 5 10 'SGD' 0.1 None 'glorot_uniform' None None 'tanh' 8 2 'same'
+ True True 2 0.4 False 8 6 'valid' False False 2 0.2 15 0.4 True 15 0.3
+ 'MinMax']",0.5375
+"['tanh' 5 10 'SGD' 0.1 None 'glorot_uniform' None None 'tanh' 8 3 'valid'
+ False True 2 0.4 False 8 6 'valid' False True 2 0.2 15 0.4 True 10 0.3
+ 'MinMax']",0.5875
+"['tanh' 5 10 'SGD' 0.1 None 'glorot_uniform' None None 'tanh' 8 3 'valid'
+ False True 2 0.4 False 8 6 'valid' False True 2 0.2 15 0.4 True 15 0.3
+ 'MinMax']",0.6125
+"['tanh' 5 10 'SGD' 0.1 None 'glorot_uniform' None None 'tanh' 8 3 'valid'
+ False True 2 0.4 False 8 4 'valid' False True 2 0.2 15 0.4 True 15 0.3
+ 'MinMax']",0.6125
+"['relu' 7 10 'SGD' 0.1 None 'glorot_uniform' None None 'tanh' 8 3 'valid'
+ False True 2 0.4 False 8 6 'valid' True False 2 0.0 15 0.4 False 15 0.2
+ 'MinMax']",0.5375
+"['tanh' 5 10 'Adam' 0.1 None 'glorot_uniform' None None 'tanh' 9 2 'same'
+ False True 2 0.4 False 8 6 'valid' False True 2 0.2 15 0.4 False 15 0.1
+ 'MinMax']",0.375

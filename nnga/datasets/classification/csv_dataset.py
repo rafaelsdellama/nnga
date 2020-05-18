@@ -1,10 +1,15 @@
 import os
 import numpy as np
 from statistics import mean, stdev
-from nnga.datasets.classification.base_dataset import BaseDataset
-from nnga.utils.data_io import load_csv_file, load_csv_line, \
-    save_scale_parameters, save_feature_selected
-from nnga.utils.scale import scale_features
+from nnga.datasets.base_dataset import BaseDataset
+from nnga.utils.data_io import (
+    load_csv_file,
+    load_csv_line,
+    save_scale_parameters,
+    save_encoder_parameters,
+    save_decoder_parameters,
+)
+from nnga.utils.data_manipulation import scale_features
 
 
 class CSVDataset(BaseDataset):
@@ -24,20 +29,22 @@ class CSVDataset(BaseDataset):
     def __init__(self, cfg, logger, is_validation=False):
         self._is_validation = is_validation
         if self._is_validation:
-            self._dataset_csv_path = os.path.expandvars(cfg.DATASET.VAL_CSV_PATH)
+            self._dataset_csv_path = os.path.expandvars(
+                cfg.DATASET.VAL_CSV_PATH
+            )
         else:
-            self._dataset_csv_path = os.path.expandvars(cfg.DATASET.TRAIN_CSV_PATH)
+            self._dataset_csv_path = os.path.expandvars(
+                cfg.DATASET.TRAIN_CSV_PATH
+            )
 
         self._data = None
         self._features = None
         self.scale_parameters = {}
         self._sep = ","
         self._scale_method = cfg.DATASET.SCALER
-        self.attributes_selected = None
+        self.features_selected = None
 
         super().__init__(cfg, logger, is_validation)
-
-        self._make_scale_parameters()
 
     def _load_metadata(self):
         """Create metadata for classification.
@@ -58,6 +65,10 @@ class CSVDataset(BaseDataset):
         if "class" in self._features:
             col_list.append("class")
             self._features.remove("class")
+        else:
+            raise RuntimeError(
+                "The class column does not found!\n" "Check the dataset!"
+            )
 
         if "id" in self._features:
             col_list.append("id")
@@ -67,9 +78,9 @@ class CSVDataset(BaseDataset):
             self._dataset_csv_path, usecols=col_list, chunksize=10
         ):
             for index, row in df.iterrows():
-                self._metadata[row["id"] if "id" in row else index] = {
+                self._metadata[index] = {
                     "line_path": index,
-                    "label": row["class"] if "class" in row else None,
+                    "label": str(row["class"]),
                 }
 
     @property
@@ -93,8 +104,7 @@ class CSVDataset(BaseDataset):
         return len(self._features)
 
     def _make_scale_parameters(self):
-        """Using the metadata structure populate attributes
-        _labels, _class_to_id, _id_to_class
+        """Calculate the scale parameters to be used
         """
         for key in self._features:
             df = load_csv_file(self._dataset_csv_path, usecols=[key])
@@ -107,20 +117,13 @@ class CSVDataset(BaseDataset):
                 "stdev": stdev(df[key].values),
             }
 
-    def save_parameters(self, path, seed=''):
+    def save_parameters(self):
         """
         Save parameters from dataset
-
-        Parameters
-        ----------
-        path : str
-            Directory path
-        seed: int
-            Seed from GA
         """
-        save_scale_parameters(path, self.scale_parameters)
-        if self.attributes_selected is not None:
-            save_feature_selected(path, [self._features[i] for i in self.attributes_selected], seed)
+        save_scale_parameters(self._output_dir, self.scale_parameters)
+        save_encoder_parameters(self._output_dir, self._class_to_id)
+        save_decoder_parameters(self._output_dir, self._id_to_class)
 
     def load_sample_by_idx(self, idx):
         """
@@ -133,9 +136,9 @@ class CSVDataset(BaseDataset):
             Sample data scaled
 
         """
-        header, sample = load_csv_line(self._dataset_csv_path,
-                                       self._sep,
-                                       self._metadata[idx]["line_path"])
+        header, sample = load_csv_line(
+            self._dataset_csv_path, self._sep, self._metadata[idx]["line_path"]
+        )
 
         indexes_of_features = [
             i for i, value in enumerate(header) if value in self._features
@@ -152,8 +155,10 @@ class CSVDataset(BaseDataset):
 
         # Normalize the data
         sample = scale_features(
-            sample, header, self.scale_parameters,
-            scale_method=self._scale_method
+            sample,
+            header,
+            self.scale_parameters,
+            scale_method=self._scale_method,
         )
         return sample
 
@@ -173,25 +178,17 @@ class CSVDataset(BaseDataset):
         """
 
         # TODO: Data augmentation
-
-        attributes = [
-            self.load_sample_by_idx(idx)
-            for idx in indexes
-        ]
+        attributes = [self.load_sample_by_idx(idx) for idx in indexes]
 
         labels = []
         for i, idx in enumerate(indexes):
             np_label = np.zeros(len(self._labels))
-            np_label[
-                self.label_encode(
-                    self._metadata[idx]["label"]
-                )
-            ] = 1
+            np_label[self.label_encode(self._metadata[idx]["label"])] = 1
             labels.append(np_label)
 
-            if self.attributes_selected is not None:
+            if self.features_selected is not None:
                 attributes[i] = [
-                    attributes[i][index] for index in self.attributes_selected
+                    attributes[i][index] for index in self.features_selected
                 ]
 
         self._generator_classes.extend(labels)
