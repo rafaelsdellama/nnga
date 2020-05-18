@@ -89,7 +89,6 @@ def compute_metrics(lbl, predict, predict_encoded, target_names, idx):
     TP = np.diag(metrics["confusion_matrix"])
     TN = np.sum(metrics["confusion_matrix"]) - (FP + FN + TP)
 
-    # TODO: division by zero
     np.seterr(divide="ignore", invalid="ignore")
     # Sensitivity, hit rate, recall, or true positive rate
     TPR = np.divide(TP, TP + FN)

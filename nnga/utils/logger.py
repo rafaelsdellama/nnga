@@ -1,6 +1,7 @@
 import logging
 import os
 import sys
+from nnga.utils.data_io import create_dir
 
 
 def setup_logger(name, save_dir, filename="log.txt"):
@@ -31,6 +32,7 @@ def setup_logger(name, save_dir, filename="log.txt"):
     logger.addHandler(ch)
 
     if save_dir:
+        create_dir(save_dir)
         fh = logging.FileHandler(os.path.join(save_dir, filename))
         fh.setLevel(logging.DEBUG)
         fh.setFormatter(formatter)

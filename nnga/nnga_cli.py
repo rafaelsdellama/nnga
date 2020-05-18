@@ -1,6 +1,4 @@
-""" Command line inferface for package Neural Network Genetic Algorithm
-https://medium.com/@trstringer/the-easy-and-nice-way-to-do-cli-apps-in-python-5d9964dc950d
-"""
+""" Command line inferface for package Neural Network Genetic Algorithm"""
 import argparse
 import os
 from pathlib import Path
@@ -8,9 +6,16 @@ import traceback
 
 from nnga.configs import cfg, export_config
 from nnga.utils.logger import setup_logger
-from nnga.datasets.image_dataset import ImageDataset
-from nnga.datasets.csv_dataset import CSVDataset
+from nnga import ARCHITECTURES, DATASETS
+from nnga.architectures import BACKBONES
+from nnga.model_training import ModelTraining
 from nnga.genetic_algorithm.ga import GA
+
+# import tensorflow as tf
+# Set CPU as available physical device
+# tf.config.set_visible_devices([], 'GPU')
+
+TASKS = ["Classification", "Segmentation"]
 
 
 def train(cfg, logger):
@@ -23,76 +28,78 @@ def train(cfg, logger):
         RuntimeError: For wrong config options
     """
 
-    # TODO: predcit with saved model
-    # TODO: task train model withoud GA - pre-trained models
-    # TODO: pyRadiomics
+    # TODO: Custom callbacks (learn rate, tensorboard, save model, continue the train stopped)
     # TODO: Segmentation
+    # TODO: re-train (for GA models)
+    # TODO: pyRadiomics, dataset creator, cyclical feature encoding..
 
-    datasets = {"TRAIN": {}, "VAL": {}}
-
-    if cfg.MODEL.ARCHITECTURE == "MLP":
-        datasets["TRAIN"]["CSV"] = CSVDataset(cfg, logger)
-        logger.info(
-            f"Train csv dataset loaded! "
-            f"{len(datasets['TRAIN']['CSV'])} samples with "
-            f"{datasets['TRAIN']['CSV'].n_features} "
-            f"features was found!"
+    if cfg.TASK not in TASKS:
+        raise RuntimeError(
+            "There isn't a valid TASKS!\n \
+                            Check your experiment config"
         )
 
-        datasets["VAL"]["CSV"] = CSVDataset(cfg, logger, is_validation=True)
-        logger.info(
-            f"Validation csv dataset loaded! "
-            f"{len(datasets['VAL']['CSV'])} samples with "
-            f"{datasets['VAL']['CSV'].n_features} features was found!"
-        )
+    if cfg.TASK == "Segmentation":
+        raise NotImplementedError("Segmentation")
 
-    elif cfg.MODEL.ARCHITECTURE == "CNN":
-        datasets["TRAIN"]["IMG"] = ImageDataset(cfg, logger)
-        logger.info(
-            f"Train images dataset loaded! "
-            f"{len(datasets['TRAIN']['IMG'])} was found!"
-        )
-
-        datasets["VAL"]["IMG"] = ImageDataset(cfg, logger, is_validation=True)
-        logger.info(
-            f"Validation images dataset loaded! "
-            f"{len(datasets['VAL']['IMG'])} was found!"
-        )
-
-    elif cfg.MODEL.ARCHITECTURE == "CNN/MLP":
-        datasets["TRAIN"]["CSV"] = CSVDataset(cfg, logger)
-        logger.info(
-            f"Train csv dataset loaded! "
-            f"{len(datasets['TRAIN']['CSV'])} samples with "
-            f"{datasets['TRAIN']['CSV'].n_features} "
-            f"features was found!"
-        )
-        datasets["TRAIN"]["IMG"] = ImageDataset(cfg, logger)
-        logger.info(
-            f"Train images dataset loaded! "
-            f"{len(datasets['TRAIN']['IMG'])} was found!"
-        )
-
-        datasets["VAL"]["CSV"] = CSVDataset(cfg, logger, is_validation=True)
-        logger.info(
-            f"Validation csv dataset loaded! "
-            f"{len(datasets['VAL']['CSV'])} samples with "
-            f"{datasets['VAL']['CSV'].n_features} features was found!"
-        )
-        datasets["VAL"]["IMG"] = ImageDataset(cfg, logger, is_validation=True)
-        logger.info(
-            f"Validation images dataset loaded! "
-            f"{len(datasets['VAL']['IMG'])} was found!"
-        )
-
-    else:
+    if cfg.MODEL.ARCHITECTURE not in ARCHITECTURES.keys():
         raise RuntimeError(
             "There isn't a valid architecture configured!\n \
                             Check your experiment config"
         )
 
-    ga = GA(cfg, logger, datasets)
-    ga.run()
+    if cfg.MODEL.BACKBONE not in BACKBONES.keys() and cfg.MODEL.BACKBONE not in [
+        "MLP",
+        "GASearch",
+    ]:
+        raise RuntimeError(
+            "There isn't a valid backbone configured!\n \
+                            Check your experiment config"
+        )
+
+    # Read datasets
+    datasets = {}
+
+    MakeDataset = DATASETS.get(cfg.MODEL.ARCHITECTURE)
+    datasets["TRAIN"] = MakeDataset(cfg, logger)
+    logger.info(
+        f"Train {cfg.MODEL.ARCHITECTURE} dataset loaded! "
+        f"{datasets['TRAIN'].n_samples} sample(s) on { len(datasets['TRAIN']) } batch(es) was found!"
+    )
+
+    datasets["VAL"] = MakeDataset(cfg, logger, is_validation=True)
+    logger.info(
+        f"Validation {cfg.MODEL.ARCHITECTURE} dataset loaded! "
+        f"{datasets['VAL'].n_samples} sample(s) on { len(datasets['VAL']) } batch(es) was found!"
+    )
+
+    if hasattr(datasets["TRAIN"], "scale_parameters"):
+        datasets["VAL"].scale_parameters = datasets["TRAIN"].scale_parameters
+
+    if cfg.MODEL.BACKBONE == "GASearch" or cfg.MODEL.FEATURE_SELECTION:
+        ga = GA(cfg, logger, datasets)
+        ga.run()
+    else:
+        MakeModel = ARCHITECTURES.get(cfg.MODEL.ARCHITECTURE)
+        model = MakeModel(
+            cfg,
+            logger,
+            datasets["TRAIN"].input_shape,
+            datasets["TRAIN"].n_classes,
+        )
+
+        # Training
+        model_trainner = ModelTraining(cfg, model, logger, datasets)
+
+        if cfg.SOLVER.CROSS_VALIDATION:
+            cv = model_trainner.cross_validation(save=True)
+            logger.info(f"Cross validation statistics:\n{cv}")
+
+        model_trainner.fit()
+        model.save_model()
+        model_trainner.compute_metrics(save=True)
+
+    logger.info(f"Model trained!\nCheck the results on {cfg.OUTPUT_DIR}")
 
 
 def main():
@@ -161,7 +168,7 @@ def main():
 
     try:
         train(cfg, logger)
-    except Exception:
+    except:
         msg = f"Failed:\n{traceback.format_exc()}"
         logger.error(msg)
 

@@ -1,13 +1,3 @@
-from nnga.architectures.mlp import MLP
-from nnga.architectures.cnn import CNN
-from nnga.architectures.cnn_mlp import CNN_MLP
-
-MODELS = {
-    "MLP": MLP,
-    "CNN": CNN,
-    "CNN/MLP": CNN_MLP,
-}
-
 CHECK_PARAMETERS_INTERVAL = {
     "PADDING": ["valid", "same"],
     "UNITS": {"MIN": 1, "MAX": 5000},
@@ -139,7 +129,7 @@ PARAMETERS_ARCHITECTURE = {
 }
 
 
-def set_parameters(parameters, architecture, features):
+def set_parameters(parameters, architecture, backbone, features):
     """Set the network parameters to be search by the GA
     Parameters
         ----------
@@ -147,6 +137,8 @@ def set_parameters(parameters, architecture, features):
                 Parameters values provided by cfg
             architecture: str
                 Architecture configured in cfg
+            backbone: str
+                Backbone configured in cfg
             features: list
                 List with all features to be selected by GA
         Returns
@@ -159,7 +151,9 @@ def set_parameters(parameters, architecture, features):
         PARAMETERS_INTERVAL[key]["value"] = value
 
     check_parameters()
-    ENCODING, NAME_FEATURES_SELECTION = create_encoding(architecture, features)
+    ENCODING, NAME_FEATURES_SELECTION = create_encoding(
+        architecture, backbone, features
+    )
 
     return ENCODING, NAME_FEATURES_SELECTION, PARAMETERS_INTERVAL
 
@@ -231,12 +225,14 @@ def check_parameters():
                 )
 
 
-def create_encoding(architecture, features):
+def create_encoding(architecture, backbone, features):
     """Create encoding dict to be used by the GA for generate the indivs
     Parameters
         ----------
             architecture: str
                 Architecture configured in cfg
+            backbone: str
+                Backbone configured in cfg
             features: list
                 List with all features to be selected by GA
         Returns
@@ -244,34 +240,34 @@ def create_encoding(architecture, features):
     """
     ENCODING = {}
     NAME_FEATURES_SELECTION = {}
+    if backbone == "GASearch":
+        ENCODING.update(PARAMETERS_ARCHITECTURE["DEFAULT"])
 
-    ENCODING.update(PARAMETERS_ARCHITECTURE["DEFAULT"])
+        if architecture == "CNN" or architecture == "CNN/MLP":
+            ENCODING.update(PARAMETERS_ARCHITECTURE["CNN"])
 
-    if architecture == "CNN" or architecture == "CNN/MLP":
-        ENCODING.update(PARAMETERS_ARCHITECTURE["CNN"])
+            # Create cnn layers
+            for i in range(PARAMETERS_INTERVAL["MAX_CNN_LAYERS"]["value"]):
+                for key, value in PARAMETERS_ARCHITECTURE["LAYER"][
+                    "CNN_LAYER"
+                ].items():
+                    ENCODING[key + "_" + str(i)] = value
+            ENCODING.pop("activate_cnn_0")
 
-        # Create cnn layers
-        for i in range(PARAMETERS_INTERVAL["MAX_CNN_LAYERS"]["value"]):
+        # Create dense layers
+        for i in range(PARAMETERS_INTERVAL["MAX_DENSE_LAYERS"]["value"]):
             for key, value in PARAMETERS_ARCHITECTURE["LAYER"][
-                "CNN_LAYER"
+                "DENSE_LAYER"
             ].items():
                 ENCODING[key + "_" + str(i)] = value
-        ENCODING.pop("activate_cnn_0")
+        ENCODING.pop("activate_dense_0")
 
-    # Create dense layers
-    for i in range(PARAMETERS_INTERVAL["MAX_DENSE_LAYERS"]["value"]):
-        for key, value in PARAMETERS_ARCHITECTURE["LAYER"][
-            "DENSE_LAYER"
-        ].items():
-            ENCODING[key + "_" + str(i)] = value
-    ENCODING.pop("activate_dense_0")
+        if architecture == "MLP" or architecture == "CNN/MLP":
+            ENCODING.update(PARAMETERS_ARCHITECTURE["MLP"])
 
-    if architecture == "MLP" or architecture == "CNN/MLP":
-        ENCODING.update(PARAMETERS_ARCHITECTURE["MLP"])
-
-        # Features selection
-        for i, name in enumerate(features):
-            ENCODING[f"feature_selection_{i}"] = "FEATURE_SELECTION"
-            NAME_FEATURES_SELECTION[f"feature_selection_{i}"] = name
+    # Features selection
+    for i, name in enumerate(features):
+        ENCODING[f"feature_selection_{i}"] = "FEATURE_SELECTION"
+        NAME_FEATURES_SELECTION[f"feature_selection_{i}"] = name
 
     return ENCODING, NAME_FEATURES_SELECTION

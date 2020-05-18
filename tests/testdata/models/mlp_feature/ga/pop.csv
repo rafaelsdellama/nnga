@@ -1,0 +1,17 @@
+indiv,fitness
+"[True False False True False True True True False True False True True
+ True False False]",0.0875
+"[True False False True True True True True False True False True True True
+ False False]",0.1125
+"[True False False True True True True False False True False True False
+ False False False]",0.1375
+"[True True False True False True True False False True False False True
+ True False False]",0.075
+"[True False False True True True True True False True False True True True
+ False False]",0.075
+"[True False False True False True True True False True False True True
+ True False False]",0.125
+"[True False False True True True True True False True False True True True
+ False False]",0.0625
+"[False True False True False True True True False True False True True
+ True False False]",0.125

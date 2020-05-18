@@ -1,0 +1,144 @@
+2020-05-17 16:55:58,848 NNGA INFO: Namespace(config_file='experiments/mlp.yaml', create_config='', opts=[])
+2020-05-17 16:55:58,848 NNGA INFO: Loaded configuration file experiments/mlp.yaml
+2020-05-17 16:55:58,849 NNGA INFO: 
+# nnga-cli --config-file experiments/mlp.yaml
+
+DATASET:
+  PRESERVE_IMG_RATIO: True
+  TRAIN_IMG_PATH: './example/mnist/train'
+  TRAIN_CSV_PATH: './example/mnist/train/features.csv'
+  TRAIN_AUGMENTATION: False
+  TRAIN_SHUFFLE: True
+
+  VAL_IMG_PATH: './example/mnist/test'
+  VAL_CSV_PATH: './example/mnist/test/features.csv'
+  VAL_AUGMENTATION: False
+  VAL_SHUFFLE: False
+
+GA:
+  NRO_MAX_GEN: 5
+  POPULATION_SIZE: 8
+  HYPERMUTATION_CYCLE_SIZE: 1
+  MUTATION_RATE: 0.02
+  CROSSOVER_RATE: 0.6
+  ELITISM: 2
+  CONTINUE_EXEC: False
+  HYPERMUTATION: False
+  RANDOM_IMIGRANTS: False
+  SEED: 0
+  TOURNAMENT_SIZE: 2
+  SEARCH_SPACE:
+    PADDING: ['valid', 'same']
+    MAX_DENSE_LAYERS: 2
+    MAX_CNN_LAYERS: 2
+    UNITS: [10, 15]
+    EPOCHS: [8, 10]
+
+MODEL:
+  INPUT_SHAPE: (50, 50, 3)
+  ARCHITECTURE: "MLP"
+  BACKBONE: 'MLP'
+  FEATURE_SELECTION: False
+
+SOLVER:
+  CROSS_VALIDATION: False
+  CROSS_VALIDATION_FOLDS: 5
+  BATCH_SIZE: 1024
+  EPOCHS: 10
+  OPTIMIZER: "Adam"
+  BASE_LEARNING_RATE: 0.001
+
+OUTPUT_DIR: ./tests/testdata/models
+2020-05-17 16:55:58,850 NNGA INFO: CFG: 
+DATASET:
+  PRESERVE_IMG_RATIO: True
+  SCALER: Standard
+  TRAIN_AUGMENTATION: False
+  TRAIN_CSV_PATH: ./example/mnist/train/features.csv
+  TRAIN_IMG_PATH: ./example/mnist/train
+  TRAIN_SHUFFLE: True
+  VAL_AUGMENTATION: False
+  VAL_CSV_PATH: ./example/mnist/test/features.csv
+  VAL_IMG_PATH: ./example/mnist/test
+  VAL_SHUFFLE: False
+GA:
+  CONTINUE_EXEC: False
+  CROSSOVER_RATE: 0.6
+  ELITISM: 2
+  HYPERMUTATION: False
+  HYPERMUTATION_CYCLE_SIZE: 1
+  HYPERMUTATION_RATE: 3
+  IMIGRATION_RATE: 0.05
+  MUTATION_RATE: 0.02
+  NRO_MAX_GEN: 5
+  POPULATION_SIZE: 8
+  RANDOM_IMIGRANTS: False
+  SEARCH_SPACE:
+    ACTIVATION_CNN: ['relu', 'tanh']
+    ACTIVATION_DENSE: ['relu', 'tanh']
+    ACTIVITY_REGULARIZER: [None]
+    BATCH_SIZE: [3, 4, 5, 6, 7, 8]
+    BIAS_REGULARIZER: [None]
+    DROPOUT: [0.0, 0.1, 0.2, 0.3, 0.4]
+    EPOCHS: [8, 10]
+    FILTERS: [4, 5, 6, 7, 8, 9]
+    KERNEL_INITIALIZER: ['glorot_uniform']
+    KERNEL_REGULARIZER: [None]
+    KERNEL_SIZE: [2, 3, 4, 5, 6]
+    LEARNING_RATE: [0.0001, 0.001, 0.01, 0.05, 0.1]
+    MAX_CNN_LAYERS: 2
+    MAX_DENSE_LAYERS: 2
+    OPTIMIZER: ['Adam', 'SGD']
+    PADDING: ['valid', 'same']
+    POOL_SIZE: [2, 3, 4, 5]
+    SCALER: ['Standard', 'MinMax']
+    UNITS: [10, 15]
+  SEED: 0
+  TOURNAMENT_SIZE: 2
+MODEL:
+  ARCHITECTURE: MLP
+  BACKBONE: MLP
+  DROPOUT: 0.2
+  FEATURE_SELECTION: False
+  INPUT_SHAPE: (50, 50, 3)
+OUTPUT_DIR: ./tests/testdata/models\mlp
+SOLVER:
+  BASE_LEARNING_RATE: 0.001
+  BATCH_SIZE: 1024
+  CROSS_VALIDATION: False
+  CROSS_VALIDATION_FOLDS: 5
+  EPOCHS: 10
+  LOSS: categorical_crossentropy
+  METRICS: ['categorical_accuracy']
+  OPTIMIZER: Adam
+  TEST_SIZE: 0.2
+TASK: Classification
+2020-05-17 16:55:59,150 NNGA INFO: Train MLP dataset loaded! 400 sample(s) on 1 batch(es) was found!
+2020-05-17 16:55:59,274 NNGA INFO: Validation MLP dataset loaded! 150 sample(s) on 1 batch(es) was found!
+2020-05-17 16:56:00,199 NNGA INFO: Model MLP created!
+2020-05-17 16:56:00,200 NNGA INFO: Model: "model"
+2020-05-17 16:56:00,200 NNGA INFO: _________________________________________________________________
+2020-05-17 16:56:00,201 NNGA INFO: Layer (type)                 Output Shape              Param #   
+2020-05-17 16:56:00,201 NNGA INFO: =================================================================
+2020-05-17 16:56:00,201 NNGA INFO: input_1 (InputLayer)         [(None, 16)]              0         
+2020-05-17 16:56:00,201 NNGA INFO: _________________________________________________________________
+2020-05-17 16:56:00,202 NNGA INFO: dense (Dense)                (None, 16)                272       
+2020-05-17 16:56:00,202 NNGA INFO: _________________________________________________________________
+2020-05-17 16:56:00,202 NNGA INFO: dense_1 (Dense)              (None, 10)                170       
+2020-05-17 16:56:00,203 NNGA INFO: _________________________________________________________________
+2020-05-17 16:56:00,203 NNGA INFO: dropout (Dropout)            (None, 10)                0         
+2020-05-17 16:56:00,203 NNGA INFO: _________________________________________________________________
+2020-05-17 16:56:00,203 NNGA INFO: dense_2 (Dense)              (None, 10)                110       
+2020-05-17 16:56:00,204 NNGA INFO: _________________________________________________________________
+2020-05-17 16:56:00,204 NNGA INFO: dropout_1 (Dropout)          (None, 10)                0         
+2020-05-17 16:56:00,204 NNGA INFO: _________________________________________________________________
+2020-05-17 16:56:00,205 NNGA INFO: dense_3 (Dense)              (None, 10)                110       
+2020-05-17 16:56:00,205 NNGA INFO: =================================================================
+2020-05-17 16:56:00,206 NNGA INFO: Total params: 662
+2020-05-17 16:56:00,206 NNGA INFO: Trainable params: 662
+2020-05-17 16:56:00,207 NNGA INFO: Non-trainable params: 0
+2020-05-17 16:56:00,207 NNGA INFO: _________________________________________________________________
+2020-05-17 16:56:00,207 NNGA INFO: Model Trainner created!
+2020-05-17 16:56:00,227 NNGA INFO: Model compiled!
+2020-05-17 16:56:03,690 NNGA INFO: Model trained!
+Check the results on ./tests/testdata/models\mlp

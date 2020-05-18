@@ -1,0 +1,33 @@
+indiv,fitness
+"['tanh' 6 8 'SGD' 0.1 None 'glorot_uniform' None None 'tanh' 8 3 'valid'
+ False True 2 0.4 False 8 6 'valid' False True 2 0.2 15 0.2 True 15 0.0
+ 'Standard' False False False False True False True False True False False
+ True False True True True]",0.55
+"['tanh' 6 8 'SGD' 0.1 None 'glorot_uniform' None None 'tanh' 8 3 'valid'
+ False True 2 0.4 False 8 6 'valid' False True 2 0.2 15 0.2 True 15 0.0
+ 'Standard' False False False False True False True False True False False
+ True False True True True]",0.5625
+"['relu' 6 8 'SGD' 0.1 None 'glorot_uniform' None None 'tanh' 8 3 'valid'
+ False True 2 0.2 False 8 6 'valid' False True 2 0.2 15 0.4 True 15 0.3
+ 'MinMax' True False False False True True True False True False False
+ True False True True True]",0.3125
+"['tanh' 6 8 'SGD' 0.1 None 'glorot_uniform' None None 'tanh' 8 4 'valid'
+ False True 2 0.4 False 8 6 'valid' False True 2 0.2 10 0.2 True 15 0.0
+ 'Standard' False False False False True False True False True False False
+ True False True True True]",0.575
+"['tanh' 6 8 'SGD' 0.1 None 'glorot_uniform' None None 'tanh' 8 3 'valid'
+ False True 2 0.4 False 8 6 'valid' False True 2 0.2 15 0.2 True 15 0.0
+ 'Standard' False False False False True True True False True False False
+ True False True True True]",0.5
+"['tanh' 6 8 'SGD' 0.1 None 'glorot_uniform' None None 'tanh' 8 3 'valid'
+ False True 2 0.4 False 8 6 'valid' False True 2 0.2 15 0.4 True 15 0.3
+ 'MinMax' True False False False True False True False True False False
+ True False True True True]",0.6875
+"['tanh' 6 8 'SGD' 0.1 None 'glorot_uniform' None None 'tanh' 8 3 'valid'
+ False True 2 0.4 False 8 6 'valid' False True 2 0.2 15 0.2 True 15 0.0
+ 'Standard' False False False False True False True False True False False
+ True False True True True]",0.6
+"['tanh' 6 8 'SGD' 0.1 None 'glorot_uniform' None None 'tanh' 8 3 'valid'
+ False True 2 0.4 False 8 6 'valid' False True 2 0.2 15 0.2 True 15 0.0
+ 'Standard' False False False False True False True False True False False
+ True False True True True]",0.6

@@ -1,9 +1,21 @@
 # **N**eural **N**etwork optimized by **G**enetic **A**lgorithms - (NNGA)
 
-Neural Network optimized by Genetic Algorithms - (NNGA) is a library for deep model training, by Backpropagation, for data classification. The adjustment of the model parameters and the selection of resources are done by a genetic algorithm.
+Neural Network optimized by Genetic Algorithms - (NNGA) is a library for deep model training, 
+for data classification and segmentation. 
+The adjustment of the model parameters can be done by genetic algorithm or 
+can be defined by pre-trained models. 
+For classification task, feature selection can be done by a genetic algorithm.
+
+The NNGA works well for medical data, because with NNGA is possible training a model 
+using both image exam result and laboratory exam /paciente information simultaneously. 
+NNGA also preserves the image ratio, filling the background with black to maintain the 
+actual proportion of the exam.
+ 
+
 The model accepts two data entry sources:
 1. Images
-    2.1 The format of the images should be:
+    
+    The format of the images should be:
     * Windows bitmap (bmp)
     * Portable image formats (pbm, pgm, ppm)
     * Sun raster (sr, ras)
@@ -12,8 +24,10 @@ The model accepts two data entry sources:
     * TIFF files (tiff, tif)
     * Portable network graphics (png)
 2. CSV file
-    1.1. The sample class should be in the column with label "class"
-    1.2 If the two data sources are used simultaneously, the CSV file should be a column with label "id" containing the corresponding image name (without extension)
+
+    2.1. The sample class should be in the column with label "class"
+    
+    2.2 If the two data sources are used simultaneously, the CSV file should be a column with label "id" containing the corresponding image name (without extension)
 
 ## Installation
 ```bash
@@ -24,26 +38,139 @@ pip install .
 
 ## Models
 
-### Multilayer Perceptron with Feature Selection optimized by Genetic Algorithms (MLP)
+The table below shows all the models that can be created: 
+
+|      TASK      | ARCHITECTURE |                                                                                                                                              BACKBONE                                                                                                                                              | FEATURE_SELECTION |
+|:--------------:|:------------:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:-----------------:|
+| Classification |      MLP     |                                                                                                                                              GASearch                                                                                                                                              |        True       |
+| Classification |      MLP     |                                                                                                                                              GASearch                                                                                                                                              |       False       |
+| Classification |      MLP     |                                                                                                                                                 MLP                                                                                                                                                |        True       |
+| Classification |      MLP     |                                                                                                                                                 MLP                                                                                                                                                |       False       |
+| Classification |      CNN     |                                                                                                                                              GASearch                                                                                                                                              |         -         |
+| Classification |      CNN     | One of the pre-trained models:<br><br>VGG16 <br>VGG19 <br>ResNet50 <br>ResNet101 <br>ResNet152 <br>ResNet50V2 <br>ResNet101V2 <br>ResNet152V2 <br>InceptionV3 <br>InceptionResNetV2 <br>MobileNet <br>MobileNetV2 <br>DenseNet121 <br>DenseNet169 <br>DenseNet201 <br>NASNetMobile <br>NASNetLarge |         -         |
+| Classification |    CNN/MLP   |                                                                                                                                              GASearch                                                                                                                                              |        True       |
+| Classification |    CNN/MLP   |                                                                                                                                              GASearch                                                                                                                                              |       False       |
+| Classification |    CNN/MLP   | One of the pre-trained models:<br><br>VGG16 <br>VGG19 <br>ResNet50 <br>ResNet101 <br>ResNet152 <br>ResNet50V2 <br>ResNet101V2 <br>ResNet152V2 <br>InceptionV3 <br>InceptionResNetV2 <br>MobileNet <br>MobileNetV2 <br>DenseNet121 <br>DenseNet169 <br>DenseNet201 <br>NASNetMobile <br>NASNetLarge |        True       |
+| Classification |    CNN/MLP   | One of the pre-trained models:<br><br>VGG16 <br>VGG19 <br>ResNet50 <br>ResNet101 <br>ResNet152 <br>ResNet50V2 <br>ResNet101V2 <br>ResNet152V2 <br>InceptionV3 <br>InceptionResNetV2 <br>MobileNet <br>MobileNetV2 <br>DenseNet121 <br>DenseNet169 <br>DenseNet201 <br>NASNetMobile <br>NASNetLarge |       False       |
+|  Segmentation  |      CNN     |                                                                                                                                         Not yet implemented                                                                                                                                        |         -         |
+|  Segmentation  |      CNN     |                                                                                                                                         Not yet implemented                                                                                                                                        |         -         |
+
+
+### Classification Models
+* TASK: Classification
+
+#### Multilayer Perceptron with Feature Selection optimized by Genetic Algorithms (MLP)
+Parameters:
+* ARCHITECTURE: MLP
+* BACKBONE: GASearch
+* FEATURE_SELECTION: True
+
+![mlp_feature_GASearch](/doc/images/mlp_feature_GASearch.png)
+
+The Genetic Algorithm chromosome that encodes this model is shown below:
+
+![indiv_mlp_feature_GASearch](/doc/images/indiv_mlp_feature_GASearch.jpg)
+
+#### Multilayer Perceptron optimized by Genetic Algorithms (MLP)
+Parameters:
+* ARCHITECTURE: MLP
+* BACKBONE: GASearch
+* FEATURE_SELECTION: False
+
+![mlp_GASearch](/doc/images/mlp_GASearch.png)
+
+The Genetic Algorithm chromosome that encodes this model is shown below:
+
+![indiv_mlp_GASearch](/doc/images/indiv_mlp_GASearch.jpg)
+
+#### Multilayer Perceptron with Feature Selection (MLP)
+Parameters:
+* ARCHITECTURE: MLP
+* BACKBONE: MLP
+* FEATURE_SELECTION: True
+
+![mlp_feature](/doc/images/mlp_feature.png)
+
+The Genetic Algorithm chromosome that encodes this model is shown below:
+
+<img src="./doc/images/indiv_mlp_feature.jpg" width="121" height="55">
+
+#### Multilayer Perceptron (MLP)
+Parameters:
+* ARCHITECTURE: MLP
+* BACKBONE: MLP
+* FEATURE_SELECTION: False
+
 ![mlp](/doc/images/mlp.png)
 
+#### Convolutional Neural Network optimized by Genetic Algorithms (CNN)
+Parameters:
+* ARCHITECTURE: CNN
+* BACKBONE: GASearch
+
+![cnn_GASearch](/doc/images/cnn_GASearch.png)
+
 The Genetic Algorithm chromosome that encodes this model is shown below:
 
-![mlp](/doc/images/indiv_mlp.jpg)
+![indiv_cnn_GASearch](/doc/images/indiv_cnn_GASearch.jpg)
 
-### Convolutional Neural Network optimized by Genetic Algorithms (CNN)
+#### Convolutional Neural Network (CNN)
+Parameters:
+* ARCHITECTURE: CNN
+* BACKBONE: Some pre-trained models from table
+
 ![cnn](/doc/images/cnn.png)
 
+#### Hybrid CNN-MLP Model with Feature Selection optimized by Genetic Algorithms (CNN/MLP)
+Parameters:
+* ARCHITECTURE: CNN/MLP
+* BACKBONE: GASearch
+* FEATURE_SELECTION: True
+
+![cnn_mlp_feature_GASearch](/doc/images/cnn_mlp_feature_GASearch.png)
+
 The Genetic Algorithm chromosome that encodes this model is shown below:
 
-![mlp](/doc/images/indiv_cnn.jpg)
+![indiv_cnn_mlp_feature_GASearch](/doc/images/indiv_cnn_mlp_feature_GASearch.jpg)
 
-### Hybrid CNN-MLP Model with Feature Selection optimized by Genetic Algorithms (CNN/MLP)
+#### Hybrid CNN-MLP Model optimized by Genetic Algorithms (CNN/MLP)
+Parameters:
+* ARCHITECTURE: CNN/MLP
+* BACKBONE: GASearch
+* FEATURE_SELECTION: False
+
+![cnn_mlp_GASearch](/doc/images/cnn_mlp_GASearch.png)
+
+The Genetic Algorithm chromosome that encodes this model is shown below:
+
+![indiv_cnn_mlp_GASearch](/doc/images/indiv_cnn_mlp_GASearch.jpg)
+
+
+#### Hybrid CNN-MLP Model with Feature Selection (CNN/MLP)
+Parameters:
+* ARCHITECTURE: CNN/MLP
+* BACKBONE: Some pre-trained models from table
+* FEATURE_SELECTION: True
+
+![cnn_mlp_feature](/doc/images/cnn_mlp_feature.png)
+
+The Genetic Algorithm chromosome that encodes this model is shown below:
+
+<img src="./doc/images/indiv_mlp_feature.jpg" width="121" height="55">
+
+#### Hybrid CNN-MLP Model (CNN/MLP)
+Parameters:
+* ARCHITECTURE: CNN/MLP
+* BACKBONE: Some pre-trained models from table
+* FEATURE_SELECTION: False
+
 ![cnn_mlp](/doc/images/cnn_mlp.png)
 
-The Genetic Algorithm chromosome that encodes this model is shown below:
 
-![mlp](/doc/images/indiv_cnn_mlp.jpg)
+### Segmentation Models
+* TASK: Segmentation
+
+Not yet implemented
 
 ## Parameters optimized by the Genetic Algorithm
 ### Optimized parameters for each layer of the Convolutional  Neural Network:
@@ -72,11 +199,16 @@ The Genetic Algorithm chromosome that encodes this model is shown below:
 
 ## Datasets Formats
 
-### Image Dataset Directory Structure
+### Classification
 
-There is a standard way to lay out your image data for modeling.
-After you have collected your images, you must sort them first by dataset, such as train, test, and validation, and second by their class.
-Under each of the dataset directories, we will have subdirectories, one for each class where the actual image files will be placed.
+#### Image Dataset Directory Structure
+
+There is a standard way to organize your images to train a 
+classification model. After collecting your images, you should 
+first classify them by data set, such as training and validation, 
+and second by classes. In each of the folder directories of the 
+data set, we will have subdirectories, one for each class where 
+the images will be placed.
 
 The directory structure should look like this:
 
@@ -97,7 +229,7 @@ The directory structure should look like this:
     		├── image0001.jpg
     		├── ...
 
-### CSV Dataset Structure
+#### CSV Dataset Structure
 The CSV structure should look like this:
 
 | id | feature 1 | feature 2 | ... | feature N | class |
@@ -131,6 +263,8 @@ image_004; 0,02; 0,78; ...; 0,65; class_2
 image_005; 0,97; 0,67; ...; 0,13; class_3 
 image_N; 0,28; 0,39; ...; 0,51; class_N 
 ```
+### Segmentation
+Not yet implemented
 
 ## Documentation
 Please, read the [getting-started.md](/getting-started.md) for the basics.
