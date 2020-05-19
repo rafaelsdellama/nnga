@@ -80,6 +80,24 @@ def train(cfg, logger):
         ga = GA(cfg, logger, datasets)
         ga.run()
     else:
+        if cfg.SOLVER.CROSS_VALIDATION:
+            MakeModel = ARCHITECTURES.get(cfg.MODEL.ARCHITECTURE)
+            model = MakeModel(
+                cfg,
+                logger,
+                datasets["TRAIN"].input_shape,
+                datasets["TRAIN"].n_classes,
+            )
+
+            # Training
+            model_trainner = ModelTraining(cfg, model, logger, datasets)
+
+            cv = model_trainner.cross_validation(save=True)
+            logger.info(f"Cross validation statistics:\n{cv}")
+
+            del model
+            del model_trainner
+
         MakeModel = ARCHITECTURES.get(cfg.MODEL.ARCHITECTURE)
         model = MakeModel(
             cfg,
@@ -90,10 +108,6 @@ def train(cfg, logger):
 
         # Training
         model_trainner = ModelTraining(cfg, model, logger, datasets)
-
-        if cfg.SOLVER.CROSS_VALIDATION:
-            cv = model_trainner.cross_validation(save=True)
-            logger.info(f"Cross validation statistics:\n{cv}")
 
         model_trainner.fit()
         model.save_model()
