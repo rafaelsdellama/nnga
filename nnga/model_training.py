@@ -240,6 +240,7 @@ class ModelTraining:
             train_dataset.set_index(idx_train)
             test_dataset = copy.deepcopy(self._datasets["TRAIN"])
             test_dataset.set_index(idx_val)
+            self.reset()
 
             self.fitting_parameters.update(
                 {
