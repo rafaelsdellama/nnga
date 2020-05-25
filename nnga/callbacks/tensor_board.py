@@ -16,9 +16,9 @@ class TensorBoard(Callback):
             tasks: [Classification, Segmentation]
         histogram_freq: int
             Frequency (in epochs) at which to compute activation and
-            weight histograms for the layers of the model. If set to 0, histograms
-            won't be computed. Validation data (or split) must be specified for
-            histogram visualizations.
+            weight histograms for the layers of the model. If set to 0,
+            histograms won't be computed. Validation data (or split) must
+            be specified for histogram visualizations.
         write_graph: bool
             Whether to visualize the graph in TensorBoard. The log file
             can become quite large when write_graph is set to True.
@@ -26,26 +26,25 @@ class TensorBoard(Callback):
             Whether to write model weights to visualize as image in
             TensorBoard.
         update_freq: `'batch'` or `'epoch'` or integer.
-            When using `'batch'`, writes the losses and metrics to TensorBoard after each batch.
-            The same applies for `'epoch'`. If using an integer, let's say `1000`, the callback
-            will write the metrics and losses to TensorBoard every 1000 batches. Note that writing
-            too frequently to TensorBoard can slow down your training.
+            When using `'batch'`, writes the losses and metrics to
+            TensorBoard after each batch.
+            The same applies for `'epoch'`. If using an integer, let's
+            say `1000`, the callback will write the metrics and losses to
+            TensorBoard every 1000 batches. Note that writing too frequently
+            to TensorBoard can slow down your training.
         val_dataset: dataset
             validation dataset for custom visualization
-
-            TODO: Plot GA graph?
     """
 
     def __init__(
-            self,
-            log_dir='.',
-            task=None,
-            histogram_freq=0,
-            write_graph=True,
-            write_images=False,
-            update_freq='epoch',
-            val_dataset=None
-
+        self,
+        log_dir=".",
+        task=None,
+        histogram_freq=0,
+        write_graph=True,
+        write_images=False,
+        update_freq="epoch",
+        val_dataset=None,
     ):
         super(TensorBoard, self).__init__()
         self.log_dir = os.path.join(log_dir)
@@ -62,7 +61,7 @@ class TensorBoard(Callback):
         self.histogram_freq = histogram_freq
         self.write_graph = write_graph
         self.write_images = write_images
-        self.update_freq = 1 if update_freq == 'batch' else update_freq
+        self.update_freq = 1 if update_freq == "batch" else update_freq
 
         # Lazily initialized in order to avoid creating event files when
         # not needed.
@@ -106,8 +105,10 @@ class TensorBoard(Callback):
         if not logs:
             return
 
-        train_logs = {k: v for k, v in logs.items() if not k.startswith('val_')}
-        val_logs = {k: v for k, v in logs.items() if k.startswith('val_')}
+        train_logs = {
+            k: v for k, v in logs.items() if not k.startswith("val_")
+        }
+        val_logs = {k: v for k, v in logs.items() if k.startswith("val_")}
 
         with summary_ops_v2.always_record_summaries():
             if train_logs:
@@ -115,7 +116,9 @@ class TensorBoard(Callback):
                     for name, value in train_logs.items():
                         summary_ops_v2.scalar(name, value, step=epoch)
 
-                    summary_ops_v2.scalar("learning_rate", self.model.optimizer.lr, step=epoch)
+                    summary_ops_v2.scalar(
+                        "learning_rate", self.model.optimizer.lr, step=epoch
+                    )
 
             if val_logs:
                 with self._val_writer.as_default():
@@ -124,11 +127,11 @@ class TensorBoard(Callback):
                         summary_ops_v2.scalar(name, value, step=epoch)
 
                     if self._val_dataset is not None:
-                        for name, img in self._custom_vis(self.model, self._val_dataset).items():
+                        for name, img in self._custom_vis(
+                            self.model, self._val_dataset
+                        ).items():
                             summary_ops_v2.image(
-                                name,
-                                img,
-                                step=epoch,
+                                name, img, step=epoch,
                             )
 
     def _log_weights(self, epoch):
@@ -137,10 +140,14 @@ class TensorBoard(Callback):
             with summary_ops_v2.always_record_summaries():
                 for layer in self.model.layers:
                     for weight in layer.weights:
-                        weight_name = weight.name.replace(':', '_')
-                        summary_ops_v2.histogram(weight_name, weight, step=epoch)
+                        weight_name = weight.name.replace(":", "_")
+                        summary_ops_v2.histogram(
+                            weight_name, weight, step=epoch
+                        )
                         if self.write_images:
-                            self._log_weight_as_image(weight, weight_name, epoch)
+                            self._log_weight_as_image(
+                                weight, weight_name, epoch
+                            )
                 self._train_writer.flush()
 
     def _log_weight_as_image(self, weight, weight_name, epoch):
@@ -155,12 +162,13 @@ class TensorBoard(Callback):
                 shape = K.int_shape(w_img)
             w_img = array_ops.reshape(w_img, [1, shape[0], shape[1], 1])
         elif len(shape) == 3:  # ConvNet case
-            if K.image_data_format() == 'channels_last':
-                # Switch to channels_first to display every kernel as a separate
-                # image.
+            if K.image_data_format() == "channels_last":
+                # Switch to channels_first to display every kernel
+                # as a separate image.
                 w_img = array_ops.transpose(w_img, perm=[2, 0, 1])
                 shape = K.int_shape(w_img)
-            w_img = array_ops.reshape(w_img, [shape[0], shape[1], shape[2], 1])
+            w_img = array_ops.reshape(w_img, [shape[0], shape[1],
+                                              shape[2], 1])
 
         shape = K.int_shape(w_img)
         # Not possible to handle 3D convnets etc.

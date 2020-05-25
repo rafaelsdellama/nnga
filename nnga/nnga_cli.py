@@ -46,7 +46,8 @@ def train(cfg, logger):
                             Check your experiment config"
         )
 
-    if cfg.MODEL.BACKBONE not in BACKBONES.keys() and cfg.MODEL.BACKBONE not in [
+    if cfg.MODEL.BACKBONE not in BACKBONES.keys() and cfg.MODEL.BACKBONE \
+            not in [
         "MLP",
         "GASearch",
     ]:
@@ -62,13 +63,15 @@ def train(cfg, logger):
     datasets["TRAIN"] = MakeDataset(cfg, logger)
     logger.info(
         f"Train {cfg.MODEL.ARCHITECTURE} dataset loaded! "
-        f"{datasets['TRAIN'].n_samples} sample(s) on { len(datasets['TRAIN']) } batch(es) was found!"
+        f"{datasets['TRAIN'].n_samples} sample(s) on "
+        f"{ len(datasets['TRAIN']) } batch(es) was found!"
     )
 
     datasets["VAL"] = MakeDataset(cfg, logger, is_validation=True)
     logger.info(
         f"Validation {cfg.MODEL.ARCHITECTURE} dataset loaded! "
-        f"{datasets['VAL'].n_samples} sample(s) on { len(datasets['VAL']) } batch(es) was found!"
+        f"{datasets['VAL'].n_samples} sample(s) on "
+        f"{ len(datasets['VAL']) } batch(es) was found!"
     )
 
     if hasattr(datasets["TRAIN"], "scale_parameters"):

@@ -1,6 +1,7 @@
 from nnga.utils.data_io import save_model, save_cfg
 import os
 
+
 class BaseNeuralNetwork:
     """ This class implements the Model defined by genetic algorithm indiv
         Parameters
@@ -74,7 +75,8 @@ class BaseNeuralNetwork:
             self.create_model()
             if self._cfg.MODEL.FEATURE_SELECTION:
                 self._logger.info(
-                    f"Model {self._cfg.MODEL.ARCHITECTURE} created with feature selection!"
+                    f"Model {self._cfg.MODEL.ARCHITECTURE} "
+                    f"created with feature selection!"
                 )
             else:
                 self._logger.info(
@@ -113,7 +115,7 @@ class BaseNeuralNetwork:
     def save_model(self):
         """Save model
         """
-        save_model(os.path.join(self._cfg.OUTPUT_DIR, 'model'), self._model)
+        save_model(os.path.join(self._cfg.OUTPUT_DIR, "model"), self._model)
         save_cfg(self._cfg.OUTPUT_DIR)
 
     def get_model(self):

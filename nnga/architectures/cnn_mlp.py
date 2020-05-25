@@ -1,4 +1,4 @@
-from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.models import Model
 from tensorflow.keras.layers import (
     Dense,
     Dropout,
@@ -9,9 +9,7 @@ from nnga.architectures.base_neural_network import BaseNeuralNetwork
 from nnga.architectures.mlp import MLP
 from nnga.architectures.cnn import CNN
 from nnga.architectures import (
-    BACKBONES,
     INICIALIZERS,
-    OPTIMIZERS,
     REGULARIZERS,
 )
 from tensorflow.keras import backend as K
@@ -117,6 +115,7 @@ class CNN_MLP(BaseNeuralNetwork):
                         kernel_initializer=kernel_initializer,
                         kernel_regularizer=kernel_regularizer,
                         activity_regularizer=activity_regularizer,
+                        bias_regularizer=bias_regularizer,
                     )(cnn_mlp)
 
                     cnn_mlp = Dropout(
@@ -129,6 +128,7 @@ class CNN_MLP(BaseNeuralNetwork):
                 kernel_initializer=kernel_initializer,
                 kernel_regularizer=kernel_regularizer,
                 activity_regularizer=activity_regularizer,
+                bias_regularizer=bias_regularizer,
             )(cnn_mlp)
 
         self._model = Model(inputs=[mlp.input, cnn.input], outputs=cnn_mlp)

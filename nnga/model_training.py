@@ -10,14 +10,14 @@ from nnga.utils.data_io import (
     save_history,
     save_roc_curve,
     save_metrics,
-    load_train_state
+    load_train_state,
 )
 from nnga.architectures import OPTIMIZERS
 from nnga.callbacks import (
     WarmUpCosineDecayScheduler,
     EarlyStopping,
     ModelCheckpoint,
-    TensorBoard
+    TensorBoard,
 )
 
 
@@ -93,8 +93,12 @@ class ModelTraining:
         self._datasets["TRAIN"].features_selected = features_selected
         self._datasets["VAL"].features_selected = features_selected
 
-        if os.path.exists(os.path.join(self._cfg.OUTPUT_DIR, 'model', 'train_state.json')):
-            self.train_state = load_train_state(os.path.join(self._cfg.OUTPUT_DIR, 'model'))
+        if os.path.exists(
+            os.path.join(self._cfg.OUTPUT_DIR, "model", "train_state.json")
+        ):
+            self.train_state = load_train_state(
+                os.path.join(self._cfg.OUTPUT_DIR, "model")
+            )
         else:
             self.train_state = {}
 
@@ -110,13 +114,15 @@ class ModelTraining:
             "steps_per_epoch": len(self._datasets["TRAIN"]),
             "validation_steps": len(self._datasets["VAL"]),
             "verbose": 1,
-            "callbacks": self._make_callbacks(val_dataset=self._datasets["VAL"]),
+            "callbacks": self._make_callbacks(
+                val_dataset=self._datasets["VAL"]
+            ),
             "shuffle": False,
             "validation_freq": 1,
             "max_queue_size": 10,
             "workers": 0,
             "use_multiprocessing": True,
-            "initial_epoch": self.train_state.get("epoch", 0)
+            "initial_epoch": self.train_state.get("epoch", 0),
         }
 
         self._path = cfg.OUTPUT_DIR
@@ -164,8 +170,10 @@ class ModelTraining:
         self.fitting_parameters.update(
             {
                 "epochs": self.indiv[self.keys.index("epochs")],
-                "callbacks": self._make_callbacks(val_dataset=self._datasets["VAL"]),
-                "initial_epoch": 0
+                "callbacks": self._make_callbacks(
+                    val_dataset=self._datasets["VAL"]
+                ),
+                "initial_epoch": 0,
             }
         )
 
@@ -174,9 +182,11 @@ class ModelTraining:
         self.fitting_parameters.update(
             {
                 "epochs": self._cfg.SOLVER.EPOCHS,
-                "callbacks": self._make_callbacks(val_dataset=self._datasets["VAL"]),
-                "initial_epoch": self.train_state.get("epoch", 0)
-             }
+                "callbacks": self._make_callbacks(
+                    val_dataset=self._datasets["VAL"]
+                ),
+                "initial_epoch": self.train_state.get("epoch", 0),
+            }
         )
 
     def _compile(self):
@@ -220,8 +230,10 @@ class ModelTraining:
                 "validation_data": test_dataset,
                 "steps_per_epoch": len(train_dataset),
                 "validation_steps": len(test_dataset),
-                "callbacks": self._make_callbacks(val_dataset=test_dataset, cv=True),
-                "initial_epoch": 0
+                "callbacks": self._make_callbacks(
+                    val_dataset=test_dataset, cv=True
+                ),
+                "initial_epoch": 0,
             }
         )
 
@@ -278,8 +290,10 @@ class ModelTraining:
                     "validation_data": test_dataset,
                     "steps_per_epoch": len(train_dataset),
                     "validation_steps": len(test_dataset),
-                    "callbacks": self._make_callbacks(val_dataset=test_dataset, cv=True),
-                    "initial_epoch": 0
+                    "callbacks": self._make_callbacks(
+                        val_dataset=test_dataset, cv=True
+                    ),
+                    "initial_epoch": 0,
                 }
             )
 
@@ -380,7 +394,11 @@ class ModelTraining:
         lbl, _, predict, predict_encoded = self.predict()
 
         metrics = compute_metrics(
-            lbl, predict, predict_encoded, self._labels, self.fitting_parameters["validation_data"].indexes[0]
+            lbl,
+            predict,
+            predict_encoded,
+            self._labels,
+            self.fitting_parameters["validation_data"].indexes[0],
         )
         if save:
             save_metrics(self._path, metrics)
@@ -390,7 +408,9 @@ class ModelTraining:
         return metrics
 
     def _make_callbacks(self, val_dataset=None, cv=False):
-        total_steps = int(len(self._datasets["TRAIN"]) * self._cfg.SOLVER.EPOCHS)
+        total_steps = int(
+            len(self._datasets["TRAIN"]) * self._cfg.SOLVER.EPOCHS
+        )
         callbacks = [
             WarmUpCosineDecayScheduler(
                 learning_rate_base=self._cfg.SOLVER.BASE_LEARNING_RATE,
@@ -399,23 +419,21 @@ class ModelTraining:
                 hold_base_rate_steps=total_steps // 3,
                 verbose=1,
             ),
-            EarlyStopping(
-                patience=10,
-                verbose=1,
-                restore_best_weights=True,
-            ),
+            EarlyStopping(patience=10, verbose=1, restore_best_weights=True,),
         ]
         if not cv:
-            callbacks.extend([
-                ModelCheckpoint(
-                    filepath=self._cfg.OUTPUT_DIR,
-                    verbose=1,
-                    save_best_only=True,
-                ),
-                TensorBoard(
-                    log_dir=self._cfg.OUTPUT_DIR,
-                    task=self._cfg.TASK,
-                    val_dataset=val_dataset,
-                )
-            ])
+            callbacks.extend(
+                [
+                    ModelCheckpoint(
+                        filepath=self._cfg.OUTPUT_DIR,
+                        verbose=1,
+                        save_best_only=True,
+                    ),
+                    TensorBoard(
+                        log_dir=self._cfg.OUTPUT_DIR,
+                        task=self._cfg.TASK,
+                        val_dataset=val_dataset,
+                    ),
+                ]
+            )
         return callbacks

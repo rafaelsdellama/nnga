@@ -7,14 +7,16 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc
 
 import matplotlib
+
 matplotlib.use("Agg")
+
 
 def classification_vis(model, validation_dataset):
     # Use the model to predict the values from the test_images.
     test_pred_raw = model.predict(validation_dataset)
 
     lbl_encoded = validation_dataset.classes
-    lbl_encoded = np.array(lbl_encoded[-len(test_pred_raw):])
+    lbl_encoded = np.array(lbl_encoded[-len(test_pred_raw) :])
 
     test_pred = np.argmax(test_pred_raw, axis=1)
     test_labels = np.argmax(lbl_encoded, axis=1)
@@ -23,10 +25,17 @@ def classification_vis(model, validation_dataset):
     cm = confusion_matrix(test_labels, test_pred)
 
     return {
-        "Confusion Matrix": plot_to_image(plot_confusion_matrix(cm, class_names=validation_dataset.labels)),
-        "Roc Curve": plot_to_image(plot_roc_curve(lbl_encoded=lbl_encoded, predict_proba=test_pred_raw,
-                                                  labels=validation_dataset.labels))
-            }
+        "Confusion Matrix": plot_to_image(
+            plot_confusion_matrix(cm, class_names=validation_dataset.labels)
+        ),
+        "Roc Curve": plot_to_image(
+            plot_roc_curve(
+                lbl_encoded=lbl_encoded,
+                predict_proba=test_pred_raw,
+                labels=validation_dataset.labels,
+            )
+        ),
+    }
 
 
 def plot_confusion_matrix(cm, class_names):
@@ -39,7 +48,7 @@ def plot_confusion_matrix(cm, class_names):
     """
 
     figure = plt.figure(figsize=(8, 8))
-    plt.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
+    plt.imshow(cm, interpolation="nearest", cmap=plt.cm.Blues)
     plt.title("Confusion matrix")
     plt.colorbar()
     tick_marks = np.arange(len(class_names))
@@ -47,18 +56,20 @@ def plot_confusion_matrix(cm, class_names):
     plt.yticks(tick_marks, class_names)
 
     # Normalize the confusion matrix.
-    cm = np.around(cm.astype('float') / cm.sum(axis=1)[:, np.newaxis], decimals=2)
+    cm = np.around(
+        cm.astype("float") / cm.sum(axis=1)[:, np.newaxis], decimals=2
+    )
 
     # Use white text if squares are dark; otherwise black.
-    threshold = cm.max() / 2.
+    threshold = cm.max() / 2.0
 
     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
         color = "white" if cm[i, j] > threshold else "black"
         plt.text(j, i, cm[i, j], horizontalalignment="center", color=color)
 
     plt.tight_layout()
-    plt.ylabel('True label')
-    plt.xlabel('Predicted label')
+    plt.ylabel("True label")
+    plt.xlabel("Predicted label")
     return figure
 
 
@@ -76,13 +87,17 @@ def plot_roc_curve(lbl_encoded, predict_proba, labels):
 
     # Plot of a ROC curve for a specific class
     for i in range(len(labels)):
-        plt.plot(fpr[i], tpr[i], label=f'ROC curve of class {labels[i]} (area = {roc_auc[i]:.2f})')
-        plt.plot([0, 1], [0, 1], 'k--')
+        plt.plot(
+            fpr[i],
+            tpr[i],
+            label=f"ROC curve of class {labels[i]} (area = {roc_auc[i]:.2f})",
+        )
+        plt.plot([0, 1], [0, 1], "k--")
         plt.xlim([0.0, 1.0])
         plt.ylim([0.0, 1.05])
-        plt.xlabel('False Positive Rate')
-        plt.ylabel('True Positive Rate')
-        plt.title('Receiver Operating Characteristic')
+        plt.xlabel("False Positive Rate")
+        plt.ylabel("True Positive Rate")
+        plt.title("Receiver Operating Characteristic")
         plt.legend(loc="lower right")
 
     return figure
@@ -97,7 +112,7 @@ def plot_to_image(figure):
     buf = io.BytesIO()
 
     # Use plt.savefig to save the plot to a PNG in memory.
-    plt.savefig(buf, format='png')
+    plt.savefig(buf, format="png")
 
     # Closing the figure prevents it from being displayed directly inside
     # the notebook.

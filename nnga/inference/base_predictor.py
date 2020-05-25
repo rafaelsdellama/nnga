@@ -17,7 +17,7 @@ class BasePredictor:
 
     def __init__(self, model_dir, cfg):
         self._cfg = cfg
-        self._model = load_model(os.path.join(model_dir, 'model'))
+        self._model = load_model(os.path.join(model_dir, "model"))
         self._decode = {
             int(k): v for k, v in load_decoder_parameters(model_dir).items()
         }

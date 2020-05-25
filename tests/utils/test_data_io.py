@@ -59,8 +59,12 @@ img_features_cols = [
     "feature_14",
     "feature_15",
 ]
-model_saved_dir = Path(test_directory, "models", "cnn_mlp_feature_GASearch").as_posix()
-model_saved_file = Path(test_directory, "models", "cnn_mlp_feature_GASearch", "model").as_posix()
+model_saved_dir = Path(
+    test_directory, "models", "cnn_mlp_feature_GASearch"
+).as_posix()
+model_saved_file = Path(
+    test_directory, "models", "cnn_mlp_feature_GASearch", "model"
+).as_posix()
 pytest_output_directory = "./Pytest_output"
 
 

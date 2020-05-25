@@ -11,8 +11,9 @@ class EarlyStopping(Callback):
          monitor: str
             Quantity to be monitored. (default: {loss})
         min_delta: float
-            Minimum change in the monitored quantity to qualify as an improvement,
-            i.e. an absolute change of less than min_delta, will count as no improvement.
+            Minimum change in the monitored quantity to qualify as
+            an improvement, i.e. an absolute change of less than min_delta,
+            will count as no improvement.
         patience: int
             Number of epochs to wait after min has been hit. After this
             number of no improvement, training stops. (default: {0})
@@ -20,9 +21,12 @@ class EarlyStopping(Callback):
             0: quiet, 1: update messages. (default: {0})
         mode: str
             One of {"auto", "min", "max"}.
-            In min mode, training will stop when the quantity monitored has stopped decreasing;
-            in max mode it will stop when the quantity monitored has stopped increasing;
-            in auto mode, the direction is automatically inferred from the name of the monitored quantity.
+            In min mode, training will stop when the quantity monitored has
+            stopped decreasing;
+            in max mode it will stop when the quantity monitored has stopped
+            increasing;
+            in auto mode, the direction is automatically inferred from the name
+            of the monitored quantity.
         baseline: Baseline value for the monitored quantity.
             Training will stop if the model doesn't show improvement over the
             baseline.
@@ -32,13 +36,16 @@ class EarlyStopping(Callback):
             training are used.
     """
 
-    def __init__(self, monitor='val_loss',
-                 min_delta=0.0,
-                 patience=0,
-                 verbose=0,
-                 mode='auto',
-                 baseline=None,
-                 restore_best_weights=False):
+    def __init__(
+        self,
+        monitor="val_loss",
+        min_delta=0.0,
+        patience=0,
+        verbose=0,
+        mode="auto",
+        baseline=None,
+        restore_best_weights=False,
+    ):
         super(EarlyStopping, self).__init__()
 
         self.monitor = monitor
@@ -61,24 +68,27 @@ class EarlyStopping(Callback):
             )
             self.mode = "auto"
 
-        if self.mode == 'min':
+        if self.mode == "min":
             self.monitor_op = np.less
             self.min_delta *= -1
-        elif self.mode == 'max':
+        elif self.mode == "max":
             self.monitor_op = np.greater
             self.min_delta *= 1
         else:
-            if 'acc' in self.monitor:
-                self.mode = 'max'
+            if "acc" in self.monitor:
+                self.mode = "max"
                 self.monitor_op = np.greater
                 self.min_delta *= 1
             else:
-                self.mode = 'min'
+                self.mode = "min"
                 self.monitor_op = np.less
                 self.min_delta *= -1
 
             if self.verbose:
-                self.logger.info(f"EarlyStopping mode is automatically inferred to '{self.mode}'")
+                self.logger.info(
+                    f"EarlyStopping mode is automatically "
+                    f"inferred to '{self.mode}'"
+                )
 
         # best_weights to store the weights at which the minimum loss occurs.
         self.best_weights = None
@@ -113,9 +123,13 @@ class EarlyStopping(Callback):
                 self.model.stop_training = True
                 if self.restore_best_weights:
                     if self.verbose:
-                        self.logger.info('Restoring model weights from the end of the best epoch.')
+                        self.logger.info(
+                            "Restoring model weights from the end of "
+                            "the best epoch."
+                        )
                     self.model.set_weights(self.best_weights)
 
     def on_train_end(self, logs=None):
         if self.stopped_epoch > 0 and self.verbose:
-            self.logger.info(f'Epoch {self.stopped_epoch + 1}: early stopping')
+            self.logger.info(f"Epoch {self.stopped_epoch + 1}: "
+                             f"early stopping")
