@@ -330,12 +330,12 @@ class GA:
                 self.new_pop.indivs[i] = self.old_pop.indivs[
                     self.old_pop.bestIndiv[i]
                 ]
-                self.new_pop.indivs[i].fitness = self._calculate_fitness(
-                    self.new_pop.indivs[i].chromosome, i, gen
-                )
-                # self.new_pop.indivs[i].fitness = self.old_pop.indivs[
-                #     self.old_pop.bestIndiv[i]
-                # ].fitness
+                # self.new_pop.indivs[i].fitness = self._calculate_fitness(
+                #     self.new_pop.indivs[i].chromosome, i, gen
+                # )
+                self.new_pop.indivs[i].fitness = self.old_pop.indivs[
+                    self.old_pop.bestIndiv[i]
+                ].fitness
 
         for i in range(self.elitism, self.population_size, 2):
             parent_1 = self._select_individual_by_tournament(
@@ -656,7 +656,7 @@ class GA:
                 features_idx,
             )
 
-            evaluate = model_trainner.train_test_split(random_state=gen)
+            evaluate = model_trainner.train_test_split(random_state=0)
             metrics = model_trainner.compute_metrics()
             fitness = float(metrics["balanced_accuracy_score"])
             # fitness = 1 / (1 + evaluate[0])
@@ -703,34 +703,6 @@ class GA:
         MakeModel = ARCHITECTURES.get(self._cfg.MODEL.ARCHITECTURE)
 
         try:
-
-            if self._cfg.SOLVER.CROSS_VALIDATION:
-                model = MakeModel(
-                    self._cfg,
-                    self._logger,
-                    self.datasets["TRAIN"].input_shape,
-                    self.datasets["TRAIN"].n_classes,
-                    indiv=indiv,
-                    keys=self._encoding_keys,
-                )
-
-                model_trainner = ModelTraining(
-                    self._cfg,
-                    model,
-                    self._logger,
-                    self.datasets,
-                    indiv,
-                    self._encoding_keys,
-                    features_idx,
-                )
-                cv = model_trainner.cross_validation(
-                    random_state=self._seed, save=True
-                )
-                self._logger.info(f"Cross validation statistics:\n{cv}")
-
-                del model
-                del model_trainner
-
             model = MakeModel(
                 self._cfg,
                 self._logger,
@@ -749,6 +721,12 @@ class GA:
                 self._encoding_keys,
                 features_idx,
             )
+
+            if self._cfg.SOLVER.CROSS_VALIDATION:
+                cv = model_trainner.cross_validation(
+                    random_state=self._seed, save=True
+                )
+                self._logger.info(f"Cross validation statistics:\n{cv}")
 
             model_trainner.fit()
             evaluate = model_trainner.evaluate()

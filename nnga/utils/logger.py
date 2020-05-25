@@ -39,3 +39,19 @@ def setup_logger(name, save_dir, filename="log.txt"):
         logger.addHandler(fh)
 
     return logger
+
+
+def get_logger(name):
+    """
+
+    Parameters
+    ----------
+    name : str
+        Logger name
+
+    Returns
+    -------
+        Logger
+            Logger object
+    """
+    return logging.getLogger(name)

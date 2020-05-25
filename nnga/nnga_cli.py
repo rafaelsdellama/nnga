@@ -3,6 +3,9 @@ import argparse
 import os
 from pathlib import Path
 import traceback
+import webbrowser
+from tensorboard import program
+from threading import Timer
 
 from nnga.configs import cfg, export_config
 from nnga.utils.logger import setup_logger
@@ -27,11 +30,6 @@ def train(cfg, logger):
     Raises:
         RuntimeError: For wrong config options
     """
-
-    # TODO: Custom callbacks (learn rate, tensorboard, save model, continue the train stopped)
-    # TODO: Segmentation
-    # TODO: re-train (for GA models)
-    # TODO: pyRadiomics, dataset creator, cyclical feature encoding..
 
     if cfg.TASK not in TASKS:
         raise RuntimeError(
@@ -80,24 +78,6 @@ def train(cfg, logger):
         ga = GA(cfg, logger, datasets)
         ga.run()
     else:
-        if cfg.SOLVER.CROSS_VALIDATION:
-            MakeModel = ARCHITECTURES.get(cfg.MODEL.ARCHITECTURE)
-            model = MakeModel(
-                cfg,
-                logger,
-                datasets["TRAIN"].input_shape,
-                datasets["TRAIN"].n_classes,
-            )
-
-            # Training
-            model_trainner = ModelTraining(cfg, model, logger, datasets)
-
-            cv = model_trainner.cross_validation(save=True)
-            logger.info(f"Cross validation statistics:\n{cv}")
-
-            del model
-            del model_trainner
-
         MakeModel = ARCHITECTURES.get(cfg.MODEL.ARCHITECTURE)
         model = MakeModel(
             cfg,
@@ -105,12 +85,14 @@ def train(cfg, logger):
             datasets["TRAIN"].input_shape,
             datasets["TRAIN"].n_classes,
         )
-
         # Training
         model_trainner = ModelTraining(cfg, model, logger, datasets)
 
+        if cfg.SOLVER.CROSS_VALIDATION:
+            cv = model_trainner.cross_validation(save=True)
+            logger.info(f"Cross validation statistics:\n{cv}")
+
         model_trainner.fit()
-        model.save_model()
         model_trainner.compute_metrics(save=True)
 
     logger.info(f"Model trained!\nCheck the results on {cfg.OUTPUT_DIR}")
@@ -181,10 +163,19 @@ def main():
     logger.info(f"CFG: \n{cfg}")
 
     try:
+        launch_tensorboard(cfg.OUTPUT_DIR)
         train(cfg, logger)
     except:
         msg = f"Failed:\n{traceback.format_exc()}"
         logger.error(msg)
+
+
+def launch_tensorboard(logdir, port=6007):
+    """Open tensorboard."""
+    tb = program.TensorBoard()
+    tb.configure(argv=[None, "--logdir", logdir, "--port", str(port)])
+    url = tb.launch()
+    Timer(1, webbrowser.open_new, args=[url]).start()
 
 
 if __name__ == "__main__":

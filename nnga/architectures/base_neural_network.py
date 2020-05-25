@@ -1,5 +1,5 @@
 from nnga.utils.data_io import save_model, save_cfg
-
+import os
 
 class BaseNeuralNetwork:
     """ This class implements the Model defined by genetic algorithm indiv
@@ -113,7 +113,7 @@ class BaseNeuralNetwork:
     def save_model(self):
         """Save model
         """
-        save_model(self._cfg.OUTPUT_DIR, self._model)
+        save_model(os.path.join(self._cfg.OUTPUT_DIR, 'model'), self._model)
         save_cfg(self._cfg.OUTPUT_DIR)
 
     def get_model(self):

@@ -1,6 +1,7 @@
 import numpy as np
 import math
 import copy
+import os
 from sklearn.model_selection import StratifiedKFold
 from sklearn.model_selection import StratifiedShuffleSplit
 from nnga.utils.helper import dump_tensors
@@ -9,9 +10,15 @@ from nnga.utils.data_io import (
     save_history,
     save_roc_curve,
     save_metrics,
+    load_train_state
 )
 from nnga.architectures import OPTIMIZERS
-from tensorflow.keras.models import clone_model
+from nnga.callbacks import (
+    WarmUpCosineDecayScheduler,
+    EarlyStopping,
+    ModelCheckpoint,
+    TensorBoard
+)
 
 
 class ModelTraining:
@@ -58,8 +65,7 @@ class ModelTraining:
         self._cfg = cfg
         self._logger = logger
         self._datasets = datasets
-        self._original_model = model.get_model()
-        self._model = clone_model(self._original_model)
+        self._model = model.get_model()
 
         self.cv = self._cfg.SOLVER.CROSS_VALIDATION
         self.cv_folds = self._cfg.SOLVER.CROSS_VALIDATION_FOLDS
@@ -87,6 +93,11 @@ class ModelTraining:
         self._datasets["TRAIN"].features_selected = features_selected
         self._datasets["VAL"].features_selected = features_selected
 
+        if os.path.exists(os.path.join(self._cfg.OUTPUT_DIR, 'model', 'train_state.json')):
+            self.train_state = load_train_state(os.path.join(self._cfg.OUTPUT_DIR, 'model'))
+        else:
+            self.train_state = {}
+
         self.compile_parameters = {
             "loss": self._cfg.SOLVER.LOSS,
             "metrics": self._cfg.SOLVER.METRICS,
@@ -99,33 +110,32 @@ class ModelTraining:
             "steps_per_epoch": len(self._datasets["TRAIN"]),
             "validation_steps": len(self._datasets["VAL"]),
             "verbose": 1,
-            "callbacks": None,
+            "callbacks": self._make_callbacks(val_dataset=self._datasets["VAL"]),
             "shuffle": False,
             "validation_freq": 1,
             "max_queue_size": 10,
             "workers": 0,
             "use_multiprocessing": True,
+            "initial_epoch": self.train_state.get("epoch", 0)
         }
 
         self._path = cfg.OUTPUT_DIR
         self._labels = datasets["TRAIN"].labels
         self._model_history = None
-        self._idx_train = None
-        self._idx_val = None
 
         if self._cfg.MODEL.BACKBONE == "GASearch":
-            self.configure_compiler_ga()
-            self.configure_fit_ga()
+            self._configure_compiler_ga()
+            self._configure_fit_ga()
             self._logger.info(f"Model Trainner from GA created!")
         else:
-            self.configure_compiler()
-            self.configure_fit()
+            self._configure_compiler()
+            self._configure_fit()
             self._logger.info(f"Model Trainner created!")
 
-        self.compile()
+        self._compile()
         self._logger.info(f"Model compiled!")
 
-    def configure_compiler_ga(self):
+    def _configure_compiler_ga(self):
         """
         Set compile parameters from GA indiv
         """
@@ -137,7 +147,7 @@ class ModelTraining:
             }
         )
 
-    def configure_compiler(self):
+    def _configure_compiler(self):
         """
         Set compile parameters from config
         """
@@ -149,19 +159,27 @@ class ModelTraining:
             }
         )
 
-    def configure_fit_ga(self):
+    def _configure_fit_ga(self):
         """ Set fit parameters from GA indiv """
         self.fitting_parameters.update(
-            {"epochs": self.indiv[self.keys.index("epochs")],}
+            {
+                "epochs": self.indiv[self.keys.index("epochs")],
+                "callbacks": self._make_callbacks(val_dataset=self._datasets["VAL"]),
+                "initial_epoch": 0
+            }
         )
 
-    def configure_fit(self):
+    def _configure_fit(self):
         """ Set fit parameters from config """
         self.fitting_parameters.update(
-            {"epochs": self._cfg.SOLVER.EPOCHS,}
+            {
+                "epochs": self._cfg.SOLVER.EPOCHS,
+                "callbacks": self._make_callbacks(val_dataset=self._datasets["VAL"]),
+                "initial_epoch": self.train_state.get("epoch", 0)
+             }
         )
 
-    def compile(self):
+    def _compile(self):
         """ Compile the model """
         self._model.compile(**self.compile_parameters)
 
@@ -180,6 +198,9 @@ class ModelTraining:
             -------
                 loss value & metrics values
         """
+        Wsave = self._model.get_weights()
+        fitting_parameters = self.fitting_parameters.copy()
+
         idx, idx_labels = self._datasets["TRAIN"].indexes
 
         sss = StratifiedShuffleSplit(
@@ -192,7 +213,6 @@ class ModelTraining:
         train_dataset.set_index(idx_train)
         test_dataset = copy.deepcopy(self._datasets["TRAIN"])
         test_dataset.set_index(idx_val)
-        self.reset()
 
         self.fitting_parameters.update(
             {
@@ -200,11 +220,19 @@ class ModelTraining:
                 "validation_data": test_dataset,
                 "steps_per_epoch": len(train_dataset),
                 "validation_steps": len(test_dataset),
+                "callbacks": self._make_callbacks(val_dataset=test_dataset, cv=True),
+                "initial_epoch": 0
             }
         )
 
         self.fit()
-        return self.evaluate()
+        evaluate = self.evaluate()
+
+        dump_tensors()
+        self._model.set_weights(Wsave)
+        self.fitting_parameters.update(fitting_parameters)
+
+        return evaluate
 
     def cross_validation(self, shuffle=True, random_state=0, save=False):
         """Execute cross validation using the train dataset
@@ -221,6 +249,9 @@ class ModelTraining:
             -------
                 Pandas DataFrame with cross validation results
         """
+        Wsave = self._model.get_weights()
+        fitting_parameters = self.fitting_parameters.copy()
+
         idx, idx_labels = self._datasets["TRAIN"].indexes
 
         skf = StratifiedKFold(
@@ -240,7 +271,6 @@ class ModelTraining:
             train_dataset.set_index(idx_train)
             test_dataset = copy.deepcopy(self._datasets["TRAIN"])
             test_dataset.set_index(idx_val)
-            self.reset()
 
             self.fitting_parameters.update(
                 {
@@ -248,11 +278,14 @@ class ModelTraining:
                     "validation_data": test_dataset,
                     "steps_per_epoch": len(train_dataset),
                     "validation_steps": len(test_dataset),
+                    "callbacks": self._make_callbacks(val_dataset=test_dataset, cv=True),
+                    "initial_epoch": 0
                 }
             )
 
             self.fit()
             evaluate = self.evaluate()
+            evaluate_results.append(evaluate)
 
             metrics = self.compute_metrics()
             self._logger.info(
@@ -262,10 +295,12 @@ class ModelTraining:
                 f"confusion matrix: \n{metrics['confusion_matrix']}"
             )
 
-            evaluate_results.append(evaluate)
             dump_tensors()
-            cv = cross_validation_statistics(evaluate_results)
-            self._logger.info(f"Cross validation statistics:\n{cv}")
+            self._model.set_weights(Wsave)
+            self.fitting_parameters.update(fitting_parameters)
+
+        cv = cross_validation_statistics(evaluate_results)
+        self._logger.info(f"Cross validation statistics:\n{cv}")
 
         if save:
             save_metrics(
@@ -345,7 +380,7 @@ class ModelTraining:
         lbl, _, predict, predict_encoded = self.predict()
 
         metrics = compute_metrics(
-            lbl, predict, predict_encoded, self._labels, self._idx_val
+            lbl, predict, predict_encoded, self._labels, self.fitting_parameters["validation_data"].indexes[0]
         )
         if save:
             save_metrics(self._path, metrics)
@@ -354,9 +389,33 @@ class ModelTraining:
 
         return metrics
 
-    def reset(self):
-        """
-        Reset the model weights to initial weights
-        """
-        self._model = clone_model(self._original_model)
-        self.compile()
+    def _make_callbacks(self, val_dataset=None, cv=False):
+        total_steps = int(len(self._datasets["TRAIN"]) * self._cfg.SOLVER.EPOCHS)
+        callbacks = [
+            WarmUpCosineDecayScheduler(
+                learning_rate_base=self._cfg.SOLVER.BASE_LEARNING_RATE,
+                total_steps=total_steps,
+                warmup_steps=total_steps // 10,
+                hold_base_rate_steps=total_steps // 3,
+                verbose=1,
+            ),
+            EarlyStopping(
+                patience=10,
+                verbose=1,
+                restore_best_weights=True,
+            ),
+        ]
+        if not cv:
+            callbacks.extend([
+                ModelCheckpoint(
+                    filepath=self._cfg.OUTPUT_DIR,
+                    verbose=1,
+                    save_best_only=True,
+                ),
+                TensorBoard(
+                    log_dir=self._cfg.OUTPUT_DIR,
+                    task=self._cfg.TASK,
+                    val_dataset=val_dataset,
+                )
+            ])
+        return callbacks

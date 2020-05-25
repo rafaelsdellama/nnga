@@ -8,7 +8,8 @@ import scikitplot as skplt
 import csv
 from nnga.configs import export_config
 import json
-from tensorflow.keras.models import model_from_json
+# from tensorflow.keras.models import model_from_json
+import tensorflow as tf
 
 
 def create_dir(path):
@@ -215,9 +216,8 @@ def save_cfg(path):
         Returns
         -------
     """
-    out_dir = Path(path)
-    create_dir(out_dir)
-    export_config(Path(out_dir, "config.yaml").as_posix())
+    create_dir(path)
+    export_config(Path(path, "config.yaml").as_posix())
 
 
 def save_roc_curve(path, lbl, predict_proba, labels):
@@ -438,7 +438,7 @@ def save_feature_selected(path, feature_selected):
 
 def save_encoder_parameters(path, encode):
     """
-    Save Encode and Decode parameters
+    Save Encode parameters
 
     Parameters
     ----------
@@ -463,7 +463,7 @@ def save_encoder_parameters(path, encode):
 
 def save_decoder_parameters(path, decode):
     """
-    Save Encode and Decode parameters
+    Save Decode parameters
 
     Parameters
     ----------
@@ -500,13 +500,8 @@ def save_model(path, model):
         Returns
         -------
     """
-    out_dir = Path(path, "model")
-    create_dir(out_dir)
-
-    model_dir = Path(out_dir, "model").as_posix()
-    with open(model_dir + ".json", "w") as json_file:
-        json_file.write(model.to_json())
-    model.save_weights(model_dir + ".h5")
+    create_dir(path)
+    model.save(path)
 
 
 def load_scale_parameters(path):
@@ -610,24 +605,57 @@ def load_model(path):
         Parameters
         ----------
         path : str
-            Path to directory with the saved model.json
-            and model.h5
+            Path to directory with the saved model
 
         Returns
         -------
         model: model
             model read
     """
+    return tf.keras.models.load_model(path)
 
-    out_dir = Path(path, "model")
 
-    model_dir = Path(out_dir, "model").as_posix()
+def save_train_state(path, train_state):
+    """
+    Save Train state
 
-    file = open(model_dir + ".json", "r")
-    model_json = file.read()
+    Parameters
+    ----------
+        path : str
+            Directory path
+
+        train_state: Dict
+            train_state parameters
+
+    Returns
+    -------
+    """
+    create_dir(path)
+
+    file_name = Path(path, "train_state.json").as_posix()
+    file = open(file_name, "w")
+    json.dump(train_state, file)
     file.close()
 
-    model = model_from_json(model_json)
-    model.load_weights(model_dir + ".h5")
 
-    return model
+def load_train_state(path):
+    """
+    Load train_state parameters
+
+    Parameters
+    ----------
+        path : str
+            Directory path
+
+    Returns
+    -------
+        train_state: Dict
+            train_state parameters
+
+    """
+
+    file_name = Path(path, "train_state.json").as_posix()
+    with open(file_name) as json_file:
+        train_state = json.load(json_file)
+
+    return train_state
