@@ -66,8 +66,7 @@ def test_save_model(architecture, backbone, input_shape, n_classes, path):
     MakeModel = ARCHITECTURES.get(_cfg.MODEL.ARCHITECTURE)
     model = MakeModel(_cfg, logger, input_shape, n_classes)
     model.save_model()
-    assert os.path.exists(Path(path, "model", "model.json").as_posix())
-    assert os.path.exists(Path(path, "model", "model.h5").as_posix())
+    assert os.path.exists(Path(path, "model", "saved_model.pb").as_posix())
 
 
 @pytest.mark.parametrize(

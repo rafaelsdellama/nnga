@@ -1,3 +1,4 @@
+import os
 import numpy as np
 from nnga.utils.data_io import load_decoder_parameters, load_model
 
@@ -16,7 +17,7 @@ class BasePredictor:
 
     def __init__(self, model_dir, cfg):
         self._cfg = cfg
-        self._model = load_model(model_dir)
+        self._model = load_model(os.path.join(model_dir, "model"))
         self._decode = {
             int(k): v for k, v in load_decoder_parameters(model_dir).items()
         }

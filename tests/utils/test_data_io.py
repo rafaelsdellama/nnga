@@ -59,7 +59,12 @@ img_features_cols = [
     "feature_14",
     "feature_15",
 ]
-model_saved_dir = Path(test_directory, "models", "cnn_mlp_feature_GASearch").as_posix()
+model_saved_dir = Path(
+    test_directory, "models", "cnn_mlp_feature_GASearch"
+).as_posix()
+model_saved_file = Path(
+    test_directory, "models", "cnn_mlp_feature_GASearch", "model"
+).as_posix()
 pytest_output_directory = "./Pytest_output"
 
 
@@ -337,7 +342,7 @@ def test_load_decoder_parameters(path):
 
 
 @pytest.mark.parametrize(
-    "path", [model_saved_dir],
+    "path", [model_saved_file],
 )
 def test_load_model(path):
     model = load_model(path)
