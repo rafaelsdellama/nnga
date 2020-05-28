@@ -33,6 +33,8 @@ Here we could see an example of experiment file:
 ```yaml
 TASK: "Classification"
 
+VERBOSE: 0
+
 # Dataset experiment configuration
 DATASET:
   SCALER: "Standard"
@@ -117,7 +119,13 @@ The first important option is about what task the experiment will do. Nowadays 2
 # - Segmentation
 TASK: "Classification"
 ```
-The second section is about datasets: 
+The second section is about messages:
+```yaml
+# 0: quiet, 
+# 1: show callback messages
+VERBOSE: 0
+```
+The next section is about datasets: 
 ```yaml
 # Dataset experiment configuration
 DATASET:
@@ -305,6 +313,7 @@ MODEL:
   FEATURE_SELECTION: false  
 
   # Define input shape of experiment
+  # For pre-trained models, should be with 3 channels: [, , 3]
   INPUT_SHAPE: [150, 150, 3]
   
   # Define the Dropout rate to be used by the model

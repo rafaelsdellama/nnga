@@ -10,6 +10,7 @@ from yacs.config import CfgNode as CN
 _C = CN()
 _C.OUTPUT_DIR = "./NNGA_output"  # path to save checkpoints files
 _C.TASK = "Classification"
+_C.VERBOSE = 0
 
 _C.GA = CN()
 _C.GA.NRO_MAX_GEN = 100

@@ -1,3 +1,4 @@
+import os
 import numpy as np
 from pathlib import Path
 from statistics import mean, stdev
@@ -69,33 +70,41 @@ class ImageCSVDataset(CSVDataset, ImageDataset):
                 "The id column does not found!\n" "Check the dataset!"
             )
 
+        data = read_dataset(
+            self._dataset_img_path, format="png, jpg, jpeg, tif",
+        )
+        self._metadata = {
+            os.path.splitext(Path(img_path).name)[0]: {
+                "image_path": img_path,
+                "label": str(label),
+            }
+            for img_path, label in zip(data["data"], data["labels"])
+        }
+
+        _metadata_csv = {}
         for df in load_csv_file(
             self._dataset_csv_path, usecols=col_list, chunksize=10
         ):
             for index, row in df.iterrows():
-                self._metadata[str(row["id"])] = {
+                _metadata_csv[str(row["id"])] = {
                     "line_path": index,
                 }
 
-        data = read_dataset(
-            self._dataset_img_path, format="png, jpg, jpeg, tif",
-        )
-
-        _metadata_aux = {
-            Path(img_path).name.split(".")[0]: {
-                "image_path": img_path,
-                "label": label,
-            }
-            for img_path, label in zip(data["data"], data["labels"])
-        }
-        if self._metadata.keys() != _metadata_aux.keys():
-            raise RuntimeError(
-                "The id column does not match the name of the directory images!\n"
-                "Check the dataset!"
-            )
+        if set(self._metadata.keys()) != set(_metadata_csv.keys()):
+            if set(self._metadata.keys()).issubset(_metadata_csv.keys()):
+                self._logger.warning(
+                    f"Some ids from csv is not found on images directory! \n"
+                    f"{list(set(_metadata_csv.keys()).difference(self._metadata.keys()))}")
+            else:
+                msg = "The id column does not match the name of the directory images!\n" \
+                      f"Img not in CSV File: " \
+                      f"{list(set(self._metadata.keys()).difference(_metadata_csv.keys()))}" \
+                      f"\nCheck the dataset!"
+                self._logger.error(msg)
+                raise RuntimeError(msg)
 
         for key in self._metadata.keys():
-            self._metadata[key].update(_metadata_aux[key])
+            self._metadata[key].update(_metadata_csv[key])
 
     def _make_scale_parameters(self):
         """Calculate the scale parameters to be used

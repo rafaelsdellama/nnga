@@ -173,11 +173,12 @@ def main():
         logger.error(msg)
 
 
-def launch_tensorboard(logdir, port=6007):
+def launch_tensorboard(logdir):
     """Open tensorboard."""
     tb = program.TensorBoard()
-    tb.configure(argv=[None, "--logdir", logdir, "--port", str(port)])
+    tb.configure(argv=[None, "--logdir", logdir])
     url = tb.launch()
+    print(f"Tensorboard: {url}")
     Timer(1, webbrowser.open_new, args=[url]).start()
 
 

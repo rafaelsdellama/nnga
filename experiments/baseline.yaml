@@ -1,4 +1,5 @@
 TASK: "Classification"
+VERBOSE: 0
 DATASET:
   PRESERVE_IMG_RATIO: true
   SCALER: 'Standard'
