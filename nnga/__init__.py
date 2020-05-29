@@ -9,7 +9,7 @@ from nnga.datasets.classification.csv_dataset import CSVDataset
 from nnga.datasets.classification.image_csv_dataset import ImageCSVDataset
 
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 ARCHITECTURES = {
     "MLP": MLP,

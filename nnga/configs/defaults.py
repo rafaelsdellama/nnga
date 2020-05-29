@@ -10,6 +10,7 @@ from yacs.config import CfgNode as CN
 _C = CN()
 _C.OUTPUT_DIR = "./NNGA_output"  # path to save checkpoints files
 _C.TASK = "Classification"
+_C.VERBOSE = 0
 
 _C.GA = CN()
 _C.GA.NRO_MAX_GEN = 100
@@ -34,7 +35,6 @@ _C.GA.SEARCH_SPACE.UNITS = [20, 50, 80, 100, 150, 200, 250, 500]
 _C.GA.SEARCH_SPACE.FILTERS = [4, 5, 6, 7, 8, 9]
 _C.GA.SEARCH_SPACE.KERNEL_SIZE = [2, 3, 4, 5, 6]
 _C.GA.SEARCH_SPACE.POOL_SIZE = [2, 3, 4, 5]
-_C.GA.SEARCH_SPACE.BATCH_SIZE = [3, 4, 5, 6, 7, 8]
 _C.GA.SEARCH_SPACE.EPOCHS = [30, 45, 60, 90, 120, 150, 200]
 _C.GA.SEARCH_SPACE.DROPOUT = [0.0, 0.1, 0.2, 0.3, 0.4]
 _C.GA.SEARCH_SPACE.OPTIMIZER = ["Adam", "SGD"]
