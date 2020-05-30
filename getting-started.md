@@ -33,6 +33,8 @@ Here we could see an example of experiment file:
 ```yaml
 TASK: "Classification"
 
+VERBOSE: 0
+
 # Dataset experiment configuration
 DATASET:
   SCALER: "Standard"
@@ -69,7 +71,6 @@ GA:
     FILTERS: [4, 5, 6, 7, 8, 9]
     KERNEL_SIZE: [2, 3, 4, 5, 6]
     POOL_SIZE: [2, 3, 4, 5]
-    BATCH_SIZE: [3, 4, 5, 6, 7, 8]
     EPOCHS: [30, 45, 60, 90, 120, 150, 200]
     DROPOUT: [0.0, 0.1, 0.2, 0.3, 0.4]
     OPTIMIZER: ['Adam', 'SGD']
@@ -117,7 +118,13 @@ The first important option is about what task the experiment will do. Nowadays 2
 # - Segmentation
 TASK: "Classification"
 ```
-The second section is about datasets: 
+The second section is about messages:
+```yaml
+# 0: quiet, 
+# 1: show callback messages
+VERBOSE: 0
+```
+The next section is about datasets: 
 ```yaml
 # Dataset experiment configuration
 DATASET:
@@ -236,9 +243,6 @@ GA:
 
     # Pooling size to be used by Pooling layer
     POOL_SIZE: [2, 3, 4, 5]
-
-    # Batch size to be used during the model train
-    BATCH_SIZE: [3, 4, 5, 6, 7, 8]
   
     # Number of epochs to train the model
     EPOCHS: [30, 45, 60, 90, 120, 150, 200]
@@ -305,6 +309,7 @@ MODEL:
   FEATURE_SELECTION: false  
 
   # Define input shape of experiment
+  # For pre-trained models, should be with 3 channels: [, , 3]
   INPUT_SHAPE: [150, 150, 3]
   
   # Define the Dropout rate to be used by the model
@@ -340,7 +345,6 @@ SOLVER:
   TEST_SIZE: 0.2
   
   # Batch size to be used during the model train
-  # Is used only when the BACKBONE is not "GASearch"
   BATCH_SIZE: 128
 
   # Number of epochs to train the model

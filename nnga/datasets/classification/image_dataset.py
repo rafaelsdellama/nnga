@@ -73,7 +73,7 @@ class ImageDataset(BaseDataset):
         )
 
         self._metadata = {
-            Path(img_path).name.split(".")[0]: {
+            os.path.splitext(Path(img_path).name)[0]: {
                 "image_path": img_path,
                 "label": str(label),
             }

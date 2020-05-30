@@ -25,6 +25,7 @@ class BaseDataset(Sequence):
         self._generator_classes = []
         self._class_to_id = None
         self._id_to_class = None
+        self._logger = logger
 
         self._labels = []
         self._class_weigths = {}

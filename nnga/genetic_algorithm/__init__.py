@@ -6,7 +6,6 @@ CHECK_PARAMETERS_INTERVAL = {
     "MAX_POOL": [True, False],
     "POOL_SIZE": {"MIN": 2, "MAX": 20},
     "BATCH_NORMALIZATION": [True, False],
-    "BATCH_SIZE": {"MIN": 1, "MAX": 15},
     "EPOCHS": {"MIN": 1, "MAX": 2000},
     "DROPOUT": {"MIN": 0.0, "MAX": 1.0},
     "OPTIMIZER": [
@@ -77,7 +76,6 @@ PARAMETERS_INTERVAL = {
     "MAX_POOL": {"type": "string", "value": [True, False]},
     "POOL_SIZE": {"type": "numbers", "value": None},
     "BATCH_NORMALIZATION": {"type": "string", "value": [True, False]},
-    "BATCH_SIZE": {"type": "numbers", "value": None},
     "EPOCHS": {"type": "numbers", "value": None},
     "DROPOUT": {"type": "numbers", "value": None},
     "OPTIMIZER": {"type": "string", "value": None},
@@ -98,7 +96,6 @@ PARAMETERS_INTERVAL = {
 PARAMETERS_ARCHITECTURE = {
     "DEFAULT": {
         "activation_dense": "ACTIVATION_DENSE",
-        "batch_size": "BATCH_SIZE",
         "epochs": "EPOCHS",
         "optimizer": "OPTIMIZER",
         "learning_rate": "LEARNING_RATE",
@@ -150,7 +147,7 @@ def set_parameters(parameters, architecture, backbone, features):
     for key, value in parameters.items():
         PARAMETERS_INTERVAL[key]["value"] = value
 
-    check_parameters()
+    __check_parameters()
     ENCODING, NAME_FEATURES_SELECTION = create_encoding(
         architecture, backbone, features
     )
@@ -158,13 +155,8 @@ def set_parameters(parameters, architecture, backbone, features):
     return ENCODING, NAME_FEATURES_SELECTION, PARAMETERS_INTERVAL
 
 
-def check_parameters():
-    """Check the parameters provided by cfg
-    Parameters
-        ----------
-        Returns
-        -------
-    """
+def __check_parameters():
+    """Check the parameters provided by cfg"""
     for key, parameter in PARAMETERS_INTERVAL.items():
         if key not in CHECK_PARAMETERS_INTERVAL.keys():
             continue

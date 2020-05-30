@@ -95,10 +95,9 @@ class ModelCheckpoint(Callback):
 
         if os.path.exists(os.path.join(self.modelpath, "saved_model.pb")):
             self.model = load_model(self.modelpath)
-            if self.verbose:
-                self.logger.info(
-                    f"Weights loaded from file found in {self.modelpath}"
-                )
+            self.logger.info(
+                f"Weights loaded from file found in {self.modelpath}"
+            )
 
     def on_epoch_end(self, epoch, logs=None):
         current = logs.get(self.monitor)

@@ -4,7 +4,6 @@ import copy
 import os
 from sklearn.model_selection import StratifiedKFold
 from sklearn.model_selection import StratifiedShuffleSplit
-from nnga.utils.helper import dump_tensors
 from nnga.utils.metrics import cross_validation_statistics, compute_metrics
 from nnga.utils.data_io import (
     save_history,
@@ -240,7 +239,6 @@ class ModelTraining:
         self.fit()
         evaluate = self.evaluate()
 
-        dump_tensors()
         self._model.set_weights(Wsave)
         self.fitting_parameters.update(fitting_parameters)
 
@@ -309,7 +307,6 @@ class ModelTraining:
                 f"confusion matrix: \n{metrics['confusion_matrix']}"
             )
 
-            dump_tensors()
             self._model.set_weights(Wsave)
             self.fitting_parameters.update(fitting_parameters)
 
@@ -417,16 +414,19 @@ class ModelTraining:
                 total_steps=total_steps,
                 warmup_steps=total_steps // 10,
                 hold_base_rate_steps=total_steps // 3,
-                verbose=1,
+                verbose=self._cfg.VERBOSE,
             ),
-            EarlyStopping(patience=10, verbose=1, restore_best_weights=True,),
+            EarlyStopping(
+                patience=10,
+                verbose=self._cfg.VERBOSE,
+                restore_best_weights=True,),
         ]
         if not cv:
             callbacks.extend(
                 [
                     ModelCheckpoint(
                         filepath=self._cfg.OUTPUT_DIR,
-                        verbose=1,
+                        verbose=self._cfg.VERBOSE,
                         save_best_only=True,
                     ),
                     TensorBoard(
