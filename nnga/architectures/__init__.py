@@ -25,6 +25,7 @@ from tensorflow.keras.initializers import (
 )
 
 from tensorflow.keras.applications import (
+    Xception,
     VGG16,
     VGG19,
     ResNet50,
@@ -79,6 +80,7 @@ OPTIMIZERS = {
 }
 
 BACKBONES = {
+    "Xception": Xception,
     "VGG16": VGG16,
     "VGG19": VGG19,
     "ResNet50": ResNet50,
