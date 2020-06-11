@@ -9,9 +9,10 @@ import pytest
 
 test_directory = Path(ROOT, "tests", "testdata").as_posix()
 features_mnist = Path(
-    test_directory, "datasets", "mnist", "features.csv"
+    test_directory, "datasets", "classification", "mnist", "features.csv"
 ).as_posix()
-img_mnist = Path(test_directory, "datasets", "mnist", "0", "3.png").as_posix()
+img_mnist = Path(test_directory, "datasets", "classification", "mnist", "0",
+                 "3.png").as_posix()
 model_dir = Path(test_directory, "models").as_posix()
 
 df_test = pd.read_csv(features_mnist)

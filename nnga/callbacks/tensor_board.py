@@ -126,7 +126,8 @@ class TensorBoard(Callback):
                         name = name[4:]  # Remove 'val_' prefix.
                         summary_ops_v2.scalar(name, value, step=epoch)
 
-                    if self._val_dataset is not None:
+                    if self._val_dataset is not None and \
+                            self._custom_vis is not None:
                         for name, img in self._custom_vis(
                             self.model, self._val_dataset
                         ).items():

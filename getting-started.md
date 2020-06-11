@@ -118,7 +118,7 @@ The first important option is about what task the experiment will do. Nowadays 2
 # - Segmentation
 TASK: "Classification"
 ```
-The second section is about messages:
+The second option is about messages:
 ```yaml
 # 0: quiet, 
 # 1: show callback messages
@@ -165,7 +165,47 @@ DATASET:
   VAL_SHUFFLE: false
 ```
 ------------------------------
-The next section is about Genetic Algorithm configuration:
+The next section is about model construction:
+```yaml
+# Model experiment configuration
+MODEL:
+  # Define the architecture to be used
+  # For classification task, the architecture can be MLP, CNN and CNN/MLP
+  # For segmentation task, the architecture should be CNN
+  ARCHITECTURE: "MLP"
+  
+  # The backbone define the specific ARCHITECTURE to be used
+  # In Classification tasks on top of this backbone will be created 3 Dense
+  # layers and the final layer with number of neurons equal number of classes.
+  # Available options for backbone are:
+  #
+  # GASearch -> the backbone is defined by the GA. This option not use pre trained models.
+  #
+  # For CNN and CNN/MLP, is used pre-trained models like: VGG16, VGG19, ResNet50, ResNet101, 
+  # ResNet152, ResNet50V2, ResNet101V2,ResNet152V2, InceptionV3, InceptionResNetV2, MobileNet, 
+  # MobileNetV2, DenseNet121, DenseNet169, DenseNet201, NASNetMobile, NASNetLarge
+  #
+  # For MLP is created a MLP with 3 Dense layers and the final layer with number of neurons equal number of classes.
+  #
+  #
+  # For Segmentation tasks, is used pre-trained models like: unet
+  BACKBONE: "GASearch"
+
+  # flat to activates feature selection
+  FEATURE_SELECTION: false  
+
+  # Define input shape of experiment
+  # For pre-trained models, should be with 3 channels: [, , 3]
+  INPUT_SHAPE: [150, 150, 3]
+  
+  # Define the Dropout rate to be used by the model
+  # Is used only when the BACKBONE is not "GASearch"
+  DROPOUT: 0.2
+```
+------------------------------
+The following section is about Genetic Algorithm configuration:
+
+This section will be used only for classification task and if BACKBONE: "GASearch" 
 ```yaml
 # Genetic Algorithm configuration
 GA:
@@ -277,64 +317,27 @@ GA:
     # Regularizer function applied to the bias vector. 
     BIAS_REGULARIZER: [None]
 ```
-
-------------------------------
-The following section is about model construction:
-```yaml
-# Model experiment configuration
-MODEL:
-  # Define the architecture to be used
-  # Available options for architecture are MLP, CNN and CNN/MLP
-  ARCHITECTURE: "MLP"
-  
-  # The backbone define the specific ARCHITECTURE to be used
-  # In Classification tasks on top of this backbone will be created 3 Dense
-  # layers and the final layer with number of neurons equal number of classes.
-  # Available options for backbone are:
-  #
-  # GASearch -> the backbone is defined by the GA. This option not use pre trained models.
-  #
-  # For CNN and CNN/MLP, is used pre-trained models like: VGG16, VGG19, ResNet50, ResNet101, 
-  # ResNet152, ResNet50V2, ResNet101V2,ResNet152V2, InceptionV3, InceptionResNetV2, MobileNet, 
-  # MobileNetV2, DenseNet121, DenseNet169, DenseNet201, NASNetMobile, NASNetLarge
-  #
-  # For MLP is created a MLP with 3 Dense layers and the final layer with number of neurons equal number of classes.
-  #
-  #
-  # In Segmentation tasks this backbone will be used as an encoder, the final
-  # arange depends of segmentation architecture
-  BACKBONE: "GASearch"
-
-  # flat to activates feature selection
-  FEATURE_SELECTION: false  
-
-  # Define input shape of experiment
-  # For pre-trained models, should be with 3 channels: [, , 3]
-  INPUT_SHAPE: [150, 150, 3]
-  
-  # Define the Dropout rate to be used by the model
-  # Is used only when the BACKBONE is not "GASearch"
-  DROPOUT: 0.2
-```
-
 ------------------------------
 The next section is about solver hyperparameters.
 ```yaml
 # Solver experiment configuration
 SOLVER:
   # Loss function to be used
-  # The values follow the keras API
+  # For classification task, the values follow the keras API
+  # For segmentation task, the value will be dice_loss
+  # 
   LOSS: "categorical_crossentropy"
 
   # List of Metric functions to be used
-  # The values follow the keras API
+  # For classification task, the values follow the keras API
+  # For segmentation task, the value will be iou_coef
   METRICS: ["categorical_accuracy"]
   
   # flat to activates cross validation
   CROSS_VALIDATION: true
 
   # Number of folds to be user by the cross validation method,
-  # if CROSS_VALIDATION is activated
+  # if CROSS_VALIDATION is activated (Work only for classification task)
   CROSS_VALIDATION_FOLDS: 10
 
   # Test fold size to be used on train test split

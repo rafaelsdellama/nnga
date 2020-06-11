@@ -53,8 +53,7 @@ The table below shows all the models that can be created:
 | Classification |    CNN/MLP   |                                                                                                                                              GASearch                                                                                                                                              |       False       |
 | Classification |    CNN/MLP   | One of the pre-trained models:<br><br>VGG16 <br>VGG19 <br>ResNet50 <br>ResNet101 <br>ResNet152 <br>ResNet50V2 <br>ResNet101V2 <br>ResNet152V2 <br>InceptionV3 <br>InceptionResNetV2 <br>MobileNet <br>MobileNetV2 <br>DenseNet121 <br>DenseNet169 <br>DenseNet201 <br>NASNetMobile <br>NASNetLarge |        True       |
 | Classification |    CNN/MLP   | One of the pre-trained models:<br><br>VGG16 <br>VGG19 <br>ResNet50 <br>ResNet101 <br>ResNet152 <br>ResNet50V2 <br>ResNet101V2 <br>ResNet152V2 <br>InceptionV3 <br>InceptionResNetV2 <br>MobileNet <br>MobileNetV2 <br>DenseNet121 <br>DenseNet169 <br>DenseNet201 <br>NASNetMobile <br>NASNetLarge |       False       |
-|  Segmentation  |      CNN     |                                                                                                                                         Not yet implemented                                                                                                                                        |         -         |
-|  Segmentation  |      CNN     |                                                                                                                                         Not yet implemented                                                                                                                                        |         -         |
+|  Segmentation  |      CNN     |                                                                                                                                               unet                                                                                                                                                 |         -         |
 
 
 ### Classification Models
@@ -118,7 +117,7 @@ The Genetic Algorithm chromosome that encodes this model is shown below:
 #### Convolutional Neural Network (CNN)
 Parameters:
 * ARCHITECTURE: CNN
-* BACKBONE: Some pre-trained models from table
+* BACKBONE: Some pre-trained models from table for classification
 
 ![cnn](/doc/images/cnn.png)
 
@@ -150,7 +149,7 @@ The Genetic Algorithm chromosome that encodes this model is shown below:
 #### Hybrid CNN-MLP Model with Feature Selection (CNN/MLP)
 Parameters:
 * ARCHITECTURE: CNN/MLP
-* BACKBONE: Some pre-trained models from table
+* BACKBONE: Some pre-trained models from table for classification
 * FEATURE_SELECTION: True
 
 ![cnn_mlp_feature](/doc/images/cnn_mlp_feature.png)
@@ -162,7 +161,7 @@ The Genetic Algorithm chromosome that encodes this model is shown below:
 #### Hybrid CNN-MLP Model (CNN/MLP)
 Parameters:
 * ARCHITECTURE: CNN/MLP
-* BACKBONE: Some pre-trained models from table
+* BACKBONE: Some pre-trained models from table for classification
 * FEATURE_SELECTION: False
 
 ![cnn_mlp](/doc/images/cnn_mlp.png)
@@ -171,9 +170,13 @@ Parameters:
 ### Segmentation Models
 * TASK: Segmentation
 
-Not yet implemented
+Parameters:
+* ARCHITECTURE: CNN
+* BACKBONE: Some pre-trained models from table for segmentation
+* FEATURE_SELECTION: False
 
 ## Parameters optimized by the Genetic Algorithm
+Pay Atention: This optimization works only for classification task!! 
 ### Optimized parameters for each layer of the Convolutional  Neural Network:
 
 | Parameter      | activate                                                                                       | filter                                                                                                                                          | kernel_size                                                                                                             | padding                                                                                                                                 | batch_normalization                                                                                                                                                                                                                      | max_pool                                                                       | pool_size                                                                                                              | dropout                                                                                                                                        |
@@ -263,7 +266,22 @@ image_005; 0,97; 0,67; ...; 0,13; class_3
 image_N; 0,28; 0,39; ...; 0,51; class_N 
 ```
 ### Segmentation
-Not yet implemented
+    data/train/
+        ├── image/
+    		├── image0001.jpg
+    		├── ...
+        ├── mask/
+    		├── image0001.jpg
+    		├── ...
+    data/val/
+        ├── image/
+    		├── image0001.jpg
+    		├── ...
+        ├── mask/
+    		├── image0001.jpg
+    		├── ...
+
+Each image and its respective mask should be the same name.
 
 ## Documentation
 Please, read the [getting-started.md](/getting-started.md) for the basics.

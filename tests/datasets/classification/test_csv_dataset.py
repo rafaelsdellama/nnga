@@ -1,18 +1,17 @@
 """Tests for csv dataset loader."""
 import pytest
 from pathlib import Path
-
-from nnga.datasets.classification.csv_dataset import CSVDataset
+from nnga import get_dataset
 from nnga import ROOT
 from nnga.configs import cfg
 
 test_directory = Path(ROOT, "tests", "testdata").as_posix()
 
 features_mnist = Path(
-    test_directory, "datasets", "mnist", "features.csv"
+    test_directory, "datasets", "classification", "mnist", "features.csv"
 ).as_posix()
 features2_mnist = Path(
-    test_directory, "datasets", "mnist", "features2.csv"
+    test_directory, "datasets", "classification", "mnist", "features2.csv"
 ).as_posix()
 
 pytest_output_directory = "./Pytest_output"
@@ -30,10 +29,12 @@ pytest_output_directory = "./Pytest_output"
 def test_load_dataset_success(data_directory, is_validation):
     """Load csv with success."""
     _cfg = cfg.clone()
+    _cfg.MODEL.ARCHITECTURE = "MLP"
     _cfg.OUTPUT_DIR = pytest_output_directory
     _cfg.DATASET.TRAIN_CSV_PATH = data_directory
     _cfg.DATASET.VAL_CSV_PATH = data_directory
-    d = CSVDataset(_cfg, True, is_validation)
+    MakeDataset = get_dataset(_cfg.TASK, _cfg.MODEL.ARCHITECTURE)
+    d = MakeDataset(_cfg, True, is_validation)
 
     assert len(d) > 0
     assert d.n_classes == 10
@@ -58,8 +59,9 @@ def test_load_dataset_success(data_directory, is_validation):
 def test_load_with_wrong_filepath(data_directory, is_validation):
     """Get a wrong path."""
     _cfg = cfg.clone()
+    _cfg.MODEL.ARCHITECTURE = "MLP"
     _cfg.DATASET.TRAIN_CSV_PATH = data_directory
     _cfg.DATASET.VAL_CSV_PATH = data_directory
-
+    MakeDataset = get_dataset(_cfg.TASK, _cfg.MODEL.ARCHITECTURE)
     with pytest.raises(FileNotFoundError):
-        CSVDataset(_cfg, True, is_validation)
+        MakeDataset(_cfg, True, is_validation)

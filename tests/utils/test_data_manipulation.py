@@ -12,7 +12,8 @@ import numpy as np
 
 test_directory = Path(ROOT, "tests", "testdata").as_posix()
 
-img_test = Path(test_directory, "datasets", "mnist", "0", "3.png").as_posix()
+img_test = Path(test_directory, "datasets", "classification", "mnist",
+                "0", "3.png").as_posix()
 
 sample = [0, 1]
 header = ["Feature_A", "Feature_B"]

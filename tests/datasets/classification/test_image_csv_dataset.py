@@ -1,19 +1,19 @@
 """Tests for image csv dataset loader."""
 import pytest
 from pathlib import Path
-
-from nnga.datasets.classification.image_csv_dataset import ImageCSVDataset
+from nnga import get_dataset
 from nnga import ROOT
 from nnga.configs import cfg
 
 test_directory = Path(ROOT, "tests", "testdata").as_posix()
 
-img_mnist = Path(test_directory, "datasets", "mnist").as_posix()
+img_mnist = Path(test_directory, "datasets", "classification",
+                 "mnist").as_posix()
 features_mnist = Path(
-    test_directory, "datasets", "mnist", "features.csv"
+    test_directory, "datasets", "classification", "mnist", "features.csv"
 ).as_posix()
 features2_mnist = Path(
-    test_directory, "datasets", "mnist", "features2.csv"
+    test_directory, "datasets", "classification", "mnist", "features2.csv"
 ).as_posix()
 
 pytest_output_directory = "./Pytest_output"
@@ -37,13 +37,15 @@ def test_load_dataset_success(
 ):
     """Load csv and image with success."""
     _cfg = cfg.clone()
+    _cfg.MODEL.ARCHITECTURE = "CNN/MLP"
     _cfg.OUTPUT_DIR = pytest_output_directory
     _cfg.DATASET.TRAIN_IMG_PATH = img_dir
     _cfg.DATASET.TRAIN_CSV_PATH = data_dir
     _cfg.DATASET.VAL_IMG_PATH = img_dir
     _cfg.DATASET.VAL_CSV_PATH = data_dir
     _cfg.DATASET.PRESERVE_IMG_RATIO = preserve_ratio
-    d = ImageCSVDataset(_cfg, True, is_validation)
+    MakeDataset = get_dataset(_cfg.TASK, _cfg.MODEL.ARCHITECTURE)
+    d = MakeDataset(_cfg, True, is_validation)
 
     assert len(d) > 0
     assert d.n_classes == 10
@@ -74,10 +76,13 @@ def test_load_dataset_success(
 )
 def test_load_with_wrong_filepath(img_dir, data_dir, is_validation):
     _cfg = cfg.clone()
+    _cfg.MODEL.ARCHITECTURE = "CNN/MLP"
     _cfg.DATASET.TRAIN_IMG_PATH = img_dir
     _cfg.DATASET.TRAIN_CSV_PATH = data_dir
     _cfg.DATASET.VAL_IMG_PATH = img_dir
     _cfg.DATASET.VAL_CSV_PATH = data_dir
 
+    MakeDataset = get_dataset(_cfg.TASK, _cfg.MODEL.ARCHITECTURE)
+
     with pytest.raises(FileNotFoundError):
-        ImageCSVDataset(_cfg, True, is_validation)
+        MakeDataset(_cfg, True, is_validation)

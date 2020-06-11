@@ -74,7 +74,7 @@ class BasePredictor:
         pred = self._model.predict(batch)
         pred = np.argmax(pred, axis=-1)
 
-        return pred, self._decode
+        return self._posprocessing(pred), self._decode
 
     def predict_proba(self, inpts):
         """Make prediction and return class probabilities(softmax output).
@@ -94,4 +94,19 @@ class BasePredictor:
         batch = self._make_batch(inpts)
         pred = self._model.predict(batch)
 
-        return pred, self._decode
+        return self._posprocessing(pred), self._decode
+
+    def _posprocessing(self, out):
+        """Apply posprocessing on predcit output.
+
+            Parameters
+            ----------
+                out : {numpy.ndarray}
+                    Input to be pos-processed
+
+            Returns
+            -------
+                umpy.ndarray
+                    out pos-processed
+        """
+        return out

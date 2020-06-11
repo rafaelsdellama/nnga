@@ -8,7 +8,7 @@ import tensorflow as tf
 
 from nnga.genetic_algorithm.population import Population
 from nnga.genetic_algorithm import set_parameters
-from nnga import ARCHITECTURES
+from nnga import get_architecture
 from nnga.utils.data_io import (
     load_statistic,
     load_pop,
@@ -634,7 +634,7 @@ class GA:
         else:
             features_idx = None
 
-        MakeModel = ARCHITECTURES.get(self._cfg.MODEL.ARCHITECTURE)
+        MakeModel = get_architecture(self._cfg.TASK, self._cfg.MODEL.ARCHITECTURE)
 
         try:
             model = MakeModel(
@@ -645,7 +645,6 @@ class GA:
                 indiv=indiv,
                 keys=self._encoding_keys,
             )
-
             model_trainner = ModelTraining(
                 self._cfg,
                 model,
@@ -667,9 +666,12 @@ class GA:
             self._logger.info(
                 f"confusion matrix: \n{metrics['confusion_matrix']}"
             )
-        except:
+        except ValueError:
             evaluate = [float("inf"), 1e-5]
             fitness = 0.0
+        except Exception as e:
+            self._logger.error(e)
+            raise e
 
         self._logger.info(
             f"evaluate (loss value & metrics values): {evaluate}"
@@ -700,7 +702,7 @@ class GA:
         else:
             features_idx = None
 
-        MakeModel = ARCHITECTURES.get(self._cfg.MODEL.ARCHITECTURE)
+        MakeModel = get_architecture(self._cfg.TASK, self._cfg.MODEL.ARCHITECTURE)
 
         try:
             model = MakeModel(
@@ -742,9 +744,12 @@ class GA:
             )
 
             model.save_model()
-        except:
+        except ValueError:
             evaluate = [float("inf"), 1e-5]
             fitness = 0.0
+        except Exception as e:
+            self._logger.error(e)
+            raise e
 
         self._logger.info(
             f"evaluate (loss value & metrics values): {evaluate}"

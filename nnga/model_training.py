@@ -12,12 +12,12 @@ from nnga.utils.data_io import (
     load_train_state,
 )
 from nnga.architectures import OPTIMIZERS
-from nnga.callbacks import (
-    WarmUpCosineDecayScheduler,
-    EarlyStopping,
-    ModelCheckpoint,
-    TensorBoard,
-)
+from nnga.callbacks.cosine_decay_with_warmup import WarmUpCosineDecayScheduler
+from nnga.callbacks.early_stopping import EarlyStopping
+from nnga.callbacks.model_checkpoint import ModelCheckpoint
+from nnga.callbacks.tensor_board import TensorBoard
+from nnga.architectures.segmentation.losses import dice_loss
+from nnga.architectures.segmentation.metrics import iou_coef
 
 
 class ModelTraining:
@@ -33,7 +33,7 @@ class ModelTraining:
             logger logging
                 Simple python logging
 
-            datasets: ImageDataset
+            datasets: BaseDataset
                 dataset to be used in the train/test
 
             indiv: Indiv
@@ -101,9 +101,10 @@ class ModelTraining:
         else:
             self.train_state = {}
 
+        loss, metrics = get_losses_and_metrics(self._cfg)
         self.compile_parameters = {
-            "loss": self._cfg.SOLVER.LOSS,
-            "metrics": self._cfg.SOLVER.METRICS,
+            "loss": loss,
+            "metrics": metrics,
         }
         self.fitting_parameters = {
             "x": self._datasets["TRAIN"],
@@ -229,9 +230,7 @@ class ModelTraining:
                 "validation_data": test_dataset,
                 "steps_per_epoch": len(train_dataset),
                 "validation_steps": len(test_dataset),
-                "callbacks": self._make_callbacks(
-                    val_dataset=test_dataset, cv=True
-                ),
+                "callbacks": None,
                 "initial_epoch": 0,
             }
         )
@@ -288,9 +287,7 @@ class ModelTraining:
                     "validation_data": test_dataset,
                     "steps_per_epoch": len(train_dataset),
                     "validation_steps": len(test_dataset),
-                    "callbacks": self._make_callbacks(
-                        val_dataset=test_dataset, cv=True
-                    ),
+                    "callbacks": None,
                     "initial_epoch": 0,
                 }
             )
@@ -404,7 +401,7 @@ class ModelTraining:
 
         return metrics
 
-    def _make_callbacks(self, val_dataset=None, cv=False):
+    def _make_callbacks(self, val_dataset=None):
         total_steps = int(
             len(self._datasets["TRAIN"]) * self._cfg.SOLVER.EPOCHS
         )
@@ -419,21 +416,32 @@ class ModelTraining:
             EarlyStopping(
                 patience=10,
                 verbose=self._cfg.VERBOSE,
-                restore_best_weights=True,),
+                restore_best_weights=True,
+            ),
+            ModelCheckpoint(
+                filepath=self._cfg.OUTPUT_DIR,
+                verbose=self._cfg.VERBOSE,
+                save_best_only=True,
+            ),
+            TensorBoard(
+                log_dir=self._cfg.OUTPUT_DIR,
+                task=self._cfg.TASK,
+                val_dataset=val_dataset,
+            ),
         ]
-        if not cv:
-            callbacks.extend(
-                [
-                    ModelCheckpoint(
-                        filepath=self._cfg.OUTPUT_DIR,
-                        verbose=self._cfg.VERBOSE,
-                        save_best_only=True,
-                    ),
-                    TensorBoard(
-                        log_dir=self._cfg.OUTPUT_DIR,
-                        task=self._cfg.TASK,
-                        val_dataset=val_dataset,
-                    ),
-                ]
-            )
         return callbacks
+
+
+def get_losses_and_metrics(cfg):
+    """Return loss and metrics functions for specific task"""
+    options = {
+        "Classification": {
+            "loss": cfg.SOLVER.LOSS,
+            "metrics": cfg.SOLVER.METRICS,
+        },
+        "Segmentation": {
+            "loss": dice_loss,
+            "metrics": [iou_coef],
+        }
+    }.get(cfg.TASK)
+    return options["loss"], options["metrics"]

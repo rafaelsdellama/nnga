@@ -1,6 +1,6 @@
 import os
 from yacs.config import CfgNode as CN
-from nnga.inference import PREDICTORS
+from nnga.inference import get_predictor
 
 
 class Predictor:
@@ -18,7 +18,7 @@ class Predictor:
             cfg = CN.load_cfg(f)
             cfg.freeze()
 
-        self._predictor = PREDICTORS.get(cfg.MODEL.ARCHITECTURE)(
+        self._predictor = get_predictor(cfg.TASK, cfg.MODEL.ARCHITECTURE)(
             model_dir, cfg
         )
 
