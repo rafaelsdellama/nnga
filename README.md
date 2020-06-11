@@ -202,6 +202,7 @@ Pay Atention: This optimization works only for classification task!!
 ## Datasets Formats
 
 ### Classification
+Example: [Classification dataset](/tests/testdata/datasets/classification/mnist).
 
 #### Image Dataset Directory Structure
 
@@ -266,6 +267,8 @@ image_005; 0,97; 0,67; ...; 0,13; class_3
 image_N; 0,28; 0,39; ...; 0,51; class_N 
 ```
 ### Segmentation
+Example: [Segmentation dataset](/tests/testdata/datasets/segmentation/lung).
+
     data/train/
         ├── image/
     		├── image0001.jpg
