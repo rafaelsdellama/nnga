@@ -1,5 +1,5 @@
 # **N**eural **N**etwork optimized by **G**enetic **A**lgorithms - (NNGA)
-**Current stable version**: 1.1.0
+**Current stable version**: 2.0.0
 
 Neural Network optimized by Genetic Algorithms - (NNGA) is a library for deep model training, 
 for data classification and segmentation. 

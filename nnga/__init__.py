@@ -11,7 +11,7 @@ from nnga.datasets.classification.image_csv_dataset import ImageCSVDataset
 from nnga.datasets.segmentation.segmentation_dataset import SegmentationDataset
 
 
-__version__ = "1.1.0"
+__version__ = "2.0.0"
 
 ARCHITECTURES = {
     "Classification": {
