@@ -9,8 +9,7 @@ from threading import Timer
 
 from nnga.configs import cfg, export_config
 from nnga.utils.logger import setup_logger
-from nnga import ARCHITECTURES, DATASETS
-from nnga.architectures import BACKBONES
+from nnga import get_dataset, get_architecture
 from nnga.model_training import ModelTraining
 from nnga.genetic_algorithm.ga import GA
 
@@ -30,36 +29,16 @@ def train(cfg, logger):
     Raises:
         RuntimeError: For wrong config options
     """
-
     if cfg.TASK not in TASKS:
         raise RuntimeError(
             "There isn't a valid TASKS!\n \
                             Check your experiment config"
         )
 
-    if cfg.TASK == "Segmentation":
-        raise NotImplementedError("Segmentation")
-
-    if cfg.MODEL.ARCHITECTURE not in ARCHITECTURES.keys():
-        raise RuntimeError(
-            "There isn't a valid architecture configured!\n \
-                            Check your experiment config"
-        )
-
-    if cfg.MODEL.BACKBONE not in BACKBONES.keys() and cfg.MODEL.BACKBONE \
-            not in [
-        "MLP",
-        "GASearch",
-    ]:
-        raise RuntimeError(
-            "There isn't a valid backbone configured!\n \
-                            Check your experiment config"
-        )
-
     # Read datasets
     datasets = {}
 
-    MakeDataset = DATASETS.get(cfg.MODEL.ARCHITECTURE)
+    MakeDataset = get_dataset(cfg.TASK, cfg.MODEL.ARCHITECTURE)
     datasets["TRAIN"] = MakeDataset(cfg, logger)
     logger.info(
         f"Train {cfg.MODEL.ARCHITECTURE} dataset loaded! "
@@ -77,11 +56,13 @@ def train(cfg, logger):
     if hasattr(datasets["TRAIN"], "scale_parameters"):
         datasets["VAL"].scale_parameters = datasets["TRAIN"].scale_parameters
 
-    if cfg.MODEL.BACKBONE == "GASearch" or cfg.MODEL.FEATURE_SELECTION:
+    if cfg.TASK == "Classification" and (
+            cfg.MODEL.BACKBONE == "GASearch" or cfg.MODEL.FEATURE_SELECTION):
         ga = GA(cfg, logger, datasets)
         ga.run()
     else:
-        MakeModel = ARCHITECTURES.get(cfg.MODEL.ARCHITECTURE)
+        launch_tensorboard(cfg.OUTPUT_DIR)
+        MakeModel = get_architecture(cfg.TASK, cfg.MODEL.ARCHITECTURE)
         model = MakeModel(
             cfg,
             logger,
@@ -96,7 +77,9 @@ def train(cfg, logger):
             logger.info(f"Cross validation statistics:\n{cv}")
 
         model_trainner.fit()
-        model_trainner.compute_metrics(save=True)
+
+        if cfg.TASK == "Classification":
+            model_trainner.compute_metrics(save=True)
 
     logger.info(f"Model trained!\nCheck the results on {cfg.OUTPUT_DIR}")
 
@@ -166,9 +149,8 @@ def main():
     logger.info(f"CFG: \n{cfg}")
 
     try:
-        launch_tensorboard(cfg.OUTPUT_DIR)
         train(cfg, logger)
-    except:
+    except Exception:
         msg = f"Failed:\n{traceback.format_exc()}"
         logger.error(msg)
 

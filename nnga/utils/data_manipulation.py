@@ -70,7 +70,7 @@ def normalize_image(img):
     return img / 255
 
 
-def adjust_image_shape(img, input_shape, preserve_ratio=True):
+def adjust_image_shape(img, input_shape, preserve_ratio=False):
     """
         Adjust image shape
 
@@ -113,7 +113,7 @@ def adjust_image_shape(img, input_shape, preserve_ratio=True):
         dim = (width, height)
 
         # resize image
-        resized = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
+        resized = cv2.resize(img, dim, interpolation=cv2.INTER_NEAREST)
 
         border_height = input_shape[0] - resized.shape[0]
         border_top = int((input_shape[0] - resized.shape[0]) / 2)

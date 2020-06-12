@@ -1,14 +1,9 @@
 import numpy as np
 from sklearn.metrics import confusion_matrix
-import io
 import itertools
-import tensorflow as tf
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc
-
-import matplotlib
-
-matplotlib.use("Agg")
+from nnga.callbacks.visualization.commons import plot_to_image
 
 
 def classification_vis(model, validation_dataset):
@@ -102,28 +97,3 @@ def plot_roc_curve(lbl_encoded, predict_proba, labels):
 
     return figure
 
-
-def plot_to_image(figure):
-    """
-    Converts the matplotlib plot specified by 'figure' to a PNG image and
-    returns it. The supplied figure is closed and inaccessible after this call.
-    """
-
-    buf = io.BytesIO()
-
-    # Use plt.savefig to save the plot to a PNG in memory.
-    plt.savefig(buf, format="png")
-
-    # Closing the figure prevents it from being displayed directly inside
-    # the notebook.
-    plt.close(figure)
-    buf.seek(0)
-
-    # Use tf.image.decode_png to convert the PNG buffer
-    # to a TF image. Make sure you use 4 channels.
-    image = tf.image.decode_png(buf.getvalue(), channels=4)
-
-    # Use tf.expand_dims to add the batch dimension
-    image = tf.expand_dims(image, 0)
-
-    return image

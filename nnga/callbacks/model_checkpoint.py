@@ -6,7 +6,6 @@ from nnga.utils.logger import get_logger
 from nnga.utils.data_io import (
     save_model,
     save_cfg,
-    load_model,
     save_train_state,
     load_train_state,
 )
@@ -92,11 +91,11 @@ class ModelCheckpoint(Callback):
 
     def on_train_begin(self, logs=None):
         save_cfg(self.filepath)
-
-        if os.path.exists(os.path.join(self.modelpath, "saved_model.pb")):
-            self.model = load_model(self.modelpath)
+        saved_model = os.path.join(self.modelpath, "model.h5")
+        if os.path.exists(saved_model):
+            self.model.load_weights(saved_model)
             self.logger.info(
-                f"Weights loaded from file found in {self.modelpath}"
+                f"Weights loaded from file found in {saved_model}"
             )
 
     def on_epoch_end(self, epoch, logs=None):

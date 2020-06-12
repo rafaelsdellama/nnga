@@ -32,12 +32,13 @@ from nnga.utils.data_io import (
 
 test_directory = Path(ROOT, "tests", "testdata").as_posix()
 
-img_test = Path(test_directory, "datasets", "mnist", "0", "3.png").as_posix()
+img_test = Path(test_directory, "datasets", "classification", "mnist",
+                "0", "3.png").as_posix()
 img_features = Path(
-    test_directory, "datasets", "mnist", "features.csv"
+    test_directory, "datasets", "classification", "mnist", "features.csv"
 ).as_posix()
 img_features2 = Path(
-    test_directory, "datasets", "mnist", "features.csv"
+    test_directory, "datasets", "classification", "mnist", "features.csv"
 ).as_posix()
 img_features_cols = [
     "class",

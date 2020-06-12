@@ -4,14 +4,15 @@ from pathlib import Path
 from nnga import ROOT
 from nnga.configs import cfg
 from nnga.genetic_algorithm.ga import GA
-from nnga import DATASETS
+from nnga import get_dataset
 from nnga.utils.logger import setup_logger
 
 test_directory = Path(ROOT, "tests", "testdata").as_posix()
 
-img_mnist = Path(test_directory, "datasets", "mnist").as_posix()
+img_mnist = Path(test_directory, "datasets", "classification",
+                 "mnist").as_posix()
 features_mnist = Path(
-    test_directory, "datasets", "mnist", "features.csv"
+    test_directory, "datasets", "classification", "mnist", "features.csv"
 ).as_posix()
 
 pytest_output_directory = "./Pytest_output"
@@ -69,7 +70,7 @@ def test_fit_model_GA(
     _cfg.GA.SEARCH_SPACE.UNITS = [3, 4]
     _cfg.GA.SEARCH_SPACE.EPOCHS = [1, 2]
 
-    MakeDataset = DATASETS.get(_cfg.MODEL.ARCHITECTURE)
+    MakeDataset = get_dataset(_cfg.TASK, _cfg.MODEL.ARCHITECTURE)
     datasets = {
         "TRAIN": MakeDataset(_cfg, logger),
         "VAL": MakeDataset(_cfg, logger, is_validation=True),
@@ -157,7 +158,7 @@ def test_wrong_hypermutation(hypermutation):
     _cfg = cfg.clone()
     _cfg.GA.HYPERMUTATION = hypermutation
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         GA(_cfg, None, None)
 
 
@@ -191,7 +192,7 @@ def test_wrong_rd_imigrantes(rd_imigrantes):
     _cfg = cfg.clone()
     _cfg.GA.RANDOM_IMIGRANTS = rd_imigrantes
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         GA(_cfg, None, None)
 
 
@@ -213,7 +214,7 @@ def test_wrong_seed(seed):
     _cfg = cfg.clone()
     _cfg.GA.SEED = seed
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         GA(_cfg, None, None)
 
 
@@ -224,7 +225,7 @@ def test_wrong_continue_exec(continue_exec):
     _cfg = cfg.clone()
     _cfg.GA.CONTINUE_EXEC = continue_exec
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         GA(_cfg, None, None)
 
 
@@ -300,17 +301,6 @@ def test_wrong_kernel_size(kernel_size):
 def test_wrong_pool_size(pool_size):
     _cfg = cfg.clone()
     _cfg.GA.SEARCH_SPACE.POOL_SIZE = pool_size
-
-    with pytest.raises(ValueError):
-        GA(_cfg, None, None)
-
-
-@pytest.mark.parametrize(
-    "batch_size", ["wrong", 1, [0, 10], [10, "wrong"], [10, 10000000], []],
-)
-def test_wrong_batch_size(batch_size):
-    _cfg = cfg.clone()
-    _cfg.GA.SEARCH_SPACE.BATCH_SIZE = batch_size
 
     with pytest.raises(ValueError):
         GA(_cfg, None, None)

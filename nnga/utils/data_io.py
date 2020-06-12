@@ -8,9 +8,7 @@ import scikitplot as skplt
 import csv
 from nnga.configs import export_config
 import json
-
-# from tensorflow.keras.models import model_from_json
-import tensorflow as tf
+from tensorflow.keras.models import model_from_json
 
 
 def create_dir(path):
@@ -366,7 +364,7 @@ def load_csv_line(path, sep, idx):
     return header, sample
 
 
-def load_image(path):
+def load_image(path, mode="color"):
     """
         Load image
 
@@ -374,6 +372,8 @@ def load_image(path):
         ----------
         path : str
             Directory path
+        mode: str
+            color or gray
 
         Returns
         -------
@@ -386,6 +386,8 @@ def load_image(path):
     if not os.path.exists(path):
         raise FileNotFoundError("File not found with provided path.")
 
+    if mode == "gray":
+        return cv2.imread(path, cv2.IMREAD_GRAYSCALE)
     return cv2.imread(path, cv2.IMREAD_COLOR)
 
 
@@ -502,7 +504,11 @@ def save_model(path, model):
         -------
     """
     create_dir(path)
-    model.save(path)
+
+    model_dir = Path(path, "model").as_posix()
+    with open(model_dir + ".json", "w") as json_file:
+        json_file.write(model.to_json())
+    model.save_weights(model_dir + ".h5")
 
 
 def load_scale_parameters(path):
@@ -606,14 +612,21 @@ def load_model(path):
         Parameters
         ----------
         path : str
-            Path to directory with the saved model
+            Path to directory with the saved model.json
+            and model.h5
 
         Returns
         -------
         model: model
             model read
     """
-    return tf.keras.models.load_model(path)
+    model_dir = Path(path, "model").as_posix()
+    file = open(model_dir + ".json", "r")
+    model_json = file.read()
+    model = model_from_json(model_json)
+    model.load_weights(model_dir + ".h5")
+
+    return model
 
 
 def save_train_state(path, train_state):

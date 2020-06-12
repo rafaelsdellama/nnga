@@ -8,7 +8,7 @@ import tensorflow as tf
 
 from nnga.genetic_algorithm.population import Population
 from nnga.genetic_algorithm import set_parameters
-from nnga import ARCHITECTURES
+from nnga import get_architecture
 from nnga.utils.data_io import (
     load_statistic,
     load_pop,
@@ -123,7 +123,7 @@ class GA:
             )
 
         if not isinstance(self.hypermutation, bool):
-            raise ValueError("GA.HYPERMUTATION must be a bool")
+            raise TypeError("GA.HYPERMUTATION must be a bool")
 
         if (
             not isinstance(self.cycleSize, int)
@@ -151,7 +151,7 @@ class GA:
             )
 
         if not isinstance(self.randomImmigrants, bool):
-            raise ValueError("GA.RANDOM_IMIGRANTS must be a bool")
+            raise TypeError("GA.RANDOM_IMIGRANTS must be a bool")
 
         if (
             not isinstance(self.immigrationRate, float)
@@ -164,25 +164,25 @@ class GA:
             )
 
         if not isinstance(self._seed, int):
-            raise ValueError("GA.SEED must be a int number")
+            raise TypeError("GA.SEED must be a int number")
 
         if not isinstance(self.continue_exec, bool):
-            raise ValueError("GA.CONTINUE_EXEC must be a bool")
-
-        if not isinstance(self.continue_exec, bool):
-            raise ValueError("GA.CONTINUE_EXEC must be a bool")
+            raise TypeError("GA.CONTINUE_EXEC must be a bool")
 
         if not isinstance(self.feature_selection, bool):
-            raise ValueError("MODEL.FEATURE_SELECTION must be a bool")
+            raise TypeError("MODEL.FEATURE_SELECTION must be a bool")
+
+        if self.feature_selection and "MLP" not in cfg.MODEL.ARCHITECTURE:
+            raise ValueError("cfg.MODEL.FEATURE_SELECTION should be True "
+                             "only for MLP or CNN/MLP ARCHITECTURE")
 
         self.old_pop = Population(self.population_size)
         self.new_pop = Population(self.population_size)
 
-        if self.feature_selection and "MLP" in cfg.MODEL.ARCHITECTURE:
+        if self.feature_selection:
             self._features = self.datasets["TRAIN"].features
         else:
             self._features = []
-            self.feature_selection = False
 
         (
             self._encoding,
@@ -634,7 +634,7 @@ class GA:
         else:
             features_idx = None
 
-        MakeModel = ARCHITECTURES.get(self._cfg.MODEL.ARCHITECTURE)
+        MakeModel = get_architecture(self._cfg.TASK, self._cfg.MODEL.ARCHITECTURE)
 
         try:
             model = MakeModel(
@@ -645,7 +645,6 @@ class GA:
                 indiv=indiv,
                 keys=self._encoding_keys,
             )
-
             model_trainner = ModelTraining(
                 self._cfg,
                 model,
@@ -656,10 +655,8 @@ class GA:
                 features_idx,
             )
 
-            evaluate = model_trainner.train_test_split(random_state=0)
-            metrics = model_trainner.compute_metrics()
+            metrics = model_trainner.train_test_split(random_state=0)
             fitness = float(metrics["balanced_accuracy_score"])
-            # fitness = 1 / (1 + evaluate[0])
 
             self._logger.info(
                 f"balanced accuracy: {metrics['balanced_accuracy_score']}"
@@ -667,13 +664,13 @@ class GA:
             self._logger.info(
                 f"confusion matrix: \n{metrics['confusion_matrix']}"
             )
-        except:
-            evaluate = [float("inf"), 1e-5]
-            fitness = 0.0
+        except Exception as e:
+            if "Negative dimension size caused" in str(e):
+                fitness = 0.0
+            else:
+                self._logger.error(e)
+                raise e
 
-        self._logger.info(
-            f"evaluate (loss value & metrics values): {evaluate}"
-        )
         self._logger.info(f"Fitness: {fitness}\n")
 
         dump_tensors()
@@ -700,7 +697,7 @@ class GA:
         else:
             features_idx = None
 
-        MakeModel = ARCHITECTURES.get(self._cfg.MODEL.ARCHITECTURE)
+        MakeModel = get_architecture(self._cfg.TASK, self._cfg.MODEL.ARCHITECTURE)
 
         try:
             model = MakeModel(
@@ -729,8 +726,6 @@ class GA:
                 self._logger.info(f"Cross validation statistics:\n{cv}")
 
             model_trainner.fit()
-            evaluate = model_trainner.evaluate()
-            # fitness = 1 / (1 + evaluate[0])
             metrics = model_trainner.compute_metrics(save=True)
             fitness = float(metrics["balanced_accuracy_score"])
 
@@ -742,13 +737,13 @@ class GA:
             )
 
             model.save_model()
-        except:
-            evaluate = [float("inf"), 1e-5]
-            fitness = 0.0
+        except Exception as e:
+            if "Negative dimension size caused" in str(e):
+                fitness = 0.0
+            else:
+                self._logger.error(e)
+                raise e
 
-        self._logger.info(
-            f"evaluate (loss value & metrics values): {evaluate}"
-        )
         self._logger.info(f"Fitness solution: {fitness}")
 
         dump_tensors()

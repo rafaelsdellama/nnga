@@ -13,8 +13,8 @@ class BaseNeuralNetwork:
             input_shape: int
                 Inputs shape
 
-            output_dim: int
-                Number of outputs
+            n_classes: int
+                Number of classes
 
             include_top: bool
                 include the top layers
@@ -33,7 +33,7 @@ class BaseNeuralNetwork:
         cfg,
         logger,
         input_shape,
-        output_dim,
+        n_classes,
         include_top=True,
         indiv=None,
         keys=None,
@@ -41,7 +41,7 @@ class BaseNeuralNetwork:
         self._cfg = cfg
         self._logger = logger
         self.input_shape = input_shape
-        self.output_dim = output_dim
+        self.n_classes = n_classes
         self.indiv = indiv
         self.keys = keys
         self.include_top = include_top
