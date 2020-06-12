@@ -123,7 +123,7 @@ class GA:
             )
 
         if not isinstance(self.hypermutation, bool):
-            raise ValueError("GA.HYPERMUTATION must be a bool")
+            raise TypeError("GA.HYPERMUTATION must be a bool")
 
         if (
             not isinstance(self.cycleSize, int)
@@ -151,7 +151,7 @@ class GA:
             )
 
         if not isinstance(self.randomImmigrants, bool):
-            raise ValueError("GA.RANDOM_IMIGRANTS must be a bool")
+            raise TypeError("GA.RANDOM_IMIGRANTS must be a bool")
 
         if (
             not isinstance(self.immigrationRate, float)
@@ -164,25 +164,25 @@ class GA:
             )
 
         if not isinstance(self._seed, int):
-            raise ValueError("GA.SEED must be a int number")
+            raise TypeError("GA.SEED must be a int number")
 
         if not isinstance(self.continue_exec, bool):
-            raise ValueError("GA.CONTINUE_EXEC must be a bool")
-
-        if not isinstance(self.continue_exec, bool):
-            raise ValueError("GA.CONTINUE_EXEC must be a bool")
+            raise TypeError("GA.CONTINUE_EXEC must be a bool")
 
         if not isinstance(self.feature_selection, bool):
-            raise ValueError("MODEL.FEATURE_SELECTION must be a bool")
+            raise TypeError("MODEL.FEATURE_SELECTION must be a bool")
+
+        if self.feature_selection and "MLP" not in cfg.MODEL.ARCHITECTURE:
+            raise ValueError("cfg.MODEL.FEATURE_SELECTION should be True "
+                             "only for MLP or CNN/MLP ARCHITECTURE")
 
         self.old_pop = Population(self.population_size)
         self.new_pop = Population(self.population_size)
 
-        if self.feature_selection and "MLP" in cfg.MODEL.ARCHITECTURE:
+        if self.feature_selection:
             self._features = self.datasets["TRAIN"].features
         else:
             self._features = []
-            self.feature_selection = False
 
         (
             self._encoding,
@@ -664,11 +664,12 @@ class GA:
             self._logger.info(
                 f"confusion matrix: \n{metrics['confusion_matrix']}"
             )
-        except ValueError:
-            fitness = 0.0
         except Exception as e:
-            self._logger.error(e)
-            raise e
+            if "Negative dimension size caused" in str(e):
+                fitness = 0.0
+            else:
+                self._logger.error(e)
+                raise e
 
         self._logger.info(f"Fitness: {fitness}\n")
 
@@ -736,11 +737,12 @@ class GA:
             )
 
             model.save_model()
-        except ValueError:
-            fitness = 0.0
         except Exception as e:
-            self._logger.error(e)
-            raise e
+            if "Negative dimension size caused" in str(e):
+                fitness = 0.0
+            else:
+                self._logger.error(e)
+                raise e
 
         self._logger.info(f"Fitness solution: {fitness}")
 

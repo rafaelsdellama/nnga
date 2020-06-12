@@ -158,7 +158,7 @@ def test_wrong_hypermutation(hypermutation):
     _cfg = cfg.clone()
     _cfg.GA.HYPERMUTATION = hypermutation
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         GA(_cfg, None, None)
 
 
@@ -192,7 +192,7 @@ def test_wrong_rd_imigrantes(rd_imigrantes):
     _cfg = cfg.clone()
     _cfg.GA.RANDOM_IMIGRANTS = rd_imigrantes
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         GA(_cfg, None, None)
 
 
@@ -214,7 +214,7 @@ def test_wrong_seed(seed):
     _cfg = cfg.clone()
     _cfg.GA.SEED = seed
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         GA(_cfg, None, None)
 
 
@@ -225,7 +225,7 @@ def test_wrong_continue_exec(continue_exec):
     _cfg = cfg.clone()
     _cfg.GA.CONTINUE_EXEC = continue_exec
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         GA(_cfg, None, None)
 
 

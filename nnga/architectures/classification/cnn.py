@@ -7,7 +7,8 @@ from tensorflow.keras.layers import (
     MaxPooling2D,
     Dropout,
     BatchNormalization,
-    GlobalAveragePooling2D,
+    # GlobalAveragePooling2D,
+    # GlobalMaxPooling2D
 )
 
 from nnga.architectures.base_neural_network import BaseNeuralNetwork
@@ -117,7 +118,6 @@ class CNN(BaseNeuralNetwork):
                     cnn
                 )
 
-        cnn = GlobalAveragePooling2D()(cnn)
         cnn = Flatten()(cnn)
 
         if self.include_top:
@@ -168,8 +168,9 @@ class CNN(BaseNeuralNetwork):
         # for layer in base_model.layers[:-4]:
         #     layer.trainable = False
 
-        mlp = GlobalAveragePooling2D()(base_model.output)
-        mlp = Flatten()(mlp)
+        # mlp = GlobalAveragePooling2D()(base_model.output)
+        # mlp = GlobalMaxPooling2D()(base_model.output)
+        mlp = Flatten()(base_model.output)
 
         if self.include_top:
             C = K.int_shape(mlp)[-1]
