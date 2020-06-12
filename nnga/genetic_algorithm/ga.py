@@ -655,10 +655,8 @@ class GA:
                 features_idx,
             )
 
-            evaluate = model_trainner.train_test_split(random_state=0)
-            metrics = model_trainner.compute_metrics()
+            metrics = model_trainner.train_test_split(random_state=0)
             fitness = float(metrics["balanced_accuracy_score"])
-            # fitness = 1 / (1 + evaluate[0])
 
             self._logger.info(
                 f"balanced accuracy: {metrics['balanced_accuracy_score']}"
@@ -667,15 +665,11 @@ class GA:
                 f"confusion matrix: \n{metrics['confusion_matrix']}"
             )
         except ValueError:
-            evaluate = [float("inf"), 1e-5]
             fitness = 0.0
         except Exception as e:
             self._logger.error(e)
             raise e
 
-        self._logger.info(
-            f"evaluate (loss value & metrics values): {evaluate}"
-        )
         self._logger.info(f"Fitness: {fitness}\n")
 
         dump_tensors()
@@ -731,8 +725,6 @@ class GA:
                 self._logger.info(f"Cross validation statistics:\n{cv}")
 
             model_trainner.fit()
-            evaluate = model_trainner.evaluate()
-            # fitness = 1 / (1 + evaluate[0])
             metrics = model_trainner.compute_metrics(save=True)
             fitness = float(metrics["balanced_accuracy_score"])
 
@@ -745,15 +737,11 @@ class GA:
 
             model.save_model()
         except ValueError:
-            evaluate = [float("inf"), 1e-5]
             fitness = 0.0
         except Exception as e:
             self._logger.error(e)
             raise e
 
-        self._logger.info(
-            f"evaluate (loss value & metrics values): {evaluate}"
-        )
         self._logger.info(f"Fitness solution: {fitness}")
 
         dump_tensors()

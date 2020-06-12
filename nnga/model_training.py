@@ -114,9 +114,7 @@ class ModelTraining:
             "steps_per_epoch": len(self._datasets["TRAIN"]),
             "validation_steps": len(self._datasets["VAL"]),
             "verbose": 1,
-            "callbacks": self._make_callbacks(
-                val_dataset=self._datasets["VAL"]
-            ),
+            "callbacks": None,
             "shuffle": False,
             "validation_freq": 1,
             "max_queue_size": 10,
@@ -170,9 +168,7 @@ class ModelTraining:
         self.fitting_parameters.update(
             {
                 "epochs": self.indiv[self.keys.index("epochs")],
-                "callbacks": self._make_callbacks(
-                    val_dataset=self._datasets["VAL"]
-                ),
+                "callbacks": None,
                 "initial_epoch": 0,
             }
         )
@@ -236,12 +232,12 @@ class ModelTraining:
         )
 
         self.fit()
-        evaluate = self.evaluate()
+        metrics = self.compute_metrics()
 
         self._model.set_weights(Wsave)
         self.fitting_parameters.update(fitting_parameters)
 
-        return evaluate
+        return metrics
 
     def cross_validation(self, shuffle=True, random_state=0, save=False):
         """Execute cross validation using the train dataset

@@ -117,6 +117,7 @@ class CNN(BaseNeuralNetwork):
                     cnn
                 )
 
+        cnn = GlobalAveragePooling2D()(cnn)
         cnn = Flatten()(cnn)
 
         if self.include_top:

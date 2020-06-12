@@ -60,6 +60,7 @@ def train(cfg, logger):
         ga = GA(cfg, logger, datasets)
         ga.run()
     else:
+        launch_tensorboard(cfg.OUTPUT_DIR)
         MakeModel = get_architecture(cfg.TASK, cfg.MODEL.ARCHITECTURE)
         model = MakeModel(
             cfg,
@@ -147,7 +148,6 @@ def main():
     logger.info(f"CFG: \n{cfg}")
 
     try:
-        launch_tensorboard(cfg.OUTPUT_DIR)
         train(cfg, logger)
     except Exception:
         msg = f"Failed:\n{traceback.format_exc()}"
