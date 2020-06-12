@@ -56,7 +56,8 @@ def train(cfg, logger):
     if hasattr(datasets["TRAIN"], "scale_parameters"):
         datasets["VAL"].scale_parameters = datasets["TRAIN"].scale_parameters
 
-    if cfg.MODEL.BACKBONE == "GASearch" or cfg.MODEL.FEATURE_SELECTION:
+    if cfg.TASK == "Classification" and (
+            cfg.MODEL.BACKBONE == "GASearch" or cfg.MODEL.FEATURE_SELECTION):
         ga = GA(cfg, logger, datasets)
         ga.run()
     else:
