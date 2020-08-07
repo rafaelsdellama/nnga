@@ -216,9 +216,11 @@ class ModelTraining:
         idx_train, idx_val = next(sss.split(idx, idx_labels))
 
         train_dataset = copy.deepcopy(self._datasets["TRAIN"])
-        train_dataset.set_index(idx_train)
+        #train_dataset.set_index(idx_train)
+        train_dataset.set_index(idx_train[0:len(idx_val)//4])
         test_dataset = copy.deepcopy(self._datasets["TRAIN"])
-        test_dataset.set_index(idx_val)
+        #test_dataset.set_index(idx_val)
+        test_dataset.set_index(idx_val[0:len(idx_val)//4])
 
         self.fitting_parameters.update(
             {

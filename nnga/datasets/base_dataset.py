@@ -97,10 +97,10 @@ class BaseDataset(Sequence):
         for _, value in self._metadata.items():
             class_count[value["label"]] += 1
 
-        max_count = max([v for _, v in class_count.items()])
         class_weigths_map = {
-            k: (v / max_count) for k, v in class_count.items()
+            k: (len(self._metadata) / (len(self._labels) * v)) for k, v in class_count.items()
         }
+        self._logger.info(f"class_weigth: {class_weigths_map}")
 
         self._class_weigths = {
             self._class_to_id[l]: class_weigths_map[l] for l in self._labels
