@@ -7,6 +7,7 @@
 
 ### Article(s):
 * Computer-Aided Diagnosis of Vertebral Compression Fractures Using Convolutional Neural Networks and Radiomics - Journal of Digital Imaging
+  * [Supplementary Material.pdf](Journal_of_digital_imaging_Supplementary_Material_2021_final.pdf)
 
 **Current stable version**: 2.0.0
 
