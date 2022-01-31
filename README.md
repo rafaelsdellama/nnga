@@ -1,7 +1,17 @@
 # **N**eural **N**etwork optimized by **G**enetic **A**lgorithms - (NNGA)
+
+**This code was developed during the master's project 'Genetic Algorithms and Convolutional Neural Networks to Aid the Diagnosis of Vertebral Compression Fractures' of the Graduate Program in Applied Computing at the Faculty of Philosophy, Sciences and Letters of Ribeirão Preto, University of São Paulo.**
+ 
+### Thesis: 
+* [Algoritmos genéticos e redes neurais convolucionais para auxílio ao diagnóstico de fraturas vertebrais por compressão](https://www.teses.usp.br/teses/disponiveis/59/59143/tde-07122020-220625/pt-br.php)
+
+### Article(s):
+* Computer-Aided Diagnosis of Vertebral Compression Fractures Using Convolutional Neural Networks and Radiomics - Journal of Digital Imaging
+  * [Supplementary Material.pdf](Journal_of_digital_imaging_Supplementary_Material_2021_final.pdf)
+
 **Current stable version**: 2.0.0
 
-Neural Network optimized by Genetic Algorithms - (NNGA) is a library for deep model training, 
+**Neural Network optimized by Genetic Algorithms - (NNGA)** is a library for deep model training, 
 for data classification and segmentation. 
 The adjustment of the model parameters can be done by genetic algorithm or 
 can be defined by pre-trained models. 
