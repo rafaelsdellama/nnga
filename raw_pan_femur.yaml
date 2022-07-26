@@ -1,0 +1,32 @@
+DATASET:
+  PRESERVE_IMG_RATIO: true
+  SCALER: MinMax
+  TRAIN_AUGMENTATION: true
+  TRAIN_IMG_PATH: C:/Users/RafaelDelLama/Downloads/Femur/
+  TRAIN_SHUFFLE: true
+  VAL_AUGMENTATION: false
+  VAL_IMG_PATH: C:/Users/RafaelDelLama/Downloads/Femur/
+  VAL_SHUFFLE: false
+MODEL:
+  ARCHITECTURE: CNN
+  BACKBONE: VGG16
+  DROPOUT: 0.2
+  FEATURE_SELECTION: false
+  INPUT_SHAPE:
+  - 224
+  - 224
+  - 3
+OUTPUT_DIR: ./NNGA_output
+SOLVER:
+  BASE_LEARNING_RATE: 0.0001
+  BATCH_SIZE: 64
+  CROSS_VALIDATION: true
+  CROSS_VALIDATION_FOLDS: 10
+  EPOCHS: 200
+  LOSS: categorical_crossentropy
+  METRICS:
+  - categorical_accuracy
+  OPTIMIZER: Adam
+  TEST_SIZE: 0.1
+TASK: Classification
+VERBOSE: 0

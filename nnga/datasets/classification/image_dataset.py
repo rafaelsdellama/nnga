@@ -69,7 +69,7 @@ class ImageDataset(BaseDataset):
             just create a kind of index.
         """
         data = read_dataset(
-            self._dataset_img_path, format="png, jpg, jpeg, tif",
+            self._dataset_img_path, format="png, jpg, jpeg, tif, BMP",
         )
 
         self._metadata = {

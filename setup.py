@@ -1,5 +1,5 @@
 from setuptools import find_packages, setup
-from nnga import __version__
+__version__ = "2.0.0"
 
 requirements = []
 with open("requirements.txt", "r") as f:

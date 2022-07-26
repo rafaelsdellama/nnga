@@ -15,7 +15,8 @@ from nnga.genetic_algorithm.ga import GA
 
 # import tensorflow as tf
 # Set CPU as available physical device
-# tf.config.set_visible_devices([], 'GPU')
+# print(tf.config.list_physical_devices('GPU'))
+# breakpoint()
 
 TASKS = ["Classification", "Segmentation"]
 
